@@ -628,6 +628,8 @@ void FlipSolverGPU::gridToParticles(){
 }
 
 void FlipSolverGPU::update(){
+    if (m_isPaused) return;
+
     m_integrateTimer.beginFrame();
     integrateParticles();
     m_integrateTimer.endFrame();

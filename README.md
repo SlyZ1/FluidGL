@@ -1,3 +1,11 @@
+
+<img src="public/FluidGL_Circle.png" width=100>
+
+# FluidGL
+
+> [!WARNING]
+> The project is in a very early state, please be understanding for all the missing features.
+
 ## Overview
 
 GPU fluid simulation, built from scratch in C++ and OpenGL compute shaders. Implements a PIC/FLIP solver running entirely on the GPU, with a custom conjugate gradient solver for the pressure projection step.

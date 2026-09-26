@@ -40,7 +40,6 @@ vec2 previousObstaclePos = vec2(0.f);
 bool previousEnableObstacle = false;
 bool enableObstacle = false;
 
-bool paused = false;
 bool freeView = false;
 
 #ifdef _WIN32
@@ -116,14 +115,12 @@ void inputs(shared_ptr<ISolver> lockedSolver){
     }
 
     if (app->keyPressedOnce(GLFW_KEY_P, frameCount)){
-        paused = !paused;
+        lockedSolver->setPaused(!lockedSolver->isPaused());
     }
 
     if (app->keyPressedOnce(GLFW_KEY_RIGHT, frameCount)){
-        if (paused){
-            for (int i = 0; i < iterations; i++)
-                if (lockedSolver) lockedSolver->update();
-        }
+        for (int i = 0; i < iterations; i++)
+            if (lockedSolver) lockedSolver->update();
     }
     if (app->keyPressed(GLFW_MOUSE_BUTTON_LEFT)){
         enableObstacle = true;
@@ -152,9 +149,8 @@ int main(){
 
         auto lockedSolver = solver.lock();
         
-        if (!paused) 
-            for (int i = 0; i < iterations; i++)
-                if (lockedSolver) lockedSolver->update();
+        for (int i = 0; i < iterations; i++)
+            if (lockedSolver) lockedSolver->update();
 
         if (renderer) {
             renderer->render();

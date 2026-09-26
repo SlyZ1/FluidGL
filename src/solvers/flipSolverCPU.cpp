@@ -466,6 +466,8 @@ void FlipSolverCPU::gridToParticles(){
 
 
 void FlipSolverCPU::update(){
+    if (m_isPaused) return;
+    
     integrateParticles();
     particleCollisions();
     pushAppartParticles();

@@ -12,6 +12,7 @@ class ISolver : public IStatsProvider {
 protected:
     std::unique_ptr<ISolverConfig> m_baseConfig;
     std::unique_ptr<ISolverConfig> m_draftConfig;
+    bool m_isPaused = true;
 public:
     ISolver(std::unique_ptr<ISolverConfig> config, const std::string& statsName) 
     : IStatsProvider(statsName), m_baseConfig(std::move(config)) {};
@@ -37,6 +38,9 @@ public:
         m_baseConfig = std::move(m_draftConfig);
         reload();
     }
+
+    bool isPaused() const { return m_isPaused; }
+    void setPaused(bool isPaused) { m_isPaused = isPaused; }
 };
 
 #endif
