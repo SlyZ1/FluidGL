@@ -9,7 +9,7 @@ class FlipSolverCPUConfig : public IParticleSolverConfig {
 protected:
     float m_partPerH = 2;
     float m_overrelaxation = 1.9f;
-    glm::vec2 m_domainSize = glm::vec2(1.0f);
+    glm::vec2 m_domainSize = glm::vec2(10.0f);
 
 public:
     FlipSolverCPUConfig() : IParticleSolverConfig() {}

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
-project(PhysicsSim)
+project(FluidGL)
 
 option(BUILD_TEST "Run through the tests" OFF)
 if(NOT CMAKE_BUILD_TYPE)

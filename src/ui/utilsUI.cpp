@@ -4,6 +4,8 @@
 
 using namespace std;
 
+bool UtilsUI::s_isHeaderLight = true;
+
 void UtilsUI::TextWithShadow(const char* text, ImVec4 textColor, ImVec4 shadowColor, ImVec2 offset) {
     ImVec2 pos = ImGui::GetCursorScreenPos();
     float rowHeight = ImGui::GetTextLineHeightWithSpacing();
@@ -52,7 +54,7 @@ void UtilsUI::EndTwoColumnLayout()
 }
 
 bool UtilsUI::BeginCustomHeader(const string& name) {
-    ImGui::PushStyleColor(ImGuiCol_ChildBg, ColorsUI::fgColor);
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, s_isHeaderLight ? ColorsUI::fgColor : ColorsUI::mgColor);
     ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
     ImGui::BeginChild((name + "_group").c_str(), ImVec2(-FLT_MIN, 0), ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding);
     bool open = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth);
@@ -60,6 +62,7 @@ bool UtilsUI::BeginCustomHeader(const string& name) {
         ImGui::Spacing();
         ImGui::Spacing();
     }
+    s_isHeaderLight = !s_isHeaderLight;
     return open;
 }
 
@@ -67,6 +70,7 @@ void UtilsUI::EndCustomHeader() {
     ImGui::EndChild();
     ImGui::PopStyleVar(1);
     ImGui::PopStyleColor(1);
+    s_isHeaderLight = !s_isHeaderLight;
 }
 
 void UtilsUI::Label(const char* label, const string& desc, function<void(void)> customWidget, float widgetSize)

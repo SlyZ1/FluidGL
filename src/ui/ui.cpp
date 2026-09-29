@@ -2,8 +2,6 @@
 #include "colorsUI.hpp"
 #include <format>
 
-#include "solvers/flipSolverGPU.hpp"
-
 using namespace std;
 
 UI::UI(UIContext ctx) : m_ctx(std::move(ctx)) {}
@@ -107,7 +105,7 @@ void UI::renderStats(){
         for (const weak_ptr<Stats>& statsPtr : m_statsCtx)
         {
             auto stats = statsPtr.lock();
-            if (!stats) return;
+            if (!stats) continue;
 
             if (ImGui::CollapsingHeader(stats->name.c_str())) {
                 drawTimers(stats->getTimers());
@@ -133,13 +131,22 @@ void UI::renderParams(){
     ImGui::PushStyleColor(ImGuiCol_Border, ColorsUI::lightBlueBorder);
     ImGui::BeginChild("Scrollable Parameters", ImVec2(-FLT_MIN, -padding), ImGuiChildFlags_None, ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
-    if (UtilsUI::BeginCustomHeader("Simulation")){
-        
-        ImGui::TreePop();
-    } UtilsUI::EndCustomHeader();
+    auto solverManagerLocked = m_ctx.solverManager.lock();
+    if (UtilsUI::BeginCustomHeader("Solver") && solverManagerLocked){
 
-    if (UtilsUI::BeginCustomHeader("Solver")){
-        if (auto solver = m_ctx.solver.lock()){
+        UtilsUI::BeginTwoColumnLayout();
+
+        static int selectedItem = solverManagerLocked->getCurrentType();
+        UtilsUI::Label("Solver Used");
+        vector<const char*> names = SolverUI::solverNames();
+        if (ImGui::Combo("##Solver Used", &selectedItem, names.data(), names.size())){
+            solverManagerLocked->instantiate((SolverType)selectedItem);
+        }
+
+        UtilsUI::EndTwoColumnLayout();
+        ImGui::Dummy(ImVec2(0, 10));
+
+        if (auto solver = solverManagerLocked->getSolver().lock()){
             solver->accept(solverUI);
             ImGui::Dummy(ImVec2(0, 5));
             if (ImGui::Button("Apply Changes", ImVec2(-FLT_MIN, 20)))

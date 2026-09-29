@@ -16,14 +16,13 @@ uniform int gridX;
 uniform int gridY;
 uniform int gridZ;
 uniform float h;
+uniform float flipRatio;
 
 #pragma include "./utils.glsl"
 
 void main(){
     int i = int(gl_GlobalInvocationID.x);
     if (i >= partN) return;
-
-    const float flipRatio = 0.9;
 
     vec3 pos = partPos[i].xyz;
     {

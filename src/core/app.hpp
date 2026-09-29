@@ -32,6 +32,7 @@ class App : public IStatsProvider {
         App& operator=(const App&) = delete;
 
         void init(int width, int height, const char *name);
+        void setIcon(const char* path);
         void setClearColor(float r, float g, float b, float a) const ;
         void startFrame(int frameCount);
         void endFrame() const;

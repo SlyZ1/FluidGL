@@ -13,6 +13,7 @@ uniform int gridY;
 uniform int gridZ;
 uniform float h;
 uniform float density;
+uniform float densityMultiplier;
 
 #pragma include "../utils.glsl"
 
@@ -54,7 +55,7 @@ void main(){
     d += s3 * velRight - s2 * velLeft;
     d += s5 * velFront - s4 * velBack;
     
-    d -= max(rho[cell] - density, 0);
+    d -= max(rho[cell] - density * densityMultiplier, 0);
 
     minusDiv[cell] = -d;
 }

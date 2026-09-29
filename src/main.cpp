@@ -27,11 +27,10 @@ int frameCount = 0;
 
 shared_ptr<App> app;
 shared_ptr<Camera> camera;
-weak_ptr<ISolver> solver;
 shared_ptr<IRenderer> renderer;
 shared_ptr<UI> ui;
 
-unique_ptr<SolverManager> solverManager = {};
+shared_ptr<SolverManager> solverManager = {};
 
 vector<vec3> poses = { vec3(0,0,0), vec3(0.5f, 0.f, 0.f) };
 int iterations = 1;
@@ -51,7 +50,8 @@ extern "C" {
 
 void init(){
     app = make_shared<App>();
-    app->init(1280, 720, "Simulator");
+    app->init(1280, 720, "FluidGL");
+    app->setIcon("public/FluidGL_Circle.png");
     app->setClearColor(0, 0, 0, 1.0f);
     app->toggleCursor(!freeView);
     
@@ -65,12 +65,11 @@ void init(){
     flipConfigGPU.setDomainSize(vec3(600, 600, 300));
     flipConfigGPU.setPartRadius(1.5f);
     
-    solverManager = make_unique<SolverManager>();
-    weak_ptr<FlipSolverGPU> typedSolver = solverManager->instantiate(flipConfigGPU);
-    renderer = make_shared<ParticleRenderer3D>(typedSolver, camera);
-    solver = typedSolver;
+    solverManager = make_shared<SolverManager>();
+    weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfigGPU);
+    renderer = make_shared<ParticleRenderer3D>(*solverManager, camera);
     
-    UIContext ctx = { app, solver, renderer };
+    UIContext ctx = { app, solverManager, renderer };
     ui = make_shared<UI>(ctx);
     ui->setStatsContext({ app, solver });
     
@@ -100,7 +99,7 @@ void inputs(shared_ptr<ISolver> lockedSolver){
             app->keyPressed(GLFW_KEY_C)
         };
         camera->move(inputs, app->dt());
-        camera->rotate(app->mouseX(), app->mouseY(), app->dt());
+        camera->rotate(app->mouseX(), app->mouseY(), 1);
     };
 
     // Hot reload shaders
@@ -147,7 +146,7 @@ int main(){
         app->startFrame(frameCount);
         ui->render();
 
-        auto lockedSolver = solver.lock();
+        auto lockedSolver = solverManager->getSolver().lock();
         
         for (int i = 0; i < iterations; i++)
             if (lockedSolver) lockedSolver->update();

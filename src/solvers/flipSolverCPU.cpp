@@ -8,8 +8,7 @@
 using namespace std;
 using namespace glm;
 
-FlipSolverCPU::FlipSolverCPU(FlipSolverCPUConfig config) 
-: IParticleSolver(make_unique<FlipSolverCPUConfig>(move(config)), "FLIP CPU Solver"), m_config(static_cast<FlipSolverCPUConfig&>(*m_baseConfig)) {
+void FlipSolverCPU::genBuffers(){
     m_isWall = vector<bool>(m_config.getGridX() * m_config.getGridY(), false);
     m_velX = vector<float>((m_config.getGridX() + 1) * m_config.getGridY(), 0.f);
     m_velY = vector<float>(m_config.getGridX() * (m_config.getGridY() + 1), 0.f);
@@ -26,7 +25,13 @@ FlipSolverCPU::FlipSolverCPU(FlipSolverCPUConfig config)
         m_partPos[i] = (vec4(x-10, y, 0, 0) - vec4(a*0.5f, a*0.5f, 0, 0)) * 2.f * m_config.getPartRadius() * 1.f;
     }
 
+    glDeleteBuffers(1, &m_posVBO); glDeleteBuffers(1, &m_velVBO);
     glGenBuffers(1, &m_posVBO); glGenBuffers(1, &m_velVBO);
+}
+
+FlipSolverCPU::FlipSolverCPU(FlipSolverCPUConfig config) 
+: IParticleSolver(make_unique<FlipSolverCPUConfig>(move(config)), "FLIP CPU Solver"), m_config(static_cast<FlipSolverCPUConfig&>(*m_baseConfig)) {
+    genBuffers();
 }
 
 ivec2 FlipSolverCPU::cellToCoord(int cell, int nx){
@@ -479,13 +484,12 @@ void FlipSolverCPU::update(){
 }
 
 void FlipSolverCPU::reload(){
-    glDeleteBuffers(1, &m_posVBO);
-    glDeleteBuffers(1, &m_velVBO);
-    glGenBuffers(1, &m_posVBO);
-    glGenBuffers(1, &m_velVBO);
+    m_config = static_cast<FlipSolverCPUConfig&>(*m_baseConfig);
+    genBuffers();
 }
 
 GLuint FlipSolverCPU::getPosBuffer() const {
+    if (m_config.getPartN() > 0) cout << "caccaca" << endl;
     glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);
     glBufferData(GL_ARRAY_BUFFER, m_partPos.size() * sizeof(vec4), m_partPos.data(), GL_STREAM_DRAW);
     return m_posVBO;

@@ -6,8 +6,8 @@
 class IParticleSolverConfig : public ISolverConfig {
 protected:
     int m_partN = 0;
-    float m_partRadius = 1;
-    float m_dt = 0.015f;
+    float m_partRadius = 1.5f;
+    float m_dt = 0.05f;
 
 public:
     IParticleSolverConfig() : ISolverConfig() {}
@@ -15,7 +15,7 @@ public:
     : ISolverConfig(), m_partN(partN), m_partRadius(partRadius), m_dt(dt) {}
     virtual ~IParticleSolverConfig() override = default;
 
-    virtual std::unique_ptr<ISolverConfig> clone() const override { return std::make_unique<IParticleSolverConfig>(*this); }
+    //virtual std::unique_ptr<ISolverConfig> clone() const override { return std::make_unique<IParticleSolverConfig>(*this); }
 
     int getPartN() const { return m_partN; }
     void setPartN(int partN) { m_partN = partN; }

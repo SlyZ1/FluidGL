@@ -129,7 +129,7 @@ private:
     void particleCollisions();
     void particlesToGrid();
     void surfaceTension();
-    void solveIncompressibility(int iterations, bool useCGS = true);
+    void solveIncompressibility(int iterations, float tol, bool useCGS = true);
     void gridToParticles();
 
 public:

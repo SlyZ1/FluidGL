@@ -32,6 +32,8 @@ private:
     std::vector<bool> m_isWall = {};
     std::vector<std::vector<int>> m_particlesInGrid = {};
 
+    void genBuffers();
+
     glm::ivec2 cellToCoord(int cell, int nx);
     int coordToCell(glm::ivec2 coord, int nx, int ny);
     int posToCell(glm::vec2 pos, int nx, int ny);

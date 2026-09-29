@@ -7,13 +7,19 @@
 
 class FlipSolverGPUConfig : public IParticleSolverConfig {
 protected:
+    float m_flipRatio = 0.9f;
     float m_partPerH = 2;
-    glm::vec3 m_domainSize = glm::vec3(1.0f);
+    float m_densityMultiplier = 5;
+    glm::vec3 m_domainSize = glm::vec3(10.0f);
+    float m_sigma = 0;
+    float m_gravity = 9.81f;
+    int m_cgMaxIter = 20;
+    float m_cgTol = 1e-3f;
 
 public:
     FlipSolverGPUConfig() : IParticleSolverConfig() {}
-    FlipSolverGPUConfig(int partN, float partRadius, float dt, float partPerH, glm::vec3 domainSize) 
-    : IParticleSolverConfig(partN, partRadius, dt), m_partPerH(partPerH), m_domainSize(domainSize) {}
+    FlipSolverGPUConfig(int partN, float partRadius, float dt, float flipRatio, float partPerH, float densityMultiplier, glm::vec3 domainSize) 
+    : IParticleSolverConfig(partN, partRadius, dt), m_flipRatio(flipRatio), m_partPerH(partPerH), m_densityMultiplier(densityMultiplier), m_domainSize(domainSize) {}
     ~FlipSolverGPUConfig() override = default;
 
     std::unique_ptr<ISolverConfig> clone() const override; 
@@ -21,6 +27,24 @@ public:
     float getH() const { return 2 * m_partRadius * m_partPerH; }
     float getDensity() const { return m_partPerH * m_partPerH * m_partPerH; }
     
+    float getDensityMultiplier() const { return m_densityMultiplier; }
+    void setDensityMultiplier(float densityMultiplier) { m_densityMultiplier = std::max(densityMultiplier, 1.0f); }
+    
+    float getFlipRatio() const { return m_flipRatio; }
+    void setFlipRatio(float flipRatio) { m_flipRatio = glm::clamp(flipRatio, 0.0f, 1.0f); }
+
+    float getSigma() const { return m_sigma; }
+    void setSigma(float sigma) { m_sigma = std::max(sigma, 0.0f); }
+
+    float getGravity() const { return m_gravity; }
+    void setGravity(float gravity) { m_gravity = std::max(gravity, 0.0f); }
+
+    int getCgMaxIter() const { return m_cgMaxIter; }
+    void setCgMaxIter(int cgMaxIter) { m_cgMaxIter = cgMaxIter; }
+
+    float getCgTol() const { return m_cgTol; }
+    void setCgTol(float cgTol) { m_cgTol = cgTol; }
+
     float getPartPerH() const { return m_partPerH; }
     void setPartPerH(float partPerH) { m_partPerH = std::max(partPerH, 1.0f); }
 

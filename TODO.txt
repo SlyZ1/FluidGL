@@ -1,11 +1,12 @@
 // UI Stats
 // Logger
 // UI params
+add sources
+add (moving ?) colliders
 render offline + export simulation
 create different scenes
 switch between different solvers
 simulation with sources
-add (moving ?) colliders
 scale DotProduct and PrefixScan for recursion
 use openVDB
 implement APIC

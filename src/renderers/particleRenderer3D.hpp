@@ -4,12 +4,12 @@
 #include "renderer.hpp"
 #include "core/shader_program.hpp"
 #include "core/camera.hpp"
-#include "solvers/particleSolver.hpp"
 #include "gizmos/solverGizmos.hpp"
+#include "solvers/solverManager.hpp"
 
 class ParticleRenderer3D : public IRenderer {
 private:
-    std::weak_ptr<IParticleSolver> m_solver;
+    const SolverManager& m_solverManager;
     std::weak_ptr<Camera> m_camera;
 
     SolverGizmos m_solverGizmos;
@@ -58,7 +58,7 @@ private:
     void initOpenGL();
      
 public:
-    ParticleRenderer3D(std::weak_ptr<IParticleSolver> solver, std::weak_ptr<Camera> camera);
+    ParticleRenderer3D(const SolverManager& solverManager, std::weak_ptr<Camera> camera);
     ~ParticleRenderer3D() override;
 
     ParticleRenderer3D(const ParticleRenderer3D&) = delete;

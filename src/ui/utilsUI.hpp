@@ -8,6 +8,9 @@
 #include <glm/glm.hpp>
 
 class UtilsUI {
+private:
+    static bool s_isHeaderLight;
+
 public:
     static inline void drawInput(const std::string& name, int& value, int min, int max) {
         value = std::clamp(value, min, max);
@@ -33,14 +36,14 @@ public:
     static inline void drawDrag(const std::string& name, int& value, int min, int max) {
         ImGui::DragInt(("##" + name).c_str(), &value, 1, min, max);
     }
-    static inline void drawDrag(const std::string& name, float& value, float min, float max) {
-        ImGui::DragFloat(("##" + name).c_str(), &value, 0.01f, min, max);
+    static inline void drawDrag(const std::string& name, float& value, float min, float max, const char* format = "%.2f", float step = 0.01f) {
+        ImGui::DragFloat(("##" + name).c_str(), &value, step, min, max, format);
     }
-    static inline void drawDrag(const std::string& name, glm::vec2& value, float min, float max) {
-        ImGui::DragFloat2(("##" + name).c_str(), &value.x, 0.5f, min, max);
+    static inline void drawDrag(const std::string& name, glm::vec2& value, float min, float max, const char* format = "%.1f", float step = 0.5f) {
+        ImGui::DragFloat2(("##" + name).c_str(), &value.x, step, min, max, format);
     }
-    static inline void drawDrag(const std::string& name, glm::vec3& value, float min, float max) {
-        ImGui::DragFloat3(("##" + name).c_str(), &value.x, 0.5f, min, max);
+    static inline void drawDrag(const std::string& name, glm::vec3& value, float min, float max, const char* format = "%.1f", float step = 0.5f) {
+        ImGui::DragFloat3(("##" + name).c_str(), &value.x, step, min, max, format);
     }
 
     static void TextWithShadow(

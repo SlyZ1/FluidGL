@@ -1,13 +1,15 @@
 #include "app.hpp"
 
 #include <iostream>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include <imgui/imgui_impl_glfw.h>
 
 #include "helpers/logger.hpp"
-
+#include <unistd.h>
 using namespace std;
 
 App::App() : IStatsProvider("App") {
@@ -81,6 +83,17 @@ void App::init(int width, int height, const char *name){
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void App::setIcon(const char* path) {
+    GLFWimage image[1];
+    image[0].pixels = stbi_load(path, &image[0].width, &image[0].height, nullptr, STBI_rgb_alpha);
+    if (!image[0].pixels) {
+        Logger::logError("Failed to load icon: " + std::string(path) + " : " + stbi_failure_reason(), __LOG_DATA__);
+        return;
+    }
+    glfwSetWindowIcon(m_window, 1, &image[0]);
+    stbi_image_free((void*)image[0].pixels);
 }
 
 void App::setClearColor(float r, float g, float b, float a) const {

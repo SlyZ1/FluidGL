@@ -7,8 +7,8 @@ using namespace glm;
 
 string ParticleRenderer3D::s_shadersPath = "src/shaders/renderers/particle";
 
-ParticleRenderer3D::ParticleRenderer3D(weak_ptr<IParticleSolver> solver, weak_ptr<Camera> camera) 
-: IRenderer(), m_solver(solver), m_camera(camera), m_solverGizmos(camera) {
+ParticleRenderer3D::ParticleRenderer3D(const SolverManager& solverManager, weak_ptr<Camera> camera) 
+: IRenderer(), m_solverManager(solverManager), m_camera(camera), m_solverGizmos(camera) {
     m_solverGizmos.setColor(vec4(0, 1, 0, 1));
 
     m_particleShader.create();
@@ -130,7 +130,7 @@ void ParticleRenderer3D::initOpenGL(){
 }
 
 void ParticleRenderer3D::render(){
-    auto solver = m_solver.lock();
+    auto solver = m_solverManager.getParticleSolver().lock();
     if (!solver) return;
 
     m_particleShader.use();
@@ -241,7 +241,7 @@ void ParticleRenderer3D::render(){
     if (m_drawGizmos){
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glEnable(GL_DEPTH_TEST);
-        if (auto lockedSolver = m_solver.lock()){
+        if (auto lockedSolver = m_solverManager.getSolver().lock()){
             lockedSolver->accept(m_solverGizmos);
         }
         m_solverGizmos.render();
