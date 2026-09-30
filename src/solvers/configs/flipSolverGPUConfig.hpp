@@ -2,6 +2,7 @@
 #define FLIP_SOLVER_GPU_CONFIG
 
 #include "particleSolverConfig.hpp"
+#include "solvers/fluidInitializer.hpp"
 
 #include <glm/glm.hpp>
 
@@ -15,6 +16,7 @@ protected:
     float m_gravity = 9.81f;
     int m_cgMaxIter = 20;
     float m_cgTol = 1e-3f;
+    FluidInitializer m_fluidInitializer = {};
 
 public:
     FlipSolverGPUConfig() : IParticleSolverConfig() {}
@@ -44,6 +46,9 @@ public:
 
     float getCgTol() const { return m_cgTol; }
     void setCgTol(float cgTol) { m_cgTol = cgTol; }
+
+    FluidInitializer getFluidInitializer() const { return m_fluidInitializer; }
+    void setFluidInitializer(FluidInitializer fluidInitializer) { m_fluidInitializer = fluidInitializer; }
 
     float getPartPerH() const { return m_partPerH; }
     void setPartPerH(float partPerH) { m_partPerH = std::max(partPerH, 1.0f); }

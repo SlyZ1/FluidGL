@@ -105,6 +105,9 @@ private:
     StatIndex m_incompressibilityStatIndex = 0;
     StatIndex m_g2pStatIndex = 0;
 
+    StatIndex m_numPartStatIndex = 0;
+    StatIndex m_numCellsStatIndex = 0;
+
     glm::vec2 m_obstaclePos = glm::vec2(0.f);
     glm::vec2 m_obstacleVel = glm::vec2(0.f);
     float m_obstacleRadius = 0.f;

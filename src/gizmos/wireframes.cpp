@@ -26,13 +26,14 @@ Wireframes::~Wireframes() {
     glDeleteBuffers(1, &m_colorsVBO);
 }
 
-void Wireframes::addLine(vec3 start, vec3 end, vec4 color) {
+WireframeIndex Wireframes::addLine(vec3 start, vec3 end, vec4 color) {
     m_lines.push_back({ start, end });
     m_colors.push_back(color);
+    return (WireframeIndex)(m_lines.size() - 1);
 }
 
-void Wireframes::addBox(vec3 min, vec3 max, vec4 color) {
-    addLine(min, vec3(max.x, min.y, min.z), color);
+WireframeIndex Wireframes::addBox(vec3 min, vec3 max, vec4 color) {
+    WireframeIndex result = addLine(min, vec3(max.x, min.y, min.z), color);
     addLine(min, vec3(min.x, max.y, min.z), color);
     addLine(min, vec3(min.x, min.y, max.z), color);
 
@@ -48,13 +49,48 @@ void Wireframes::addBox(vec3 min, vec3 max, vec4 color) {
 
     addLine(vec3(min.x, min.y, max.z), vec3(max.x, min.y, max.z), color);
     addLine(vec3(min.x, min.y, max.z), vec3(min.x, max.y, max.z), color);
+
+    return result;
 }
 
-void Wireframes::addBox2D(vec3 min, vec3 max, vec4 color){
-    addLine(min, vec3(min.x, max.y, min.z), color);
+WireframeIndex Wireframes::addBox2D(vec3 min, vec3 max, vec4 color){
+    WireframeIndex result = addLine(min, vec3(min.x, max.y, min.z), color);
     addLine(min, vec3(max.x, min.y, max.z), color);
     addLine(vec3(min.x, max.y, min.z), max, color);
     addLine(vec3(max.x, min.y, max.z), max, color);
+
+    return result;
+}
+
+void Wireframes::updateLine(WireframeIndex index, vec3 start, vec3 end, vec4 color) {
+    m_lines[index] = { start, end };
+    m_colors[index] = color;
+}
+
+void Wireframes::updateBox(WireframeIndex index, vec3 min, vec3 max, vec4 color) {
+    updateLine(index + 0, min, vec3(max.x, min.y, min.z), color);
+    updateLine(index + 1, min, vec3(min.x, max.y, min.z), color);
+    updateLine(index + 2, min, vec3(min.x, min.y, max.z), color);
+
+    updateLine(index + 3, max, vec3(min.x, max.y, max.z), color);
+    updateLine(index + 4, max, vec3(max.x, min.y, max.z), color);
+    updateLine(index + 5, max, vec3(max.x, max.y, min.z), color);
+
+    updateLine(index + 6, vec3(max.x, min.y, min.z), vec3(max.x, max.y, min.z), color);
+    updateLine(index + 7, vec3(max.x, min.y, min.z), vec3(max.x, min.y, max.z), color);
+
+    updateLine(index + 8, vec3(min.x, max.y, min.z), vec3(max.x, max.y, min.z), color);
+    updateLine(index + 9, vec3(min.x, max.y, min.z), vec3(min.x, max.y, max.z), color);
+
+    updateLine(index + 10, vec3(min.x, min.y, max.z), vec3(max.x, min.y, max.z), color);
+    updateLine(index + 11, vec3(min.x, min.y, max.z), vec3(min.x, max.y, max.z), color);
+}
+
+void Wireframes::updateBox2D(WireframeIndex index, vec3 min, vec3 max, vec4 color){
+    updateLine(index + 0, min, vec3(min.x, max.y, min.z), color);
+    updateLine(index + 1, min, vec3(max.x, min.y, max.z), color);
+    updateLine(index + 2, vec3(min.x, max.y, min.z), max, color);
+    updateLine(index + 3, vec3(max.x, min.y, max.z), max, color);
 }
 
 void Wireframes::uploadData(){
@@ -93,7 +129,7 @@ void Wireframes::render() const {
 
     glBindBuffer(GL_ARRAY_BUFFER, m_colorsVBO);
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), 0);
-    glVertexAttribDivisor(3, 3);
+    glVertexAttribDivisor(3, 1);
     glEnableVertexAttribArray(3);
 
     glDrawArraysInstanced(GL_LINES, 0, 2, m_lines.size());

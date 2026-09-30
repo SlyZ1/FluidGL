@@ -9,7 +9,6 @@ string ParticleRenderer3D::s_shadersPath = "src/shaders/renderers/particle";
 
 ParticleRenderer3D::ParticleRenderer3D(const SolverManager& solverManager, weak_ptr<Camera> camera) 
 : IRenderer(), m_solverManager(solverManager), m_camera(camera), m_solverGizmos(camera) {
-    m_solverGizmos.setColor(vec4(0, 1, 0, 1));
 
     m_particleShader.create();
     m_particleShader.load(GL_VERTEX_SHADER, Utils::joinPath(s_shadersPath, "/particleVert.glsl"));

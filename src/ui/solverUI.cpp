@@ -63,13 +63,27 @@ void SolverUI::visit(FlipSolverGPU& solver) {
 
     DRAW_FIELD(UtilsUI::drawDrag, "Domain Size", vec3, DomainSize, 0, 10000)
     ImGui::Dummy(ImVec2(0, 10));
-    DRAW_FIELD(UtilsUI::drawInput, "Particle Number", int, PartN, 0, (int)1e8)
     DRAW_FIELD(UtilsUI::drawDrag, "Particle Radius", float, PartRadius, 1, 200)
     DRAW_FIELD(UtilsUI::drawDrag, "Particle Per Cell Size", float, PartPerH, 1, 10)
     DRAW_FIELD(UtilsUI::drawDrag, "Density Multiplier", float, DensityMultiplier, 1, 10)
     ImGui::Dummy(ImVec2(0, 10));
     DRAW_FIELD(UtilsUI::drawDrag, "Flip Ratio", float, FlipRatio, 0.0f, 1.0f)
     DRAW_FIELD(UtilsUI::drawDrag, "Timestep", float, Dt, 0.01f, 0.1f)
+    ImGui::Dummy(ImVec2(0, 10));
+
+    vec3 initPos = (config.getFluidInitializer().min + config.getFluidInitializer().max) / 2.0f;
+    vec3 initSize = config.getFluidInitializer().max - config.getFluidInitializer().min;
+    vec3 dim = config.getDomainSize();
+
+    UtilsUI::Label("Particle init Size");
+    UtilsUI::drawDrag("Particle init Size", initSize, -1000, 1000);
+    initPos = glm::clamp(initPos, (initSize-dim) * 0.5f, -(initSize-dim) * 0.5f);
+    UtilsUI::Label("Particle Init Position");
+    UtilsUI::drawDrag("Particle Position", initPos, -1000, 1000);
+    initPos = glm::clamp(initPos, (initSize-dim) * 0.5f, -(initSize-dim) * 0.5f);
+
+    config.setFluidInitializer({ initPos - initSize*0.5f, initPos + initSize*0.5f });
+
     ImGui::Dummy(ImVec2(0, 10));
     
     UtilsUI::EndTwoColumnLayout();

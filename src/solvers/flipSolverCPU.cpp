@@ -489,7 +489,6 @@ void FlipSolverCPU::reload(){
 }
 
 GLuint FlipSolverCPU::getPosBuffer() const {
-    if (m_config.getPartN() > 0) cout << "caccaca" << endl;
     glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);
     glBufferData(GL_ARRAY_BUFFER, m_partPos.size() * sizeof(vec4), m_partPos.data(), GL_STREAM_DRAW);
     return m_posVBO;

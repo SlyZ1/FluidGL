@@ -64,6 +64,7 @@ void init(){
     flipConfigGPU.setPartPerH(2.0f);
     flipConfigGPU.setDomainSize(vec3(600, 600, 300));
     flipConfigGPU.setPartRadius(1.5f);
+    flipConfigGPU.setFluidInitializer({vec3(-100), vec3(100)});
     
     solverManager = make_shared<SolverManager>();
     weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfigGPU);

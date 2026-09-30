@@ -28,25 +28,35 @@ void FlipSolverGPU::deleteBuffers(){
 
 void FlipSolverGPU::createBuffers(){
     deleteBuffers();
+
+    FluidInitializer initializer = m_config.getFluidInitializer();
+
+    vec3 dim = initializer.bounds() / m_config.getH();
+    float densityScale = 1.f;
+    
+    int nx = (int)std::floor(dim.x * m_config.getPartPerH() * densityScale);
+    int ny = (int)std::floor(dim.y * m_config.getPartPerH() * densityScale);
+    int nz = (int)std::floor(dim.z * m_config.getPartPerH() * densityScale);
+    int partN = nx * ny * nz;
+    m_config.setPartN(partN);
+
+    m_stats->setCounter(m_numPartStatIndex, m_config.getPartN());
+    m_stats->setCounter(m_numCellsStatIndex, m_config.getGridX() * m_config.getGridY() * m_config.getGridZ());
+
     vector<vec4> partVel = vector<vec4>(m_config.getPartN(), vec4(0.f));
     vector<vec4> partPos = vector<vec4>(m_config.getPartN(), vec4(0.f));
-    vec3 dim = m_config.getDomainSize();
-    float volumeRatio = dim.x * dim.y * dim.z;
-    float scale = glm::pow((float)m_config.getPartN() / volumeRatio, 1.0f / 3.0f);
-    int nx = round(dim.x * scale);
-    int ny = round(dim.y * scale);
-    int nz = round(dim.z * scale);
-    for (int i = 0; i < m_config.getPartN(); i++)
-    {
-        int x = (i % nx);
-        int rest = (i - x) / nx;
-        int y = rest % ny;
-        int z = (rest - y) / ny;
-        partPos[i] = (vec4(x, y, z, 1) + 1.f * vec4(1, 0, 1, 0) * 0.5f * (float)((int)y % 2) 
-                    - vec4(nx * 0.5f, ny * 0.5f, nz * 0.5f, 0.0f)) 
-                    * 2.f * m_config.getPartRadius();
-        partPos[i].x -= dim.x * 0.3f;
-    }
+
+    int i = 0;
+    for (int x = 0; x < nx; x++)
+        for (int y = 0; y < ny; y++)
+            for (int z = 0; z < nz; z++) {
+                if (i >= partN) return;
+                partPos[i] = (vec4(x,y,z,1) + vec4(1, 0, 1, 0) * 0.5f * (float)((int)y % 2) - vec4(nx,ny,nz,1) * 0.5f) 
+                                * m_config.getH() / m_config.getPartPerH() / densityScale;
+
+                partPos[i] += vec4(initializer.pos(), 1);
+                i++;
+            }
 
     glGenBuffers(1, &m_rXBuffer); glGenBuffers(1, &m_rYBuffer); glGenBuffers(1, &m_rZBuffer);
     glGenBuffers(1, &m_velXBuffer); glGenBuffers(1, &m_velYBuffer); glGenBuffers(1, &m_velZBuffer);
@@ -134,10 +144,8 @@ FlipSolverGPU::FlipSolverGPU(FlipSolverGPUConfig config)
     m_incompressibilityStatIndex  = m_stats->registerTimer("Incompressibility");
     m_g2pStatIndex                = m_stats->registerTimer("G2P");
 
-    StatIndex numPartStatIndex = m_stats->registerCounter("Num Particles");
-    StatIndex numCellsStatIndex = m_stats->registerCounter("Num Cells");
-    m_stats->setCounter(numPartStatIndex, m_config.getPartN());
-    m_stats->setCounter(numCellsStatIndex, m_config.getGridX() * m_config.getGridY() * m_config.getGridZ());
+    m_numPartStatIndex = m_stats->registerCounter("Num Particles");
+    m_numCellsStatIndex = m_stats->registerCounter("Num Cells");
 
     m_integrateTimer.init();
     m_collisionTimer.init();
@@ -210,6 +218,8 @@ void FlipSolverGPU::reload() {
     m_computeCurvatureShader.reload();
     m_integrateGridShader.reload();
     createBuffers();
+
+
     
     m_cgs.init(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ(), 0, m_minusDivBuffer, m_pressureBuffer);
 }

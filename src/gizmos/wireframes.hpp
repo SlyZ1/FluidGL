@@ -6,6 +6,8 @@
 #include "core/shader_program.hpp"
 #include "core/camera.hpp"
 
+using WireframeIndex = int;
+
 class Wireframes {
 private:
     struct Line {
@@ -36,9 +38,12 @@ public:
     Wireframes(Wireframes&&) = default;
     Wireframes& operator=(Wireframes&&) = default;
 
-    void addLine(glm::vec3 start, glm::vec3 end, glm::vec4 color);
-    void addBox(glm::vec3 min, glm::vec3 max, glm::vec4 color);
-    void addBox2D(glm::vec3 min, glm::vec3 max, glm::vec4 color);
+    WireframeIndex addLine(glm::vec3 start, glm::vec3 end, glm::vec4 color);
+    WireframeIndex addBox(glm::vec3 min, glm::vec3 max, glm::vec4 color);
+    WireframeIndex addBox2D(glm::vec3 min, glm::vec3 max, glm::vec4 color);
+    void updateLine(WireframeIndex index, glm::vec3 start, glm::vec3 end, glm::vec4 color);
+    void updateBox(WireframeIndex index, glm::vec3 min, glm::vec3 max, glm::vec4 color);
+    void updateBox2D(WireframeIndex index, glm::vec3 min, glm::vec3 max, glm::vec4 color);
 
     void setLineWidth(float lineWidth) { glLineWidth(lineWidth); }
 

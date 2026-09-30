@@ -4,15 +4,34 @@
 #include <glm/glm.hpp>
 
 #include "solvers/solverVisitor.hpp"
+#include "solvers/solverManager.hpp"
 #include "gizmos/wireframes.hpp"
 #include "core/camera.hpp"
 
+
 class SolverGizmos : public ISolverVisitor {
 private:
-    std::unique_ptr<Wireframes> m_wireframes;
-    glm::vec4 m_color = glm::vec4(1);
+    template<typename T>
+    struct WireframeData {
+        WireframeIndex index;
+        T data;
+        WireframeData() {
+            index = -1;
+            data = {};
+        }
+        WireframeData(WireframeIndex index_, T data_) : index(index_), data(data_) {}
+    };
 
-    glm::vec3 m_solverDomainSize = glm::vec3(0);
+    std::unique_ptr<Wireframes> m_wireframes;
+    const glm::vec4 m_domainColor = glm::vec4(0.29f, 0.769f, 0.282f, 1.0f);
+    const glm::vec4 m_initializerColor = glm::vec4(0.859f, 0.529f, 0.318f, 1.0f);
+
+    WireframeData<glm::vec3> m_solverDomainData = {};
+    WireframeData<FluidInitializer> m_solverInitializerData = {};
+
+    SolverType m_solverType = SolverType::MaxType;
+
+    void resetWireframes();
 
 public:
     SolverGizmos(std::weak_ptr<Camera> camera);
@@ -27,7 +46,6 @@ public:
     void visit(FlipSolverCPU& solver) override;
     void visit(FlipSolverGPU& solver) override;
 
-    void setColor(glm::vec4 color) { m_color = color; }
     void render() const;
 };
 
