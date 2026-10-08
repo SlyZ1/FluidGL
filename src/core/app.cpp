@@ -12,6 +12,8 @@
 #include <unistd.h>
 using namespace std;
 
+vector<function<void(double, double)>> App::s_scrollCallbacks = {};
+
 App::App() : IStatsProvider("App") {
     for (int i = 0; i < GLFW_KEY_LAST + 1; i++)
         m_wasPressed[i] = INT_MAX;
@@ -83,6 +85,13 @@ void App::init(int width, int height, const char *name){
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glfwSetScrollCallback(m_window, callScrollCallbacks);
+}
+
+void App::callScrollCallbacks(GLFWwindow*, double offsetX, double offsetY) {
+    for (const auto& callback : s_scrollCallbacks)
+        callback(offsetX, offsetY);
 }
 
 void App::setIcon(const char* path) {
@@ -133,11 +142,12 @@ bool App::shouldClose() const {
 }
 
 bool App::keyPressed(int key) const {
-    return glfwGetKey(m_window, key) == GLFW_PRESS || glfwGetMouseButton(m_window, key) == GLFW_PRESS;
+    return (glfwGetKey(m_window, key) == GLFW_PRESS && !ImGui::GetIO().WantCaptureKeyboard)
+    || (glfwGetMouseButton(m_window, key) == GLFW_PRESS && !ImGui::GetIO().WantCaptureMouse);
 }
 
 bool App::keyPressedOnce(int key, int frame) {
-    bool isPressed = glfwGetKey(m_window, key) == GLFW_PRESS;
+    bool isPressed = glfwGetKey(m_window, key) == GLFW_PRESS && !ImGui::GetIO().WantCaptureKeyboard;
 
     if (!isPressed){
         m_wasPressed[key] = INT_MAX;
@@ -177,6 +187,10 @@ float App::mouseY() const {
     glfwGetCursorPos(m_window, nullptr, &mouseY);
     float result = static_cast<float>(mouseY);
     return result;
+}
+
+void App::addScrollCallback(std::function<void(double, double)> callback){
+    s_scrollCallbacks.push_back(callback);
 }
 
 float App::dt() const {

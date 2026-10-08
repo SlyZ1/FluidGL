@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <filesystem>
+#include <algorithm>
 
 using namespace glm;
 using namespace std;
@@ -65,4 +66,31 @@ vec2 Utils::yz(const vec4& v){
 
 vec3 Utils::xyz(const vec4& v){
     return vec3(v.x, v.y, v.z);
+}
+
+float Utils::damp(float current, float target, float& vel, float smoothTime, float dt){
+    smoothTime = std::max(0.0001f, smoothTime);
+    float omega = 2.f / smoothTime;
+
+    float x = omega * dt;
+    float exp = 1.f / (1.f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+    float change = current - target;
+    float originalTo = target;
+
+    // float maxChange = 100.0f * smoothTime;
+    // change = std::clamp(change, -maxChange, maxChange);
+    // target = current - change;
+
+    float temp = (vel + omega * change) * dt;
+    vel = (vel - omega * temp) * exp;
+    float output = target + (change + temp) * exp;
+
+    if ((originalTo - current > 0.0f) == (output > originalTo))
+    {
+        output = originalTo;
+        vel = (output - originalTo) / dt;
+    }
+
+    return output;
 }

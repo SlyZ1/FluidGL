@@ -39,8 +39,6 @@ vec2 previousObstaclePos = vec2(0.f);
 bool previousEnableObstacle = false;
 bool enableObstacle = false;
 
-bool freeView = false;
-
 #ifdef _WIN32
 extern "C" {
     __declspec(dllexport) unsigned long NvOptimusEnablement = 1;
@@ -53,15 +51,15 @@ void init(){
     app->init(1280, 720, "FluidGL");
     app->setIcon("public/FluidGL_Circle.png");
     app->setClearColor(0, 0, 0, 1.0f);
-    app->toggleCursor(!freeView);
+    app->toggleCursor(true);
     
-    camera = make_shared<Camera>(app, 60.0f, 0.02f, 1.5f);
-    camera->resetMousePos(app->mouseX(), app->mouseY());
+    camera = make_shared<Camera>(app, 60.0f, 1200.f, 0.75f);
+    camera->toggleFreeView(false);
     
     FlipSolverGPUConfig flipConfigGPU = FlipSolverGPUConfig();
     flipConfigGPU.setPartN((int)1e5);
-    flipConfigGPU.setDt(0.05f);
-    flipConfigGPU.setPartPerH(2.0f);
+    flipConfigGPU.setDt(0.05f / iterations);
+    flipConfigGPU.setPartPerH(1.0f);
     flipConfigGPU.setDomainSize(vec3(600, 600, 300));
     flipConfigGPU.setPartRadius(1.5f);
     flipConfigGPU.setFluidInitializer({vec3(-100), vec3(100)});
@@ -79,29 +77,9 @@ void init(){
 
 void inputs(shared_ptr<ISolver> lockedSolver){
     if (app->keyPressedOnce(GLFW_KEY_ESCAPE, frameCount)){
-        freeView = !freeView;
-        app->toggleCursor(!freeView);
-        if (!freeView){
-            camera->hasStoppedMoving();
-        } else {
-            camera->resetMousePos(app->mouseX(), app->mouseY());
-        }
+        camera->toggleFreeView(!camera->getFreeView());
+        app->toggleCursor(!camera->getFreeView());
     }
-
-    if (freeView){
-        CameraMoveInputs inputs = {
-            app->keyPressed(GLFW_KEY_W), 
-            app->keyPressed(GLFW_KEY_S), 
-            app->keyPressed(GLFW_KEY_D), 
-            app->keyPressed(GLFW_KEY_A),
-            app->keyPressed(GLFW_KEY_SPACE),
-            app->keyPressed(GLFW_KEY_LEFT_CONTROL),
-            app->keyPressed(GLFW_KEY_LEFT_SHIFT),
-            app->keyPressed(GLFW_KEY_C)
-        };
-        camera->move(inputs, app->dt());
-        camera->rotate(app->mouseX(), app->mouseY(), 1);
-    };
 
     // Hot reload shaders
     if (app->keyPressedOnce(GLFW_KEY_R, frameCount)){
@@ -111,22 +89,17 @@ void inputs(shared_ptr<ISolver> lockedSolver){
     
     if (app->keyPressedOnce(GLFW_KEY_ENTER, frameCount)){
         if (lockedSolver) lockedSolver->reload();
-        Logger::logInfo("Simulation restarted", __LOG_DATA__);
+        Logger::logInfo("Simulation restarted.", __LOG_DATA__);
     }
 
     if (app->keyPressedOnce(GLFW_KEY_P, frameCount)){
         lockedSolver->setPaused(!lockedSolver->isPaused());
+        Logger::logInfo(lockedSolver->isPaused() ? "Simulation paused." : "Simulation resumed.", __LOG_DATA__);
     }
 
     if (app->keyPressedOnce(GLFW_KEY_RIGHT, frameCount)){
         for (int i = 0; i < iterations; i++)
             if (lockedSolver) lockedSolver->update();
-    }
-    if (app->keyPressed(GLFW_MOUSE_BUTTON_LEFT)){
-        enableObstacle = true;
-    }
-    else{
-        enableObstacle = false;
     }
 }
 
@@ -147,14 +120,14 @@ int main(){
         app->startFrame(frameCount);
         ui->render();
 
+        camera->update(app->dt() / 1000.0f);
+
         auto lockedSolver = solverManager->getSolver().lock();
         
         for (int i = 0; i < iterations; i++)
             if (lockedSolver) lockedSolver->update();
 
-        if (renderer) {
-            renderer->render();
-        }
+        renderer ? renderer->render() : void();
 
         inputs(lockedSolver);
 

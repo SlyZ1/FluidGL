@@ -19,6 +19,7 @@ public:
     static glm::vec2 yz(const glm::vec3& v);
     static glm::vec2 yz(const glm::vec4& v);
     static glm::vec3 xyz(const glm::vec4& v);
+    static float damp(float current, float target, float& vel, float smoothTime, float dt);
     
     template <typename T>
     static std::vector<T> concat(std::initializer_list<std::reference_wrapper<const std::vector<T>>> vectors){

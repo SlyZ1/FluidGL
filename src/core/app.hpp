@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <functional>
+
 #include "helpers/metrics.hpp"
 #include "helpers/stats.hpp"
 
@@ -19,10 +21,14 @@ class App : public IStatsProvider {
         CPUTimer m_frameTimer = {};
         FPSCounter m_fpsCounter = {};
 
+        static std::vector<std::function<void(double, double)>> s_scrollCallbacks;
+
         float m_lastTime = 0;
         float m_dt = 0;
 
         int m_wasPressed[GLFW_KEY_LAST + 1];
+
+        static void callScrollCallbacks(GLFWwindow*, double offsetX, double offsetY);
 
     public:
         App();
@@ -43,6 +49,7 @@ class App : public IStatsProvider {
         bool cursorIsHidden() const;
         float mouseX() const;
         float mouseY() const;
+        void addScrollCallback(std::function<void(double, double)> callback);
         float dt() const;
         unsigned int width() const;
         unsigned int height() const;

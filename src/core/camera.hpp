@@ -10,17 +10,6 @@ struct CameraProperties {
     float focalLength;
 };
 
-struct CameraMoveInputs {
-    bool forward;
-    bool backward;
-    bool right;
-    bool left;
-    bool up;
-    bool down;
-    bool sprinting;
-    bool slowing;
-};
-
 class Camera {
     private:
         std::shared_ptr<App> m_app;
@@ -34,26 +23,48 @@ class Camera {
         float m_lastMouseY = 0;
         bool m_isMoving = false;
         bool m_isLooking = false;
+        bool m_freeView = false;
         int m_lastMovingFrame = 0;
+        static float s_targetZoom;
+        float m_zoom = 1000.0f;
 
         CameraProperties m_camProps = { 50.0f, 0.0f, 1.0f };
+
+        glm::vec4 keyboardInputs();
+        void freeMove(float dt);
+        void freeRotate(float deltaMouseX, float deltaMouseY, float dt);
+
+        void lookAround(float deltaMouseX, float deltaMouseY, float dt);
+        static void scrollCallback(double, double offsetY);
+        void zoom(float dt);
 
     public:
         Camera(std::shared_ptr<App> app, float fov, float moveSensitivity, float lookSensitivity) 
             : m_app(app), m_fov(fov), m_moveSensitivity(moveSensitivity), m_lookSensitivity(lookSensitivity) {
                 m_pos = glm::vec3(0.0f, 0.0f, 1000.0f);
+                resetMousePos();
+                m_app->addScrollCallback(scrollCallback);
             }
-        void move(const CameraMoveInputs& inputs, float dt);
-        void rotate(float mouseX, float mouseY, float dt);
-        void resetMousePos(float mouseX, float mouseY);
-        glm::vec3 lookDir() const;
-        glm::vec3 position() const { return m_pos; }
+
+        void update(float dt);
+
+        glm::vec3 getLookDirection() const;
+
+        glm::vec3 getPosition() const { return m_pos; }
         void setPosition(glm::vec3 newPos) { m_pos = newPos; }
+
         bool getIsMoving(int frame);
         void hasStoppedMoving() { m_isMoving = false; m_isLooking = false; }
+        void resetMousePos();
+
+        void toggleFreeView(bool freeView);
+        bool getFreeView() const { return m_freeView; }
+
         CameraProperties* getCameraProperties() { return &m_camProps; }
+
         float getFov() const {return m_fov;}
         void setFov(float fov) {m_fov = fov;}
+
         glm::mat4 viewMatrix() const;
         glm::mat4 projectionMatrix() const;
 };
