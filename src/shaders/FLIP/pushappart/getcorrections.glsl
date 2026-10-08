@@ -45,9 +45,9 @@ void main(){
     vec3 currentCorrections = vec3(0.0);
     int currentNumCorrections = 0;
 
-    for(int x = -int(posCondInt.x); x <= 1 - int(posCondInt.x); x++) {
-        for(int y = -int(posCondInt.y); y <= 1 - int(posCondInt.y); y++) { 
-            for(int z = -int(posCondInt.z); z <= 1 - int(posCondInt.z); z++)
+    for(int x = -1; x <= 1; x++) {
+        for(int y = -1; y <= 1; y++) { 
+            for(int z = -1; z <= 1; z++)
             {
                 int cx = coord.x + x;
                 int cy = coord.y + y;

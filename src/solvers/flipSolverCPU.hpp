@@ -61,7 +61,6 @@ public:
     void reload() override;
     GLuint getPosBuffer() const override;
     GLuint getVelBuffer() const override;
-    bool is3D() const override { return false; }
 
     const std::vector<glm::vec4>& getPos() { return m_partPos; };
     const std::vector<glm::vec4>& getVel() { return m_partVel; };

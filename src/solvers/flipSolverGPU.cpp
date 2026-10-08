@@ -16,7 +16,11 @@ void FlipSolverGPU::deleteBuffers(){
     glDeleteBuffers(1, &m_partPosBuffer); glDeleteBuffers(1, &m_partVelBuffer); 
     glDeleteBuffers(1, &m_isAirBuffer); glDeleteBuffers(1, &m_oldPartPosBuffer);
 
-    glDeleteBuffers(1, &m_blockSumBuffer); glDeleteBuffers(1, &m_cellOfBuffer);
+    for (GLuint buffer : m_blockSumBuffers)
+        glDeleteBuffers(1, &buffer);
+    m_blockSumBuffers.clear();
+
+    glDeleteBuffers(1, &m_cellOfBuffer);
     glDeleteBuffers(1, &m_firstCellParticleBuffer); glDeleteBuffers(1, &m_cellParticleIdsBuffer);
     glDeleteBuffers(1, &m_firstCellParticleBuffer2);
 
@@ -91,13 +95,20 @@ void FlipSolverGPU::createBuffers(){
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_isAirBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() * sizeof(uint), nullptr, GL_DYNAMIC_DRAW);
 
-    glGenBuffers(1, &m_blockSumBuffer); glGenBuffers(1, &m_cellOfBuffer);
+    int ceiledN = (int)glm::ceil((float)(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() + 1) / 512.f) * 512;
+    for (int i = ceiledN; i > SHARED_SIZE; i/=512)
+    {
+        GLuint blockSumBuffer = 0;
+        glGenBuffers(1, &blockSumBuffer);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, blockSumBuffer);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(uint) * (i + 511) / 512, nullptr, GL_DYNAMIC_DRAW);
+        m_blockSumBuffers.push_back(blockSumBuffer);
+    }
+
+    glGenBuffers(1, &m_cellOfBuffer);
     glGenBuffers(1, &m_firstCellParticleBuffer); glGenBuffers(1, &m_cellParticleIdsBuffer);
     glGenBuffers(1, &m_firstCellParticleBuffer2);
-    int ceiledN = (int)glm::ceil((float)(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() + 1) / 512.f) * 512;
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_blockSumBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, ceiledN / 512 * sizeof(uint), nullptr, GL_DYNAMIC_DRAW);
+    
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_cellOfBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_config.getPartN() * sizeof(uint), nullptr, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_firstCellParticleBuffer);
@@ -143,6 +154,7 @@ FlipSolverGPU::FlipSolverGPU(FlipSolverGPUConfig config)
     m_surfaceTensionStatIndex     = m_stats->registerTimer("Surface Tension");
     m_incompressibilityStatIndex  = m_stats->registerTimer("Incompressibility");
     m_g2pStatIndex                = m_stats->registerTimer("G2P");
+    m_scanStatIndex               = m_stats->registerTimer("Counting Sort");
 
     m_numPartStatIndex = m_stats->registerCounter("Num Particles");
     m_numCellsStatIndex = m_stats->registerCounter("Num Cells");
@@ -269,29 +281,40 @@ void FlipSolverGPU::resetUintBuffer(GLuint buffer, int n){
     m_resetUintBuffersShader.dispatch((n + 255) / 256);
 }
 
-void FlipSolverGPU::prefixSum(GLuint data, GLuint blockSum, int n){
+void FlipSolverGPU::prefixSum(GLuint data, int n, int recursionIndex){
+    int newN = (n + 511) / 512;
+
     // Scan on the local work groups, store the total sum in blockSum
     m_localSumShader.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, data);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, blockSum);
-    m_localSumShader.dispatch((n + 511) / 512);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_blockSumBuffers[recursionIndex]);
+    m_localSumShader.dispatch(newN);
 
     ShaderProgram::SSBOBarrier();
 
     // Scan blockSum
-    m_smallSumShader.use();
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, blockSum);
-    glUniform1i(ShaderProgram::getVarLoc("length"), n / 512);
-    m_smallSumShader.dispatch(1); 
+    if (newN < SHARED_SIZE){
+        m_smallSumShader.use();
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockSumBuffers[recursionIndex]);
+        glUniform1i(ShaderProgram::getVarLoc("length"), newN);
+        m_smallSumShader.dispatch(1); 
+    }
+    else{
+        GLuint tempBuffer = 0;
+        glGenBuffers(1, &tempBuffer);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, tempBuffer);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(uint) * (newN + 511) / 512, nullptr, GL_DYNAMIC_DRAW);
+        prefixSum(m_blockSumBuffers[recursionIndex], newN, recursionIndex+1);
+    }
 
     ShaderProgram::SSBOBarrier();
 
     // Sum the scanned blockSum in all local work groups to get the scanned result 
     m_globalSumShader.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, data);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, blockSum);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_blockSumBuffers[recursionIndex]);
     glUniform1i(ShaderProgram::getVarLoc("length"), n);
-    m_globalSumShader.dispatch((n + 511) / 512);
+    m_globalSumShader.dispatch(newN);
 }
 
 void FlipSolverGPU::countingSort(){
@@ -301,7 +324,6 @@ void FlipSolverGPU::countingSort(){
     int ceiledN = (int)glm::ceil((float)(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() + 1) / 512.f) * 512;
     resetUintBuffer(m_firstCellParticleBuffer, ceiledN);
     resetUintBuffer(m_firstCellParticleBuffer2, ceiledN);
-    resetUintBuffer(m_blockSumBuffer, ceiledN / 512);
     resetUintBuffer(m_cellParticleIdsBuffer, m_config.getPartN());
     resetUintBuffer(m_cellOfBuffer, m_config.getPartN());
 
@@ -323,7 +345,7 @@ void FlipSolverGPU::countingSort(){
     ShaderProgram::SSBOBarrier();
 
     // Exclusive scan of the number of particles
-    prefixSum(m_firstCellParticleBuffer, m_blockSumBuffer, ceiledN);
+    prefixSum(m_firstCellParticleBuffer, ceiledN);
 
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
@@ -344,11 +366,11 @@ void FlipSolverGPU::countingSort(){
 }
 
 void FlipSolverGPU::pushAppartParticles(int iterations){
-    countingSort();
-
+    
     const float minDist = 2.0f * m_config.getPartRadius();
     for (int i = 0; i < iterations; i++)
     {
+        countingSort();
         glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
         glBindBuffer(GL_COPY_READ_BUFFER, m_partPosBuffer);
@@ -410,9 +432,6 @@ void FlipSolverGPU::resetFloatBuffer(GLuint buffer, int n){
 }
 
 void FlipSolverGPU::particlesToGrid(){
-    countingSort();
-
-    ShaderProgram::SSBOBarrier();
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_partPosBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_partVelBuffer);
@@ -667,6 +686,11 @@ void FlipSolverGPU::update(){
     m_pushAppartTimer.endFrame();
 
     particleCollisions();
+
+    m_scanTimer.beginFrame();
+    countingSort();
+    ShaderProgram::SSBOBarrier();
+    m_scanTimer.endFrame();
     
     m_p2gTimer.beginFrame();
     particlesToGrid();
@@ -691,6 +715,7 @@ void FlipSolverGPU::update(){
     m_stats->setTimer(m_surfaceTensionStatIndex,    m_surfaceTensionTimer.getLastResultMs());
     m_stats->setTimer(m_incompressibilityStatIndex, m_incompressibilityTimer.getLastResultMs());
     m_stats->setTimer(m_g2pStatIndex,               m_g2pTimer.getLastResultMs());
+    m_stats->setTimer(m_scanStatIndex,              m_scanTimer.getLastResultMs());
 }
 
 void FlipSolverGPU::updateObstacle(vec2 pos, vec2 vel, float rad){

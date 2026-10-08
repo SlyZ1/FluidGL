@@ -121,7 +121,7 @@ static bool testDot(float eps = 1e-4f){
     GLuint bufferV = 0;
     GLuint bufferResult = 0;
 
-    const int N = 1000000;
+    const int N = 1e6;
     vector<float> u = vector<float>(N);
     vector<float> v = vector<float>(N);
     float expectedDot = 0;

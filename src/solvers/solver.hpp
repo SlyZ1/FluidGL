@@ -22,7 +22,6 @@ public:
     virtual void reload() = 0;
     virtual GLuint getPosBuffer() const = 0;
     virtual GLuint getVelBuffer() const = 0;
-    virtual bool is3D() const = 0;
 
     virtual const ISolverConfig& getConfig() const {
         return *m_baseConfig;

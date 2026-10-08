@@ -46,7 +46,7 @@ private:
 
     // Particle Sort
     GLuint m_cellOfBuffer = 0;
-    GLuint m_blockSumBuffer = 0;
+    std::vector<GLuint> m_blockSumBuffers = {};
     GLuint m_cellParticleIdsBuffer = 0;
     GLuint m_firstCellParticleBuffer = 0;
     GLuint m_firstCellParticleBuffer2 = 0;
@@ -60,7 +60,7 @@ private:
     ShaderProgram m_resetUintBuffersShader = {};
     ShaderProgram m_partCountShader = {};
     ShaderProgram m_localSumShader = {};
-    ShaderProgram m_smallSumShader = {};
+    ShaderProgram m_smallSumShader = {}; const int SHARED_SIZE = 2048;
     ShaderProgram m_globalSumShader = {};
     ShaderProgram m_cellParticleIdShader = {};
 
@@ -104,6 +104,7 @@ private:
     StatIndex m_surfaceTensionStatIndex = 0;
     StatIndex m_incompressibilityStatIndex = 0;
     StatIndex m_g2pStatIndex = 0;
+    StatIndex m_scanStatIndex = 0;
 
     StatIndex m_numPartStatIndex = 0;
     StatIndex m_numCellsStatIndex = 0;
@@ -124,7 +125,7 @@ private:
 
     void resetFloatBuffer(GLuint buffer, int n);
     void resetUintBuffer(GLuint buffer, int n);
-    void prefixSum(GLuint data, GLuint blockSum, int n);
+    void prefixSum(GLuint data, int n, int recursionIndex = 0);
     void countingSort();
 
     void integrateParticles();
@@ -157,8 +158,6 @@ public:
     FlipSolverGPUConfig& getDraftConfig() override {
         return static_cast<FlipSolverGPUConfig&>(ISolver::getDraftConfig());
     }
-
-    bool is3D() const override { return true; }
 };
 
 #endif

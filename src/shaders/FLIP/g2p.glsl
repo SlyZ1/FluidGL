@@ -25,20 +25,25 @@ void main(){
     if (i >= partN) return;
 
     vec3 pos = partPos[i].xyz;
+    vec3 vel = partVel[i].xyz;
     {
         int cell = posToCell(pos - vec3(0., h * 0.5, h * 0.5), gridX, gridY, gridZ);
         ivec3 coord = cellToCoord(cell, gridX, gridY);
         vec3 cellCenter = coordToPos(coord, gridX, gridY, gridZ) - vec3(h * 0.5, 0., 0.);
         vec3 dp = (pos - cellCenter) / h;
         
-        float s1 = float(isAir[coordToCell(coord + ivec3(0,0,0), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && isAir[coordToCell(coord + ivec3(0+1,0,0), gridX, gridY, gridZ)] == 0u));
-        float s2 = float(isAir[coordToCell(coord + ivec3(1,0,0), gridX, gridY, gridZ)] == 0u || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,0,0), gridX, gridY, gridZ)] == 0u));
-        float s3 = float(isAir[coordToCell(coord + ivec3(1,1,0), gridX, gridY, gridZ)] == 0u || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,1,0), gridX, gridY, gridZ)] == 0u));
-        float s4 = float(isAir[coordToCell(coord + ivec3(0,1,0), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && isAir[coordToCell(coord + ivec3(0+1,1,0), gridX, gridY, gridZ)] == 0u));
-        float s5 = float(isAir[coordToCell(coord + ivec3(0,0,1), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && isAir[coordToCell(coord + ivec3(0+1,0,1), gridX, gridY, gridZ)] == 0u));
-        float s6 = float(isAir[coordToCell(coord + ivec3(1,0,1), gridX, gridY, gridZ)] == 0u || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,0,1), gridX, gridY, gridZ)] == 0u));
-        float s7 = float(isAir[coordToCell(coord + ivec3(1,1,1), gridX, gridY, gridZ)] == 0u || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,1,1), gridX, gridY, gridZ)] == 0u));
-        float s8 = float(isAir[coordToCell(coord + ivec3(0,1,1), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && isAir[coordToCell(coord + ivec3(0+1,1,1), gridX, gridY, gridZ)] == 0u));
+        bool airBool100 = isAir[coordToCell(coord + ivec3(1,0,0), gridX, gridY, gridZ)] == 0u;
+        bool airBool110 = isAir[coordToCell(coord + ivec3(1,1,0), gridX, gridY, gridZ)] == 0u;
+        bool airBool101 = isAir[coordToCell(coord + ivec3(1,0,1), gridX, gridY, gridZ)] == 0u;
+        bool airBool111 = isAir[coordToCell(coord + ivec3(1,1,1), gridX, gridY, gridZ)] == 0u;
+        float s1 = float(isAir[coordToCell(coord + ivec3(0,0,0), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && airBool100));
+        float s2 = float(airBool100 || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,0,0), gridX, gridY, gridZ)] == 0u));
+        float s3 = float(airBool110 || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,1,0), gridX, gridY, gridZ)] == 0u));
+        float s4 = float(isAir[coordToCell(coord + ivec3(0,1,0), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && airBool110));
+        float s5 = float(isAir[coordToCell(coord + ivec3(0,0,1), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && airBool101));
+        float s6 = float(airBool101 || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,0,1), gridX, gridY, gridZ)] == 0u));
+        float s7 = float(airBool111 || (coord.x + 2 <= gridX && isAir[coordToCell(coord + ivec3(1+1,1,1), gridX, gridY, gridZ)] == 0u));
+        float s8 = float(isAir[coordToCell(coord + ivec3(0,1,1), gridX, gridY, gridZ)] == 0u || (coord.x + 1 <= gridX && airBool111));
 
         float w1 = s1 * (1. - dp.x) * (1. - dp.y) * (1. - dp.z);
         float w2 = s2 * dp.x * (1. - dp.y) * (1. - dp.z);
@@ -65,8 +70,8 @@ void main(){
                                + oldVelX[bottomLeftFront] * w5 + oldVelX[bottomRightFront] * w6 + oldVelX[topRightFront] * w7 + oldVelX[topLeftFront] * w8);
             pic /= sumW;
             flip /= sumW;
-            partVel[i].x += flip;
-            partVel[i].x = mix(pic, partVel[i].x, flipRatio);
+            vel.x += flip;
+            vel.x = mix(pic, vel.x, flipRatio);
         }
     }
     {
@@ -75,14 +80,18 @@ void main(){
         vec3 cellCenter = coordToPos(coord, gridX, gridY, gridZ) - vec3(0., h * 0.5, 0.);
         vec3 dp = (pos - cellCenter) / h;
         
-        float s1 = float(isAir[coordToCell(coord + ivec3(0,0,0), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && isAir[coordToCell(coord + ivec3(0,0+1,0), gridX, gridY, gridZ)] == 0u));
-        float s2 = float(isAir[coordToCell(coord + ivec3(1,0,0), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && isAir[coordToCell(coord + ivec3(1,0+1,0), gridX, gridY, gridZ)] == 0u));
-        float s3 = float(isAir[coordToCell(coord + ivec3(1,1,0), gridX, gridY, gridZ)] == 0u || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(1,1+1,0), gridX, gridY, gridZ)] == 0u));
-        float s4 = float(isAir[coordToCell(coord + ivec3(0,1,0), gridX, gridY, gridZ)] == 0u || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(0,1+1,0), gridX, gridY, gridZ)] == 0u));
-        float s5 = float(isAir[coordToCell(coord + ivec3(0,0,1), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && isAir[coordToCell(coord + ivec3(0,0+1,1), gridX, gridY, gridZ)] == 0u));
-        float s6 = float(isAir[coordToCell(coord + ivec3(1,0,1), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && isAir[coordToCell(coord + ivec3(1,0+1,1), gridX, gridY, gridZ)] == 0u));
-        float s7 = float(isAir[coordToCell(coord + ivec3(1,1,1), gridX, gridY, gridZ)] == 0u || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(1,1+1,1), gridX, gridY, gridZ)] == 0u));
-        float s8 = float(isAir[coordToCell(coord + ivec3(0,1,1), gridX, gridY, gridZ)] == 0u || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(0,1+1,1), gridX, gridY, gridZ)] == 0u));
+        bool airBool010 = isAir[coordToCell(coord + ivec3(0,1,0), gridX, gridY, gridZ)] == 0u;
+        bool airBool110 = isAir[coordToCell(coord + ivec3(1,1,0), gridX, gridY, gridZ)] == 0u;
+        bool airBool011 = isAir[coordToCell(coord + ivec3(0,1,1), gridX, gridY, gridZ)] == 0u;
+        bool airBool111 = isAir[coordToCell(coord + ivec3(1,1,1), gridX, gridY, gridZ)] == 0u;
+        float s1 = float(isAir[coordToCell(coord + ivec3(0,0,0), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && airBool010));
+        float s2 = float(isAir[coordToCell(coord + ivec3(1,0,0), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && airBool110));
+        float s3 = float(airBool110 || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(1,1+1,0), gridX, gridY, gridZ)] == 0u));
+        float s4 = float(airBool010 || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(0,1+1,0), gridX, gridY, gridZ)] == 0u));
+        float s5 = float(isAir[coordToCell(coord + ivec3(0,0,1), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && airBool011));
+        float s6 = float(isAir[coordToCell(coord + ivec3(1,0,1), gridX, gridY, gridZ)] == 0u || (coord.y + 1 <= gridY && airBool111));
+        float s7 = float(airBool111 || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(1,1+1,1), gridX, gridY, gridZ)] == 0u));
+        float s8 = float(airBool011 || (coord.y + 2 <= gridY && isAir[coordToCell(coord + ivec3(0,1+1,1), gridX, gridY, gridZ)] == 0u));
 
         float w1 = s1 * (1. - dp.x) * (1. - dp.y) * (1. - dp.z);
         float w2 = s2 * dp.x * (1. - dp.y) * (1. - dp.z);
@@ -109,8 +118,8 @@ void main(){
                                + oldVelY[bottomLeftFront] * w5 + oldVelY[bottomRightFront] * w6 + oldVelY[topRightFront] * w7 + oldVelY[topLeftFront] * w8);
             pic /= sumW;
             flip /= sumW;
-            partVel[i].y += flip;
-            partVel[i].y = mix(pic, partVel[i].y, flipRatio);
+            vel.y += flip;
+            vel.y = mix(pic, vel.y, flipRatio);
         }
     }
     {
@@ -119,14 +128,18 @@ void main(){
         vec3 cellCenter = coordToPos(coord, gridX, gridY, gridZ) - vec3(0., 0., h * 0.5);
         vec3 dp = (pos - cellCenter) / h;
         
-        float s1 = float(isAir[coordToCell(coord + ivec3(0,0,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && isAir[coordToCell(coord + ivec3(0,0,0+1), gridX, gridY, gridZ)] == 0u));
+        bool airBool001 = isAir[coordToCell(coord + ivec3(0,0,1), gridX, gridY, gridZ)] == 0u;
+        bool airBool011 = isAir[coordToCell(coord + ivec3(0,1,1), gridX, gridY, gridZ)] == 0u;
+        bool airBool101 = isAir[coordToCell(coord + ivec3(1,0,1), gridX, gridY, gridZ)] == 0u;
+        bool airBool111 = isAir[coordToCell(coord + ivec3(1,1,1), gridX, gridY, gridZ)] == 0u;
+        float s1 = float(isAir[coordToCell(coord + ivec3(0,0,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && airBool001));
         float s2 = float(isAir[coordToCell(coord + ivec3(1,0,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && isAir[coordToCell(coord + ivec3(1,0,0+1), gridX, gridY, gridZ)] == 0u));
-        float s3 = float(isAir[coordToCell(coord + ivec3(1,1,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && isAir[coordToCell(coord + ivec3(1,1,0+1), gridX, gridY, gridZ)] == 0u));
-        float s4 = float(isAir[coordToCell(coord + ivec3(0,1,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && isAir[coordToCell(coord + ivec3(0,1,0+1), gridX, gridY, gridZ)] == 0u));
-        float s5 = float(isAir[coordToCell(coord + ivec3(0,0,1), gridX, gridY, gridZ)] == 0u || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(0,0,1+1), gridX, gridY, gridZ)] == 0u));
+        float s3 = float(isAir[coordToCell(coord + ivec3(1,1,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && airBool111));
+        float s4 = float(isAir[coordToCell(coord + ivec3(0,1,0), gridX, gridY, gridZ)] == 0u || (coord.z + 1 <= gridZ && airBool011));
+        float s5 = float(airBool001 || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(0,0,1+1), gridX, gridY, gridZ)] == 0u));
         float s6 = float(isAir[coordToCell(coord + ivec3(1,0,1), gridX, gridY, gridZ)] == 0u || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(1,0,1+1), gridX, gridY, gridZ)] == 0u));
-        float s7 = float(isAir[coordToCell(coord + ivec3(1,1,1), gridX, gridY, gridZ)] == 0u || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(1,1,1+1), gridX, gridY, gridZ)] == 0u));
-        float s8 = float(isAir[coordToCell(coord + ivec3(0,1,1), gridX, gridY, gridZ)] == 0u || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(0,1,1+1), gridX, gridY, gridZ)] == 0u));
+        float s7 = float(airBool111 || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(1,1,1+1), gridX, gridY, gridZ)] == 0u));
+        float s8 = float(airBool011 || (coord.z + 2 <= gridZ && isAir[coordToCell(coord + ivec3(0,1,1+1), gridX, gridY, gridZ)] == 0u));
 
         float w1 = s1 * (1. - dp.x) * (1. - dp.y) * (1. - dp.z);
         float w2 = s2 * dp.x * (1. - dp.y) * (1. - dp.z);
@@ -153,8 +166,10 @@ void main(){
                                + oldVelZ[bottomLeftFront] * w5 + oldVelZ[bottomRightFront] * w6 + oldVelZ[topRightFront] * w7 + oldVelZ[topLeftFront] * w8);
             pic /= sumW;
             flip /= sumW;
-            partVel[i].z += flip;
-            partVel[i].z = mix(pic, partVel[i].z, flipRatio);
+            vel.z += flip;
+            vel.z = mix(pic, vel.z, flipRatio);
         }
     }
+
+    partVel[i].xyz = vel;
 }

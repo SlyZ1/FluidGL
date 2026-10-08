@@ -58,7 +58,7 @@ private:
     bool inFlight[NUM_QUERIES] = {false, false, false, false};
     int writeIndex = 0;
 
-    const float m_updateInterval = 0.25f;
+    const float m_updateInterval = 0.1f;
     double m_updateTimer = 0.0f;
     int m_frameCount = 0;
     TimerValue m_time = 0;

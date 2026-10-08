@@ -1,3 +1,8 @@
+int getHash(int x, int y, int z) {
+    int h = (x * 92837111) ^  (y * 689287499) ^ (z * 283923481);
+    return abs(h) % (gridX * gridY * gridZ);
+}
+
 ivec3 cellToCoord(int cell, int nx, int ny){
     int column = cell % nx;
     int rest = (cell - column) / nx;
