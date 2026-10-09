@@ -27,13 +27,11 @@ int frameCount = 0;
 
 shared_ptr<App> app;
 shared_ptr<Camera> camera;
-shared_ptr<IRenderer> renderer;
 shared_ptr<UI> ui;
 
 shared_ptr<SolverManager> solverManager = {};
 
 vector<vec3> poses = { vec3(0,0,0), vec3(0.5f, 0.f, 0.f) };
-int iterations = 1;
 
 vec2 previousObstaclePos = vec2(0.f);
 bool previousEnableObstacle = false;
@@ -56,55 +54,54 @@ void init(){
     camera = make_shared<Camera>(app, 60.0f, 1200.f, 0.75f);
     camera->toggleFreeView(false);
     
-    FlipSolverGPUConfig flipConfigGPU = FlipSolverGPUConfig();
-    flipConfigGPU.setPartN((int)1e5);
-    flipConfigGPU.setDt(0.05f / iterations);
-    flipConfigGPU.setPartPerH(1.0f);
-    flipConfigGPU.setDomainSize(vec3(600, 600, 300));
-    flipConfigGPU.setPartRadius(1.5f);
-    flipConfigGPU.setFluidInitializer({vec3(-100), vec3(100)});
+    FlipSolverGPUConfig flipConfig = FlipSolverGPUConfig();
+    flipConfig.setPartN((int)1e5);
+    flipConfig.setDt(0.05f);
+    flipConfig.setPartPerH(1.0f);
+    flipConfig.setDomainSize(vec3(600, 600, 300));
+    flipConfig.setPartRadius(1.5f);
+    flipConfig.setFluidInitializer({vec3(-100), vec3(100)});
     
-    solverManager = make_shared<SolverManager>();
-    weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfigGPU);
-    renderer = make_shared<ParticleRenderer3D>(*solverManager, camera);
+    solverManager = make_shared<SolverManager>(camera);
+    weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfig);
     
-    UIContext ctx = { app, solverManager, renderer };
+    UIContext ctx = { app, solverManager };
     ui = make_shared<UI>(ctx);
     ui->setStatsContext({ app, solver });
     
     Logger::logSuccess("Program started.", __LOG_DATA__);
 }
 
-void inputs(shared_ptr<ISolver> lockedSolver){
+void inputs(){
     if (app->keyPressedOnce(GLFW_KEY_ESCAPE, frameCount)){
         camera->toggleFreeView(!camera->getFreeView());
         app->toggleCursor(!camera->getFreeView());
     }
 
-    // Hot reload shaders
+    if (app->keyPressedOnce(GLFW_KEY_G, frameCount)){
+        solverManager->toggleGizmos(!solverManager->getGizmosToggled());
+    }
+
     if (app->keyPressedOnce(GLFW_KEY_R, frameCount)){
-        if (renderer) renderer->reload();
+        solverManager->reloadRenderer();
         Logger::logInfo("Shaders reloaded.", __LOG_DATA__);
     }
     
     if (app->keyPressedOnce(GLFW_KEY_ENTER, frameCount)){
-        if (lockedSolver) lockedSolver->reload();
+        solverManager->reloadSolver();
         Logger::logInfo("Simulation restarted.", __LOG_DATA__);
     }
 
     if (app->keyPressedOnce(GLFW_KEY_P, frameCount)){
-        lockedSolver->setPaused(!lockedSolver->isPaused());
-        Logger::logInfo(lockedSolver->isPaused() ? "Simulation paused." : "Simulation resumed.", __LOG_DATA__);
+        solverManager->togglePause();
     }
 
     if (app->keyPressedOnce(GLFW_KEY_RIGHT, frameCount)){
-        for (int i = 0; i < iterations; i++)
-            if (lockedSolver) lockedSolver->update();
+        solverManager->update();
     }
 }
 
 void end(){
-    if (renderer) renderer.reset();
     solverManager.reset();
 
     ui.reset();
@@ -122,14 +119,10 @@ int main(){
 
         camera->update(app->dt() / 1000.0f);
 
-        auto lockedSolver = solverManager->getSolver().lock();
-        
-        for (int i = 0; i < iterations; i++)
-            if (lockedSolver) lockedSolver->update();
+        solverManager->update();
+        solverManager->render();
 
-        renderer ? renderer->render() : void();
-
-        inputs(lockedSolver);
+        inputs();
 
         frameCount++;
         app->endFrame();

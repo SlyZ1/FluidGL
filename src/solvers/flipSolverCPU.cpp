@@ -486,6 +486,7 @@ void FlipSolverCPU::update(){
 void FlipSolverCPU::reload(){
     m_config = static_cast<FlipSolverCPUConfig&>(*m_baseConfig);
     genBuffers();
+    ISolver::reload();
 }
 
 GLuint FlipSolverCPU::getPosBuffer() const {

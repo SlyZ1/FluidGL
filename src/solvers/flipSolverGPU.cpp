@@ -234,6 +234,7 @@ void FlipSolverGPU::reload() {
 
     
     m_cgs.init(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ(), 0, m_minusDivBuffer, m_pressureBuffer);
+    ISolver::reload();
 }
 
 ivec3 FlipSolverGPU::cellToCoord(int cell, int nx, int ny){

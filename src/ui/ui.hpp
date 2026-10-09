@@ -6,14 +6,13 @@
 #include "core/app.hpp"
 #include "helpers/stats.hpp"
 #include "renderers/renderer.hpp" 
-#include "solverUI.hpp" 
+#include "solvers/visitors/solverUI.hpp" 
 #include "utilsUI.hpp" 
 #include "solvers/solverManager.hpp"
 
 struct UIContext {
     std::shared_ptr<App> app;
     std::weak_ptr<SolverManager> solverManager;
-    std::weak_ptr<IRenderer> renderer;
 };
 
 class UI {

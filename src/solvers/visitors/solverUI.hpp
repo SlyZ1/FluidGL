@@ -1,7 +1,7 @@
 #ifndef SOLVER_UI_HPP
 #define SOLVER_UI_HPP
 
-#include "solvers/solverVisitor.hpp"
+#include "solvers/visitors/solverVisitor.hpp"
 #include "solvers/solverManager.hpp"
 #include <string>
 #include <vector>
@@ -13,6 +13,7 @@ public:
     void visit(IParticleSolver& solver) override;
     void visit(FlipSolverCPU& solver) override;
     void visit(FlipSolverGPU& solver) override;
+    void visit(XpbdSolverCPU& solver) override;
 
     static std::vector<const char*> solverNames();
     static const char* solverName(SolverType type);

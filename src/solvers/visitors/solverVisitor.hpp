@@ -4,6 +4,7 @@
 class IParticleSolver;
 class FlipSolverCPU;
 class FlipSolverGPU;
+class XpbdSolverCPU;
 
 class ISolverVisitor {
 public:
@@ -12,6 +13,7 @@ public:
     virtual void visit(IParticleSolver& solver) = 0;
     virtual void visit(FlipSolverCPU& solver) = 0;
     virtual void visit(FlipSolverGPU& solver) = 0;
+    virtual void visit(XpbdSolverCPU& solver) = 0;
 };
 
 #endif

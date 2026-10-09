@@ -2,6 +2,7 @@
 
 #include "solvers/flipSolverCPU.hpp"
 #include "solvers/flipSolverGPU.hpp"
+#include "solvers/xpdbSolverCPU.hpp"
 
 using namespace std;
 using namespace glm;
@@ -51,6 +52,13 @@ void SolverGizmos::visit(FlipSolverGPU& solver) {
 
     FluidInitializer initializerBounds = config.getFluidInitializer();
     UPDATE_WIREFRAME(Box, m_solverInitializerData, initializerBounds, initializerBounds.min, initializerBounds.max, m_initializerColor)
+}
+
+void SolverGizmos::visit(XpbdSolverCPU& solver) {
+    const XpbdSolverCPUConfig& config = solver.getDraftConfig();
+
+    if (m_solverType != SolverType::XpbdCPU) resetWireframes();
+    m_solverType = SolverType::XpbdCPU;
 }
 
 void SolverGizmos::render() const {

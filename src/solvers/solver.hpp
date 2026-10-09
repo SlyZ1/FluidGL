@@ -3,15 +3,18 @@
 
 #include <memory>
 #include <glad/glad.h>
+#include <functional>
 
 #include "configs/solverConfig.hpp"
 #include "helpers/stats.hpp"
-#include "solverVisitor.hpp"
+#include "solvers/visitors/solverVisitor.hpp"
 
 class ISolver : public IStatsProvider {
 protected:
     std::unique_ptr<ISolverConfig> m_baseConfig;
     std::unique_ptr<ISolverConfig> m_draftConfig;
+    std::function<void()> m_configChangedCallback = {}; 
+    std::function<void()> m_reloadCallback = {}; 
     bool m_isPaused = true;
 public:
     ISolver(std::unique_ptr<ISolverConfig> config, const std::string& statsName) 
@@ -19,7 +22,7 @@ public:
     virtual ~ISolver() = default;
     virtual void accept(ISolverVisitor& visitor) = 0;
     virtual void update() = 0;
-    virtual void reload() = 0;
+    virtual void reload() { m_reloadCallback(); };
     virtual GLuint getPosBuffer() const = 0;
     virtual GLuint getVelBuffer() const = 0;
 
@@ -36,7 +39,11 @@ public:
         if (!m_draftConfig) return;
         m_baseConfig = std::move(m_draftConfig);
         reload();
+        m_configChangedCallback();
     }
+
+    void setConfigChangedCallback(std::function<void()> configChangedCallback) { m_configChangedCallback = configChangedCallback; }
+    void setReloadCallback(std::function<void()> reloadCallback) { m_reloadCallback = reloadCallback; }
 
     bool isPaused() const { return m_isPaused; }
     void setPaused(bool isPaused) { m_isPaused = isPaused; }

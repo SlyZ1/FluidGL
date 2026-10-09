@@ -3,8 +3,9 @@
 
 #include <glm/glm.hpp>
 
-#include "solvers/solverVisitor.hpp"
-#include "solvers/solverManager.hpp"
+#include "solvers/solverType.hpp"
+#include "solvers/fluidInitializer.hpp"
+#include "solvers/visitors/solverVisitor.hpp"
 #include "gizmos/wireframes.hpp"
 #include "core/camera.hpp"
 
@@ -45,6 +46,7 @@ public:
     void visit(IParticleSolver& solver) override;
     void visit(FlipSolverCPU& solver) override;
     void visit(FlipSolverGPU& solver) override;
+    void visit(XpbdSolverCPU& solver) override;
 
     void render() const;
 };

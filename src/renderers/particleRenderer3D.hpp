@@ -4,20 +4,20 @@
 #include "renderer.hpp"
 #include "core/shader_program.hpp"
 #include "core/camera.hpp"
-#include "gizmos/solverGizmos.hpp"
-#include "solvers/solverManager.hpp"
 
 class ParticleRenderer3D : public IRenderer {
 private:
-    const SolverManager& m_solverManager;
     std::weak_ptr<Camera> m_camera;
-
-    SolverGizmos m_solverGizmos;
-    bool m_drawGizmos = true;
 
     GLuint m_VBO = 0;
     GLuint m_VAO = 0;
     GLuint m_EBO = 0;
+
+    GLuint m_posBuffer = 0;
+    GLuint m_velBuffer = 0;
+
+    float m_partRadius = 0;
+    int m_numParticles = 0;
 
     static std::string s_shadersPath;
 
@@ -58,16 +58,19 @@ private:
     void initOpenGL();
      
 public:
-    ParticleRenderer3D(const SolverManager& solverManager, std::weak_ptr<Camera> camera);
+    ParticleRenderer3D(std::weak_ptr<Camera> camera);
     ~ParticleRenderer3D() override;
 
     ParticleRenderer3D(const ParticleRenderer3D&) = delete;
     ParticleRenderer3D& operator=(const ParticleRenderer3D&) = delete;
 
-    void toggleGizmos(bool drawGizmos) { m_drawGizmos = drawGizmos; }
+    void setPosBuffer(GLuint posBuffer) { m_posBuffer = posBuffer; }
+    void setVelBuffer(GLuint velBuffer) { m_velBuffer = velBuffer; }
+    void setPartRadius(float partRadius) { m_partRadius = partRadius; }
+    void setNumParticles(int numParticles) { m_numParticles = numParticles; }
 
     void render() override;
     void reload() override;
 };
 
-#endif
+#endif 

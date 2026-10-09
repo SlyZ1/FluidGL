@@ -1,6 +1,6 @@
 #include "solverUI.hpp"
 
-#include "utilsUI.hpp"
+#include "ui/utilsUI.hpp"
 #include "solvers/flipSolverCPU.hpp"
 #include "solvers/flipSolverGPU.hpp"
 
@@ -107,6 +107,22 @@ void SolverUI::visit(FlipSolverGPU& solver) {
 #define CUSTOM_DRAW(label, name, min, max) UtilsUI::drawDrag(label, name, min, max, "%.5f", 5e-5f)
         DRAW_FIELD(CUSTOM_DRAW, "Tolerance", float, CgTol, 1e-5f, 1e-1f)
 #undef CUSTOM_DRAW
+
+        UtilsUI::EndTwoColumnLayout();
+        ImGui::TreePop();
+    } UtilsUI::EndCustomHeader();
+}
+
+void SolverUI::visit(XpbdSolverCPU& solver) {
+    XpbdSolverCPUConfig& config = static_cast<XpbdSolverCPUConfig&>(solver.getDraftConfig());
+
+    DRAW_FIELD(UtilsUI::drawDrag, "Timestep", float, Dt, 0.01f, 0.1f)
+    ImGui::Dummy(ImVec2(0, 10));
+
+    if (UtilsUI::BeginCustomHeader("Forces")) {
+        UtilsUI::BeginTwoColumnLayout();
+
+        DRAW_FIELD(UtilsUI::drawDrag, "Gravity", float, Gravity, 0, 1000)
 
         UtilsUI::EndTwoColumnLayout();
         ImGui::TreePop();
