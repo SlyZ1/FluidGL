@@ -489,16 +489,16 @@ void FlipSolverCPU::reload(){
     ISolver::reload();
 }
 
-GLuint FlipSolverCPU::getPosBuffer() const {
+shared_ptr<GLuint> FlipSolverCPU::getPosBuffer() const {
     glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);
     glBufferData(GL_ARRAY_BUFFER, m_partPos.size() * sizeof(vec4), m_partPos.data(), GL_STREAM_DRAW);
-    return m_posVBO;
+    return make_shared<GLuint>(m_posVBO);
 }
 
-GLuint FlipSolverCPU::getVelBuffer() const {
+shared_ptr<GLuint> FlipSolverCPU::getVelBuffer() const {
     glBindBuffer(GL_ARRAY_BUFFER, m_velVBO);
     glBufferData(GL_ARRAY_BUFFER, m_partVel.size() * sizeof(vec4), m_partVel.data(), GL_STREAM_DRAW);
-    return m_velVBO;
+    return make_shared<GLuint>(m_velVBO);
 }
 
 vector<vec4> FlipSolverCPU::getGrid(float width){

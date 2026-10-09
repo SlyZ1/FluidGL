@@ -13,8 +13,8 @@ private:
     GLuint m_VAO = 0;
     GLuint m_EBO = 0;
 
-    GLuint m_posBuffer = 0;
-    GLuint m_velBuffer = 0;
+    std::shared_ptr<GLuint> m_posBuffer = 0;
+    std::shared_ptr<GLuint> m_velBuffer = 0;
 
     float m_partRadius = 0;
     int m_numParticles = 0;
@@ -64,8 +64,8 @@ public:
     ParticleRenderer3D(const ParticleRenderer3D&) = delete;
     ParticleRenderer3D& operator=(const ParticleRenderer3D&) = delete;
 
-    void setPosBuffer(GLuint posBuffer) { m_posBuffer = posBuffer; }
-    void setVelBuffer(GLuint velBuffer) { m_velBuffer = velBuffer; }
+    void setPosBuffer(std::shared_ptr<GLuint> posBuffer) { m_posBuffer = posBuffer; }
+    void setVelBuffer(std::shared_ptr<GLuint> velBuffer) { m_velBuffer = velBuffer; }
     void setPartRadius(float partRadius) { m_partRadius = partRadius; }
     void setNumParticles(int numParticles) { m_numParticles = numParticles; }
 

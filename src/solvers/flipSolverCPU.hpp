@@ -59,8 +59,8 @@ public:
     void accept(ISolverVisitor& visitor) override { visitor.visit(*this); }
     void update() override;
     void reload() override;
-    GLuint getPosBuffer() const override;
-    GLuint getVelBuffer() const override;
+    std::shared_ptr<GLuint> getPosBuffer() const override;
+    std::shared_ptr<GLuint> getVelBuffer() const override;
 
     const std::vector<glm::vec4>& getPos() { return m_partPos; };
     const std::vector<glm::vec4>& getVel() { return m_partVel; };

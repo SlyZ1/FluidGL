@@ -12,6 +12,7 @@ void CGS::deleteBuffers(){
     glDeleteBuffers(1, &m_ATBuffer);
     glDeleteBuffers(1, &m_ATbBuffer);
     glDeleteBuffers(1, &m_zeroBuffer);
+    glDeleteBuffers(1, &m_zBuffer);
     glDeleteBuffers(1, &m_dBuffer);
     glDeleteBuffers(1, &m_AdBuffer);
     glDeleteBuffers(1, &m_rBuffer);
@@ -34,6 +35,10 @@ void CGS::initBuffers(){
 
     glGenBuffers(1, &m_zeroBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_zeroBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
+
+    glGenBuffers(1, &m_zBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_zBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
 
     glGenBuffers(1, &m_dBuffer);
@@ -105,6 +110,10 @@ void CGS::swap_rtr_indices(){
     RTR_SCALAR_INDEX = temp;
 }
 
+void CGS::computeZ() {
+
+}
+
 GLuint CGS::solve(int maxIter, float tol){
     std::function<void(GLuint, GLuint, GLuint, int, bool)> matVec =
     [this](GLuint Abuf, GLuint dBuf, GLuint AdBuf, int n, bool dispatch) {
@@ -151,6 +160,8 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
     // r = b - Ad
     m_matOps->saxpy(m_bBuffer, m_AdBuffer, m_rBuffer, m_scalarBuffer, m_n, minusOperations, true);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    computeZ();        
     
     // d = r
     m_matOps->copy(m_rBuffer, m_dBuffer, m_n);

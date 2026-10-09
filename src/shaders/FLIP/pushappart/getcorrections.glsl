@@ -60,7 +60,7 @@ void main(){
 
                 for (int k = rangeStart; k < rangeEnd; k++)
                 {
-                    int j = int(cellParticleIds[k]);
+                    int j = k;//int(cellParticleIds[k]);
                     if (j == i) continue;
 
                     vec3 diff = currentPos - oldPartPos[j].xyz;
@@ -85,5 +85,7 @@ void main(){
     }
 
     if (currentNumCorrections > 0) 
-        partPos[i].xyz = currentPos + currentCorrections / currentNumCorrections;
+        partPos[i] = vec4(currentPos + currentCorrections / currentNumCorrections, 1);
+    else
+        partPos[i] = vec4(currentPos, 1);
 }

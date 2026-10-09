@@ -25,16 +25,16 @@ void XpbdSolverCPU::integrate() {
     }
 }
 
-GLuint XpbdSolverCPU::getPosBuffer() const {
+shared_ptr<GLuint> XpbdSolverCPU::getPosBuffer() const {
     glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
     glBufferData(GL_ARRAY_BUFFER, m_vertPos.size() * sizeof(vec4), m_vertPos.data(), GL_STREAM_DRAW);
-    return m_posBuffer;
+    return make_shared<GLuint>(m_posBuffer);
 }
 
-GLuint XpbdSolverCPU::getVelBuffer() const {
+shared_ptr<GLuint> XpbdSolverCPU::getVelBuffer() const {
     glBindBuffer(GL_ARRAY_BUFFER, m_velBuffer);
     glBufferData(GL_ARRAY_BUFFER, m_vertVel.size() * sizeof(vec4), m_vertVel.data(), GL_STREAM_DRAW);
-    return m_velBuffer;
+    return make_shared<GLuint>(m_velBuffer);
 }
 
 void XpbdSolverCPU::update() {
@@ -42,7 +42,7 @@ void XpbdSolverCPU::update() {
 }
 
 void XpbdSolverCPU::reload() {
-    
+
 
     ISolver::reload();
 }

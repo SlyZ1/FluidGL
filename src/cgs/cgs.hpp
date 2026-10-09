@@ -27,6 +27,7 @@ private:
     
     GLuint m_zeroBuffer = 0;
     GLuint m_xBuffer = 0;
+    GLuint m_zBuffer = 0;
     GLuint m_dBuffer = 0;
     GLuint m_AdBuffer = 0;
     GLuint m_rBuffer = 0;
@@ -40,6 +41,7 @@ private:
     void initBuffers();
     void deleteBuffers();
     void swap_rtr_indices();
+    void computeZ();
 
 public:
     CGS();

@@ -129,17 +129,18 @@ void ParticleRenderer3D::initOpenGL(){
 }
 
 void ParticleRenderer3D::render(){
+    if (!m_posBuffer || !m_velBuffer) return;
     m_particleShader.use();
 
     glBindVertexArray(m_VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, *m_posBuffer);
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
     glVertexAttribDivisor(1, 1);
     glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_velBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, *m_velBuffer);
 
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
     glVertexAttribDivisor(3, 1);

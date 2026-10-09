@@ -21,14 +21,17 @@ private:
 
     // FLIP Buffers
     GLuint m_partPosBuffer = 0;
-    GLuint m_oldPartPosBuffer = 0;
     GLuint m_partVelBuffer = 0;
+    GLuint m_oldPartPosBuffer = 0;
+    GLuint m_oldPartVelBuffer = 0;
+
     GLuint m_velXBuffer = 0;
     GLuint m_velYBuffer = 0;
     GLuint m_velZBuffer = 0;
     GLuint m_oldVelXBuffer = 0;
     GLuint m_oldVelYBuffer = 0;
     GLuint m_oldVelZBuffer = 0;
+
     GLuint m_rXBuffer = 0;
     GLuint m_rYBuffer = 0;
     GLuint m_rZBuffer = 0;
@@ -63,6 +66,7 @@ private:
     ShaderProgram m_smallSumShader = {}; const int SHARED_SIZE = 2048;
     ShaderProgram m_globalSumShader = {};
     ShaderProgram m_cellParticleIdShader = {};
+    ShaderProgram m_sortBuffers = {};
 
     // Push appart
     ShaderProgram m_resetBuffersShader = {};
@@ -146,8 +150,8 @@ public:
     void accept(ISolverVisitor& visitor) override { visitor.visit(*this); }
     void update() override;
     void reload() override;
-    GLuint getPosBuffer() const override { return m_partPosBuffer; };
-    GLuint getVelBuffer() const override { return m_partVelBuffer; };
+    std::shared_ptr<GLuint> getPosBuffer() const override { return std::make_shared<GLuint>(m_partPosBuffer); };
+    std::shared_ptr<GLuint> getVelBuffer() const override { return std::make_shared<GLuint>(m_partVelBuffer); };
 
     void updateObstacle(glm::vec2 pos, glm::vec2 vel, float radius);
 

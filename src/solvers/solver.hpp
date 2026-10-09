@@ -23,8 +23,8 @@ public:
     virtual void accept(ISolverVisitor& visitor) = 0;
     virtual void update() = 0;
     virtual void reload() { m_reloadCallback(); };
-    virtual GLuint getPosBuffer() const = 0;
-    virtual GLuint getVelBuffer() const = 0;
+    virtual std::shared_ptr<GLuint> getPosBuffer() const = 0;
+    virtual std::shared_ptr<GLuint> getVelBuffer() const = 0;
 
     virtual const ISolverConfig& getConfig() const {
         return *m_baseConfig;

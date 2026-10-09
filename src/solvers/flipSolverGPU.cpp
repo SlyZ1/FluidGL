@@ -14,7 +14,8 @@ void FlipSolverGPU::deleteBuffers(){
     glDeleteBuffers(1, &m_velXBuffer); glDeleteBuffers(1, &m_velYBuffer); glDeleteBuffers(1, &m_velZBuffer);
     glDeleteBuffers(1, &m_oldVelXBuffer); glDeleteBuffers(1, &m_oldVelYBuffer); glDeleteBuffers(1, &m_oldVelZBuffer);
     glDeleteBuffers(1, &m_partPosBuffer); glDeleteBuffers(1, &m_partVelBuffer); 
-    glDeleteBuffers(1, &m_isAirBuffer); glDeleteBuffers(1, &m_oldPartPosBuffer);
+    glDeleteBuffers(1, &m_oldPartPosBuffer); glDeleteBuffers(1, &m_oldPartVelBuffer);
+    glDeleteBuffers(1, &m_isAirBuffer); 
 
     for (GLuint buffer : m_blockSumBuffers)
         glDeleteBuffers(1, &buffer);
@@ -66,7 +67,8 @@ void FlipSolverGPU::createBuffers(){
     glGenBuffers(1, &m_velXBuffer); glGenBuffers(1, &m_velYBuffer); glGenBuffers(1, &m_velZBuffer);
     glGenBuffers(1, &m_oldVelXBuffer); glGenBuffers(1, &m_oldVelYBuffer); glGenBuffers(1, &m_oldVelZBuffer);
     glGenBuffers(1, &m_partPosBuffer); glGenBuffers(1, &m_partVelBuffer); 
-    glGenBuffers(1, &m_isAirBuffer); glGenBuffers(1, &m_oldPartPosBuffer);
+    glGenBuffers(1, &m_oldPartPosBuffer); glGenBuffers(1, &m_oldPartVelBuffer);
+    glGenBuffers(1, &m_isAirBuffer); 
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_rXBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, (m_config.getGridX() + 1) * m_config.getGridY() * m_config.getGridZ() * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
@@ -88,9 +90,11 @@ void FlipSolverGPU::createBuffers(){
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_config.getGridX() * m_config.getGridY() * (m_config.getGridZ() + 1) * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_partPosBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, partPos.size() * sizeof(vec4), partPos.data(), GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_oldPartPosBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, partPos.size() * sizeof(vec4), nullptr, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_partVelBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, partVel.size() * sizeof(vec4), partVel.data(), GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_oldPartPosBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, partPos.size() * sizeof(vec4), partPos.data(), GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_oldPartVelBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, partVel.size() * sizeof(vec4), partVel.data(), GL_DYNAMIC_DRAW);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_isAirBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() * sizeof(uint), nullptr, GL_DYNAMIC_DRAW);
@@ -179,6 +183,7 @@ FlipSolverGPU::FlipSolverGPU(FlipSolverGPUConfig config)
     loadCompute(m_resetBuffersShader, "/pushappart/resetbuffers.glsl");
     loadCompute(m_getCorrectionsShader, "/pushappart/getcorrections.glsl");
     loadCompute(m_applyCorrectionsShader, "/pushappart/applycorrections.glsl");
+    loadCompute(m_sortBuffers, "/sortbuffers.glsl");
     loadCompute(m_p2gShader, "/p2g/p2g.glsl");
     loadCompute(m_resetFloatBufferShader, "/p2g/resetfloatbuffer.glsl");
     loadCompute(m_applyWeightsShader, "/p2g/applyweights.glsl");
@@ -215,6 +220,7 @@ void FlipSolverGPU::reload() {
     m_resetBuffersShader.reload();
     m_getCorrectionsShader.reload();
     m_applyCorrectionsShader.reload();
+    m_sortBuffers.reload();
     m_p2gShader.reload();
     m_resetFloatBufferShader.reload();
     m_applyWeightsShader.reload();
@@ -266,13 +272,6 @@ void FlipSolverGPU::integrateParticles(){
     glUniform3f(ShaderProgram::getVarLoc("maxPos"), maxPos.x, maxPos.y, maxPos.z);
     glUniform1f(ShaderProgram::getVarLoc("gravity"), m_config.getGravity());
     m_integrateShader.dispatch((m_config.getPartN() + 255) / 256);
-
-    ShaderProgram::SSBOBarrier();
-
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_partPosBuffer);
-    vec4 pos0 = vec4(0);
-    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(vec4), &pos0);
 }
 
 void FlipSolverGPU::resetUintBuffer(GLuint buffer, int n){
@@ -364,6 +363,35 @@ void FlipSolverGPU::countingSort(){
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_cellParticleIdsBuffer);
     glUniform1i(ShaderProgram::getVarLoc("partN"), m_config.getPartN());
     m_cellParticleIdShader.dispatch((m_config.getPartN() + 63) / 64);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    
+    glBindBuffer(GL_COPY_READ_BUFFER, m_partPosBuffer);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, m_oldPartPosBuffer);
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, m_config.getPartN() * sizeof(vec4));
+    glBindBuffer(GL_COPY_READ_BUFFER, m_partVelBuffer);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, m_oldPartVelBuffer);
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, m_config.getPartN() * sizeof(vec4));
+    
+    ShaderProgram::SSBOBarrier();
+
+    m_sortBuffers.use();
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_cellParticleIdsBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_oldPartPosBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_oldPartVelBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_partPosBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_partVelBuffer);
+    glUniform1i(ShaderProgram::getVarLoc("partN"), m_config.getPartN());
+
+    m_sortBuffers.dispatch((m_config.getPartN() + 255) / 256);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    glBindBuffer(GL_COPY_READ_BUFFER, m_partPosBuffer);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, m_oldPartPosBuffer);
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, m_config.getPartN() * sizeof(vec4));
+
+    ShaderProgram::SSBOBarrier();
 }
 
 void FlipSolverGPU::pushAppartParticles(int iterations){
@@ -372,13 +400,10 @@ void FlipSolverGPU::pushAppartParticles(int iterations){
     for (int i = 0; i < iterations; i++)
     {
         countingSort();
-        glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-
-        glBindBuffer(GL_COPY_READ_BUFFER, m_partPosBuffer);
-        glBindBuffer(GL_COPY_WRITE_BUFFER, m_oldPartPosBuffer);
-        glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, m_config.getPartN() * sizeof(vec4));
         
         ShaderProgram::SSBOBarrier();
+        
+        // swap(m_partPosBuffer, m_oldPartPosBuffer);
 
         m_getCorrectionsShader.use();
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_firstCellParticleBuffer);

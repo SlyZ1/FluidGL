@@ -33,8 +33,8 @@ public:
     void accept(ISolverVisitor& visitor) override { visitor.visit(*this); }
     void update() override;
     void reload() override;
-    GLuint getPosBuffer() const override;
-    GLuint getVelBuffer() const override;
+    std::shared_ptr<GLuint> getPosBuffer() const override;
+    std::shared_ptr<GLuint> getVelBuffer() const override;
 
     const XpbdSolverCPUConfig& getConfig() const override {
         return m_config; 

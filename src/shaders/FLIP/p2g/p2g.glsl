@@ -65,11 +65,10 @@ void main(){
                         isAir[cell] = 0u;
                         hasSetIsAirToFalse = true;
                     }
-                    int i = int(cellParticleIds[k]);
+                    int i = k;//int(cellParticleIds[k]);
                     vec3 pos = partPos[i].xyz;
                     vec3 vel = partVel[i].xyz;
                     {
-                        int cell = posToCell(pos - vec3(0, h * 0.5, h * 0.5), gridX, gridY, gridZ);
                         vec3 dp = min(abs(pos - cellCenterX) / h, 1.0);
                         float w = (1.0 - dp.x) * (1.0 - dp.y) * (1.0 - dp.z);
                         
@@ -77,7 +76,6 @@ void main(){
                         currentRX += w;
                     }
                     {
-                        int cell = posToCell(pos - vec3(h * 0.5, 0, h * 0.5), gridX, gridY, gridZ);
                         vec3 dp = min(abs(pos - cellCenterY) / h, 1.0);
                         float w = (1.0 - dp.x) * (1.0 - dp.y) * (1.0 - dp.z);
                         
@@ -85,7 +83,6 @@ void main(){
                         currentRY += w;
                     }
                     {
-                        int cell = posToCell(pos - vec3(h * 0.5, h * 0.5, 0), gridX, gridY, gridZ);
                         vec3 dp = min(abs(pos - cellCenterZ) / h, 1.0);
                         float w = (1.0 - dp.x) * (1.0 - dp.y) * (1.0 - dp.z);
                         
