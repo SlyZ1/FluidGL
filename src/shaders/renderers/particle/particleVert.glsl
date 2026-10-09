@@ -20,7 +20,7 @@ void main()
 
     float t = clamp(length(cVel) / 50.0, 0.0, 1.0);
 
-    float customRadius = mix(particleRadius, particleRadius / 4, t) * 2;
+    float customRadius = mix(particleRadius, particleRadius / 2, t) * 2;
     //customRadius = particleRadius * 4;
     radius = customRadius;
     viewPos.xy += vPos.xy * customRadius;

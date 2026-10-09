@@ -62,6 +62,14 @@ WireframeIndex Wireframes::addBox2D(vec3 min, vec3 max, vec4 color){
     return result;
 }
 
+WireframeIndex Wireframes::addTriangle(vec3 v1, vec3 v2, vec3 v3, vec4 color){
+    WireframeIndex result = addLine(v1, v2, color);
+    addLine(v2, v3, color);
+    addLine(v3, v1, color);
+
+    return result;
+}
+
 void Wireframes::updateLine(WireframeIndex index, vec3 start, vec3 end, vec4 color) {
     m_lines[index] = { start, end };
     m_colors[index] = color;
@@ -91,6 +99,12 @@ void Wireframes::updateBox2D(WireframeIndex index, vec3 min, vec3 max, vec4 colo
     updateLine(index + 1, min, vec3(max.x, min.y, max.z), color);
     updateLine(index + 2, vec3(min.x, max.y, min.z), max, color);
     updateLine(index + 3, vec3(max.x, min.y, max.z), max, color);
+}
+
+void Wireframes::updateTriangle(WireframeIndex index, glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec4 color){
+    updateLine(index + 0, v1, v2, color);
+    updateLine(index + 1, v2, v3, color);
+    updateLine(index + 2, v3, v1, color);
 }
 
 void Wireframes::uploadData(){

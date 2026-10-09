@@ -9,9 +9,9 @@
 class FlipSolverGPUConfig : public IParticleSolverConfig {
 protected:
     float m_flipRatio = 0.9f;
-    float m_partPerH = 2;
+    float m_partPerH = 1;
     float m_densityMultiplier = 5;
-    glm::vec3 m_domainSize = glm::vec3(10.0f);
+    glm::vec3 m_domainSize = glm::vec3(600.0f, 600.0f, 300.0f);
     float m_sigma = 0;
     float m_gravity = 9.81f;
     int m_cgMaxIter = 20;

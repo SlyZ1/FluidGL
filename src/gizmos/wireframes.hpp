@@ -41,9 +41,11 @@ public:
     WireframeIndex addLine(glm::vec3 start, glm::vec3 end, glm::vec4 color);
     WireframeIndex addBox(glm::vec3 min, glm::vec3 max, glm::vec4 color);
     WireframeIndex addBox2D(glm::vec3 min, glm::vec3 max, glm::vec4 color);
+    WireframeIndex addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec4 color);
     void updateLine(WireframeIndex index, glm::vec3 start, glm::vec3 end, glm::vec4 color);
     void updateBox(WireframeIndex index, glm::vec3 min, glm::vec3 max, glm::vec4 color);
     void updateBox2D(WireframeIndex index, glm::vec3 min, glm::vec3 max, glm::vec4 color);
+    void updateTriangle(WireframeIndex index, glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec4 color);
 
     void setLineWidth(float lineWidth) { glLineWidth(lineWidth); }
 

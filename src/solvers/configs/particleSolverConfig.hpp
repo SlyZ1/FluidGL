@@ -5,9 +5,9 @@
 
 class IParticleSolverConfig : public ISolverConfig {
 protected:
-    int m_partN = 0;
+    int m_partN = 1000;
     float m_partRadius = 1.5f;
-    float m_dt = 0.05f;
+    float m_dt = 0.03f;
 
 public:
     IParticleSolverConfig() : ISolverConfig() {}
