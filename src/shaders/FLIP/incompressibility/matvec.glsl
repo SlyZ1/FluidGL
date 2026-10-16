@@ -55,7 +55,7 @@ void main(){
     //     s5 = float(isAir[c] == 0u);
     // }
     float s = s0 + s1 + s2 + s3 + s4 + s5;
-    const float eps = 1e-1;
+    const float eps = 1e-10;
     float xCell = x[cell];
     if (s <= 0.0) { Ax[cell] = eps * xCell; return; }
 

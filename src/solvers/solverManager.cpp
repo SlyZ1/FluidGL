@@ -85,6 +85,8 @@ weak_ptr<FlipSolverGPU> SolverManager::instantiate(const FlipSolverGPUConfig& co
         
         r->setPosBuffer(s->getPosBuffer());
         r->setVelBuffer(s->getVelBuffer());
+        r->setNumParticlesBuffer(s->getPartNBuffer());
+        r->setRenderMode(true);
     };
 
     solver->setConfigChangedCallback(updateRendererData);

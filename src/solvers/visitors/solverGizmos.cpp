@@ -51,7 +51,14 @@ void SolverGizmos::visit(FlipSolverGPU& solver) {
     UPDATE_WIREFRAME(Box, m_solverDomainData, newDomainSize, -domainBounds, domainBounds, m_domainColor)
 
     FluidInitializer initializerBounds = config.getFluidInitializer();
-    UPDATE_WIREFRAME(Box, m_solverInitializerData, initializerBounds, initializerBounds.min, initializerBounds.max, m_initializerColor)
+    UPDATE_WIREFRAME(
+        Box, 
+        m_solverInitializerData, 
+        initializerBounds, 
+        initializerBounds.min(config.getPartRadius()), 
+        initializerBounds.max(config.getPartRadius()), 
+        m_initializerColor
+    )
 }
 
 void SolverGizmos::visit(XpbdSolverCPU& solver) {

@@ -47,6 +47,7 @@ ParticleRenderer3D::~ParticleRenderer3D(){
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
+    glDeleteBuffers(1, &m_drawBuffer);
 
     // glDeleteBuffers(1, &gridVBO);
     // glDeleteBuffers(1, &posesVBO);
@@ -86,6 +87,12 @@ void ParticleRenderer3D::initOpenGL(){
     glGenBuffers(1, &m_EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, s_quadIndices.size() * sizeof(GLuint), s_quadIndices.data(), GL_STATIC_DRAW);
+
+    glDeleteBuffers(1, &m_drawBuffer);
+    glGenBuffers(1, &m_drawBuffer);
+    DrawElementsIndirectCommand command = { 6, 0, 0, 0, 0 };
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_drawBuffer);
+    glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawElementsIndirectCommand), &command, GL_DYNAMIC_DRAW);
 
     // glGenTextures(1, &depthTex);
     // glBindTexture(GL_TEXTURE_2D, depthTex);
@@ -128,7 +135,7 @@ void ParticleRenderer3D::initOpenGL(){
     // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurredTex, 0);
 }
 
-void ParticleRenderer3D::render(){
+void ParticleRenderer3D::renderLogic() {
     if (!m_posBuffer || !m_velBuffer) return;
     m_particleShader.use();
 
@@ -157,7 +164,24 @@ void ParticleRenderer3D::render(){
     glDisable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
-    glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, m_numParticles);
+}
+
+void ParticleRenderer3D::render(){
+    renderLogic();
+    if (!m_renderIndirect)
+        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, m_numParticles);
+    else{
+        glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+        glBindBuffer(GL_COPY_READ_BUFFER, *m_partNBuffer);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, m_drawBuffer);
+        glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, sizeof(GLuint), sizeof(GLuint));
+
+        glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
+
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_drawBuffer);
+        glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, (void*)0);
+    }
 
     // cumulativeParticleShader.use();
 

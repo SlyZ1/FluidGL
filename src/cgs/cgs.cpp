@@ -148,25 +148,22 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_scalarBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, initScalars.size() * sizeof(float), initScalars.data(), GL_DYNAMIC_DRAW);
     
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    ShaderProgram::SSBOBarrier();
     
     // clear x
     if (!reuse) m_matOps->copy(m_zeroBuffer, m_xBuffer, m_n);
-
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     // Ad = A * x
     matVec(m_ABuffer, m_xBuffer, m_AdBuffer, m_n, true);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     // r = b - Ad
     m_matOps->saxpy(m_bBuffer, m_AdBuffer, m_rBuffer, m_scalarBuffer, m_n, minusOperations, true);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     computeZ();        
     
     // d = r
     m_matOps->copy(m_rBuffer, m_dBuffer, m_n);
     // compute rTrnew
-    m_matOps->dot(m_rBuffer, m_rBuffer, m_scalarBuffer, m_n, glm::ivec3(RTR_NEW_SCALAR_INDEX, RTR0_VALUE_INDEX, RTR_SCALAR_INDEX));
+    m_matOps->dot(m_rBuffer, m_rBuffer, m_scalarBuffer, m_n, glm::ivec3(RTR_NEW_SCALAR_INDEX, RTR0_SCALAR_INDEX, RTR_SCALAR_INDEX));
+    m_matOps->dot(m_bBuffer, m_bBuffer, m_scalarBuffer, m_n, BTB_SCALAR_INDEX);
     for (int i = 0; i < maxIter; i++)
     {
         // Compute Ad
@@ -233,7 +230,8 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
         // Stop condition + clean scalar
         m_stopProg.use();
         glUniform1i(ShaderProgram::getVarLoc("rTrIndex"), RTR_NEW_SCALAR_INDEX);
-        glUniform1i(ShaderProgram::getVarLoc("rTr0ValueIndex"), RTR0_VALUE_INDEX);
+        glUniform1i(ShaderProgram::getVarLoc("bTbIndex"), BTB_SCALAR_INDEX);
+        glUniform1i(ShaderProgram::getVarLoc("rTr0ValueIndex"), RTR0_SCALAR_INDEX);
         glUniform1i(ShaderProgram::getVarLoc("numScalars"), NUM_SCALARS);
         glUniform1i(ShaderProgram::getVarLoc("numIndirectParams"), (int)m_dispatchParams.size());
         glUniform1f(ShaderProgram::getVarLoc("tol"), tol);
@@ -241,8 +239,5 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_indirectBuffer);
         ShaderProgram::indirectDispatch(m_indirectBuffer, 3 * sizeof(DispatchParams));
     }
-
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-    
     return m_xBuffer;
 }

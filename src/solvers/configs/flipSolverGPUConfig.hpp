@@ -11,17 +11,23 @@ protected:
     float m_flipRatio = 0.9f;
     float m_partPerH = 1;
     float m_densityMultiplier = 5;
-    glm::vec3 m_domainSize = glm::vec3(600.0f, 600.0f, 300.0f);
+    glm::vec3 m_domainSize = glm::vec3(900.0f, 400.0f, 300.0f);
     float m_sigma = 0;
     float m_gravity = 9.81f;
     int m_cgMaxIter = 20;
     float m_cgTol = 1e-3f;
-    FluidInitializer m_fluidInitializer = {};
+    int m_numPushAppart = 2;
+    FluidInitializer m_fluidInitializer = FluidInitializer(
+        glm::vec3(-450, -100, -150),
+        glm::vec3(-150, 100, 150),
+        1.5f
+    );
 
 public:
     FlipSolverGPUConfig() : IParticleSolverConfig() {}
     FlipSolverGPUConfig(int partN, float partRadius, float dt, float flipRatio, float partPerH, float densityMultiplier, glm::vec3 domainSize) 
-    : IParticleSolverConfig(partN, partRadius, dt), m_flipRatio(flipRatio), m_partPerH(partPerH), m_densityMultiplier(densityMultiplier), m_domainSize(domainSize) {}
+    : IParticleSolverConfig(partN, partRadius, dt), m_flipRatio(flipRatio), m_partPerH(partPerH), m_densityMultiplier(densityMultiplier), m_domainSize(domainSize),
+    m_fluidInitializer({ glm::vec3(-450, -100, -150), glm::vec3(-150, 100, 150), m_partRadius }) {}
     ~FlipSolverGPUConfig() override = default;
 
     std::unique_ptr<ISolverConfig> clone() const override; 
@@ -43,6 +49,9 @@ public:
 
     int getCgMaxIter() const { return m_cgMaxIter; }
     void setCgMaxIter(int cgMaxIter) { m_cgMaxIter = cgMaxIter; }
+
+    int getNumPushAppart() const { return m_numPushAppart; }
+    void setNumPushAppart(int numPushAppart) { m_numPushAppart = numPushAppart; }
 
     float getCgTol() const { return m_cgTol; }
     void setCgTol(float cgTol) { m_cgTol = cgTol; }

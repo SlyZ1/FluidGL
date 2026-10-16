@@ -3,8 +3,10 @@ layout(local_size_x = 256) in;
 
 layout(std430, binding = 0) buffer PartPosBuffer { vec4[] partPos; };
 layout(std430, binding = 1) buffer PartVelBuffer { vec4[] partVel; };
+layout(std430, binding = 2) buffer IsDeadBuffer { uint[] isDead; };
+layout(std430, binding = 3) buffer PartNBuffer { uint partN; };
 
-uniform int partN;
+uniform int configPartN;
 
 uniform vec3 minPos;
 uniform vec3 maxPos;
@@ -17,8 +19,16 @@ uniform float obstacleRadius;
 
 void main(){
     int i = int(gl_GlobalInvocationID.x);
-    if (i >= partN) return;
+    if (i >= configPartN) return;
+    if (isDead[i] == 1u) return;
 
+    vec3 pos = partPos[i].xyz;
+    if (pos.y > maxPos.y - 4 * radius){
+        partPos[i].x = maxPos.x + 100;
+        isDead[i] = 1u;
+        atomicAdd(partN, -1u);
+        return;
+    }
 
     // vec3 diff = pos - obstaclePos;
     // float dist2 = dot(diff, diff);
@@ -30,9 +40,6 @@ void main(){
     //     partVel[i] = obstacleVel;
     // }
 
-    vec3 pos = partPos[i].xyz;
     partPos[i] = vec4(clamp(pos, minPos + 1e-2f, maxPos - 1e-2f), 1);
     partVel[i] *= vec4(step(minPos, pos) * (1 - step(maxPos, pos)), 1);
-
-    
 }

@@ -25,6 +25,9 @@ private:
     GLuint m_oldPartPosBuffer = 0;
     GLuint m_oldPartVelBuffer = 0;
 
+    GLuint m_isDeadBuffer = 0;
+    GLuint m_aliveNBuffer = 0;
+
     GLuint m_velXBuffer = 0;
     GLuint m_velYBuffer = 0;
     GLuint m_velZBuffer = 0;
@@ -152,6 +155,7 @@ public:
     void reload() override;
     std::shared_ptr<GLuint> getPosBuffer() const override { return std::make_shared<GLuint>(m_partPosBuffer); };
     std::shared_ptr<GLuint> getVelBuffer() const override { return std::make_shared<GLuint>(m_partVelBuffer); };
+    std::shared_ptr<GLuint> getPartNBuffer() const { return std::make_shared<GLuint>(m_aliveNBuffer); };
 
     void updateObstacle(glm::vec2 pos, glm::vec2 vel, float radius);
 

@@ -2,7 +2,7 @@
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
 layout(std430, binding = 0) readonly buffer IsAirBuffer { uint[] isAir; };
-layout(std430, binding = 1) writeonly buffer PressureBuffer { uint[] pressure; };
+layout(std430, binding = 1) writeonly buffer PressureBuffer { float[] pressure; };
 
 uniform int gridX;
 uniform int gridY;

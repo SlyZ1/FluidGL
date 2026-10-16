@@ -55,12 +55,8 @@ void init(){
     camera->toggleFreeView(false);
     
     FlipSolverGPUConfig flipConfig = FlipSolverGPUConfig();
-    flipConfig.setPartN((int)1e5);
-    flipConfig.setDt(0.05f);
-    flipConfig.setPartPerH(1.0f);
-    flipConfig.setDomainSize(vec3(600, 600, 300));
-    flipConfig.setPartRadius(1.5f);
-    flipConfig.setFluidInitializer({vec3(-100), vec3(100)});
+    flipConfig.setPartPerH(2);
+    flipConfig.setDensityMultiplier(1);
     
     solverManager = make_shared<SolverManager>(camera);
     weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfig);

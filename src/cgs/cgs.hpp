@@ -14,7 +14,8 @@ private:
     int RTR_SCALAR_INDEX = 0;
     int RTR_NEW_SCALAR_INDEX = 1;
     static constexpr int DTAD_SCALAR_INDEX = 2;
-    static constexpr int RTR0_VALUE_INDEX = 3;
+    static constexpr int RTR0_SCALAR_INDEX = 3;
+    static constexpr int BTB_SCALAR_INDEX = 4;
     static constexpr int MINUS_ONE_SCALAR_INDEX = 9;
     static constexpr int NUM_SCALARS = 10;
 

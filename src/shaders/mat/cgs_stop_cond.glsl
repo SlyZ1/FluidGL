@@ -9,6 +9,7 @@ layout(std430, binding = 1) writeonly buffer IndirectBuffer {
 };
 
 uniform int rTrIndex;
+uniform int bTbIndex;
 uniform int rTr0ValueIndex;
 uniform int numScalars;
 uniform int numIndirectParams;
@@ -16,13 +17,15 @@ uniform float tol;
 
 void main(){
     float rTr = scalars[rTrIndex];
-    if (rTr < max(tol * scalars[rTr0ValueIndex], 1e-2)){
+    float target = max(tol * tol * scalars[bTbIndex], 1e-30);
+
+    if (!(rTr > target)){
         for(int i = 0; i < 3 * numIndirectParams; i++) {
             data[i] = 0;
         }
     }
     for(int i = 0; i < numScalars - 1; i++) {
-        if (i == rTrIndex || i == rTr0ValueIndex) continue;
+        if (i == rTrIndex || i == bTbIndex) continue;
         scalars[i] = 0;
     }
 }

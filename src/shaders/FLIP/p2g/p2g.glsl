@@ -12,8 +12,8 @@ layout(std430, binding = 7) writeonly buffer VelZBuffer { float[] velZ; };
 layout(std430, binding = 8) writeonly buffer IsAirBuffer { uint[] isAir; };
 layout(std430, binding = 9) readonly buffer FirstCellParticleBuffer { uint[] firstCellParticle; };
 layout(std430, binding = 10) readonly buffer CellParticleIdsBuffer { uint[] cellParticleIds; };
+layout(std430, binding = 11) readonly buffer PartNBuffer { int partN; };
 
-uniform int partN;
 uniform int gridX;
 uniform int gridY;
 uniform int gridZ;
@@ -93,6 +93,10 @@ void main(){
             }
         }
     }
+
+    if (x == 0) currentVelX = 0.0;
+    if (y == 0) currentVelY = 0.0;
+    if (z == 0) currentVelZ = 0.0;
     
     rX[cellX] = currentRX;
     rY[cellY] = currentRY;
@@ -100,4 +104,8 @@ void main(){
     velX[cellX] = currentVelX;
     velY[cellY] = currentVelY;
     velZ[cellZ] = currentVelZ;
+
+    if (x == gridX) velX[cellX+1] = 0;
+    if (y == gridY) velY[cellY+1] = 0;
+    if (z == gridZ) velZ[cellZ+1] = 0;
 }

@@ -5,8 +5,8 @@ layout(std430, binding = 0) readonly buffer FirstCellParticleBuffer { uint[] fir
 layout(std430, binding = 1) readonly buffer CellParticleIdsBuffer { uint[] cellParticleIds; };
 layout(std430, binding = 2) readonly buffer OldPartPosBuffer { vec4[] oldPartPos; };
 layout(std430, binding = 3) writeonly buffer PartPosBuffer { vec4[] partPos; };
+layout(std430, binding = 4) readonly buffer PartNBuffer { uint partN; };
 
-uniform int partN;
 uniform int gridX;
 uniform int gridY;
 uniform int gridZ;

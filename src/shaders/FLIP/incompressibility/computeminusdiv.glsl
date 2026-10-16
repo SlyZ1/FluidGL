@@ -14,6 +14,7 @@ uniform int gridZ;
 uniform float h;
 uniform float density;
 uniform float densityMultiplier;
+uniform float dt;
 
 #pragma include "../utils.glsl"
 

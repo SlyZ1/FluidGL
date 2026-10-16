@@ -7,8 +7,8 @@ layout(std430, binding = 4) readonly buffer RZBuffer { float[] rZ; };
 layout(std430, binding = 5) buffer VelXBuffer { float[] velX; };
 layout(std430, binding = 6) buffer VelYBuffer { float[] velY; };
 layout(std430, binding = 7) buffer VelZBuffer { float[] velZ; };
+layout(std430, binding = 11) readonly buffer PartNBuffer { int partN; };
 
-uniform int partN;
 uniform int gridX;
 uniform int gridY;
 uniform int gridZ;
