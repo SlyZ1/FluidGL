@@ -11,14 +11,20 @@ class_name MapLoader
 @export var skate: Node3D
 
 static var s_speed: Vector3 = Vector3.ZERO
+static var s_angle: float = 0
 
 var _spawned_sections: Array[Section] = []
 # Section "fantome" pour le prochain spawn
 var _next_spawn: Section
 
 func _ready() -> void:
-	
 	_next_spawn = _new_section(Vector3.ZERO)
+	
+static func right() -> Vector3:
+	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.RIGHT
+	
+static func up() -> Vector3:
+	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.UP
 	
 func _new_section(snap_to: Vector3) -> Section:
 	var new_section: Section = sections[0].instantiate() as Section
@@ -55,6 +61,7 @@ func _control_speed(delta: float):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	s_angle = angle
 	container.rotation_degrees.z = angle
 	_control_spawn()
 	_control_speed(delta)

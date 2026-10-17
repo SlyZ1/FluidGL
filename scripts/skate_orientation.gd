@@ -1,50 +1,140 @@
 extends MeshInstance3D
 
-@export var ray_back: RayCast3D
-@export var ray_front: RayCast3D
+@export var capteur_back: ShapeCast3D
+@export var capteur_front: ShapeCast3D
 @export_range(0.5, 2) var ground_offset: float
 
-var velocity_y: float = 0
-var previous_position: Vector3 = Vector3.ZERO
-var grounded: bool = false
+var velocity_back: float = 0
+var velocity_front: float = 0
+var grounded_back: bool = false
+var grounded_front: bool = false
+	
+func _limit_rotation(direction: Vector3) -> Vector3:
+	var up: Vector3 = MapLoader.up()
 
-func _ready() -> void:
-	previous_position = global_position
+	var horizontal: Vector3 = direction - up * direction.dot(up)
+	var longueur_h: float = horizontal.length()
+	if longueur_h < 0.001:
+		return direction
+
+	var angle: float = atan2(direction.dot(up), longueur_h)
+	var max_rad: float = deg_to_rad(30)
+	if abs(angle) <= max_rad:
+		return direction
+
+	angle = clamp(angle, -max_rad, max_rad)
+	return (horizontal / longueur_h * cos(angle) + up * sin(angle)) * direction.length()
+
+func apply_impulse(impulse_back: float, impulse_front: float) -> void:
+	velocity_back += impulse_back
+	velocity_front += impulse_front
+	
+func apply_rotation(rot: Basis) -> void:
+	var p_back_offset: Vector3 = capteur_back.global_position - global_position
+	var p_front_offset: Vector3 = capteur_front.global_position - global_position
+	p_back_offset = rot * p_back_offset
+	p_front_offset = rot * p_front_offset
+	set_pos(p_back_offset + global_position, p_front_offset + global_position)
 
 func _integrate(dt: float) -> void:
-	#if not grounded: velocity_y += -20 * dt
-	global_position += Vector3.UP * velocity_y * dt
+	var acc: float = -20 * dt
+	if not grounded_back: velocity_back += acc
+	if not grounded_front: velocity_front += acc
+		
+	var p_back: Vector3 = capteur_back.global_position
+	var p_front: Vector3 = capteur_front.global_position
+	var ecart: Vector3 = p_front - p_back
+	var longueur_h: float = Vector2(ecart.x, ecart.z).length()
+	if longueur_h < 0.001:
+		return
+		
+	var v_centre: float = (velocity_back + velocity_front) / 2.0
+	var omega: float = (velocity_front - velocity_back) / longueur_h
 	
-func _grounded_logic(one_collide: bool, target_position: Vector3) -> void:
-	if (one_collide and global_position.distance_to(target_position) <= ground_offset): 
-			if not grounded: velocity_y = 0
-			grounded = true
-	elif not one_collide: grounded = false
+	var centre: Vector3 = (p_back + p_front) / 2.0
+	var axe: Vector3 = ecart.cross(Vector3.UP)
+	if axe.length() > 0.001:
+		var rot := Basis(axe.normalized(), omega * dt)
+		global_basis = rot * global_basis
+		global_position = centre + rot * (global_position - centre)
+
+	global_position += Vector3.UP * v_centre * dt
+	
+	p_back = capteur_back.global_position
+	p_front = capteur_front.global_position
+	var d: Vector3 = p_front - p_back
+	var d_lim: Vector3 = _limit_rotation(d)
+	if not d.is_equal_approx(d_lim):
+		var milieu: Vector3 = (p_back + p_front) / 2.0
+		set_pos(milieu - d_lim / 2.0, milieu + d_lim / 2.0)
+		velocity_back = v_centre
+		velocity_front = v_centre
+	
+func set_pos(back: Vector3, front: Vector3, normal: Vector3 = Vector3.UP) -> void:
+	var direction: Vector3 = _limit_rotation(front - back)
+	if direction.length() < 0.001:
+		return
+
+	var echelle: Vector3 = global_basis.get_scale()
+	var dir_locale: Vector3 = (capteur_front.position - capteur_back.position).normalized()
+
+	var rot: Basis = Basis.looking_at(direction.normalized(), normal) \
+			* Basis.looking_at(dir_locale, Vector3.UP).inverse()
+	global_basis = rot * Basis.from_scale(echelle)
+
+	var milieu_local: Vector3 = (capteur_front.position + capteur_back.position) / 2.0
+	global_position = (back + front) / 2.0 - global_basis * milieu_local
+			
+func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
+	capteur.force_shapecast_update()
+	if not capteur.is_colliding():
+		return -INF
+	var rayon: float = (capteur.shape as SphereShape3D).radius * capteur.global_basis.get_scale().x
+	var g: Vector3 = capteur.get_collision_point(0)
+	var n: Vector3 = capteur.get_collision_normal(0)
+	if n.y < 0.1:
+		return -INF
+	return g.y + (rayon - n.x * (p.x - g.x) - n.z * (p.z - g.z)) / n.y
 
 func _ground_snap(dt: float) -> void:
-	var both_collide: bool = ray_back.is_colliding() and ray_front.is_colliding()
-	var one_collide: bool = ray_back.is_colliding() or ray_front.is_colliding()
+	var p_back: Vector3 = capteur_back.global_position
+	var p_front: Vector3 = capteur_front.global_position
+	var corrige: bool = false
 	
-	var target_position: Vector3 = Vector3.ZERO
-	if one_collide:
-		var point_back: Vector3 = ray_back.get_collision_point() if ray_back.is_colliding() else ray_front.get_collision_point()
-		var point_front: Vector3 = ray_front.get_collision_point() if ray_front.is_colliding() else ray_back.get_collision_point() 
-		var normal: Vector3 = (ray_back.get_collision_normal() + ray_front.get_collision_normal()) / 2
-		var direction: Vector3 = point_back - point_front 
-		if direction.length() < 0.01: direction = Vector3.RIGHT
-		
-		var scale: Vector3 = global_basis.get_scale()
-		global_basis = Basis.looking_at(direction.normalized(), normal) * Basis.from_scale(scale)
-		target_position = (point_back + point_front).y / 2 * Vector3.UP
-		if grounded: 
-			var theta: float = acos(normal.dot(-MapLoader.s_speed.normalized()))
-			velocity_y = MapLoader.s_speed.length() / tan(theta)
-			velocity_y = clamp(velocity_y, 0, 100)
-			global_position = target_position + ground_offset * normal
+	capteur_back.force_shapecast_update()
+	capteur_front.force_shapecast_update()
 	
-	_grounded_logic(one_collide, target_position)
+	var normal: Vector3 = Vector3.ZERO
+
+	var y_back: float = _corriger_roue(capteur_back, p_back)
+	grounded_back = p_back.y <= y_back + 0.01
+	if grounded_back:
+		p_back.y = y_back
+		corrige = true
+		var n_back: Vector3 = capteur_back.get_collision_normal(0)
+		normal += n_back
+		var theta_back: float = acos(n_back.dot(-MapLoader.s_speed.normalized()))
+		velocity_back = MapLoader.s_speed.length() / tan(theta_back)
+		velocity_back = max(velocity_back, 0.0)
+
+	var y_front: float = _corriger_roue(capteur_front, p_front)
+	grounded_front = p_front.y <= y_front + 0.01
+	if grounded_front:
+		p_front.y = y_front
+		corrige = true
+		var n_front: Vector3 = capteur_front.get_collision_normal(0)
+		normal += n_front
+		var theta_front: float = acos(n_front.dot(-MapLoader.s_speed.normalized()))
+		velocity_front = MapLoader.s_speed.length() / tan(theta_front)
+		velocity_front = max(velocity_front, 0.0)
+
+	if corrige:
+		set_pos(p_back, p_front, normal.normalized())
 
 func _process(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
-	previous_position = global_position
+	if Input.is_action_just_pressed("F"):
+		apply_rotation(Basis.from_euler(Vector3(0,deg_to_rad(45),0)))
+	if Input.is_action_just_pressed("H"):
+		velocity_back += 10
