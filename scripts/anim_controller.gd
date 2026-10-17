@@ -9,19 +9,25 @@ class BasicTrick:
 		q = Quaternion.IDENTITY
 
 var active_tricks: Array[BasicTrick]
+var current_trick_duration: float = 0
+
+var parent: Node3D
 
 func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
 	TrickManager.trick_ended.connect(_on_trick_end)
+	parent = get_parent()
 
 func _process(delta: float) -> void:
 	var current_rotation: Quaternion = Quaternion.IDENTITY
 	for trick in active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
-	
-	#get_parent().rotation = (current_rotation.get_euler())
-	get_parent().set_rot(Basis(current_rotation))
+	if ((TrickManager.get_time_left() > 0.5 * current_trick_duration) 
+		and parent.is_mesh_colliding() 
+		and parent.velocity_back + parent.velocity_front < 0): 
+		MapLoader.instance.stop()
+	parent.set_rot(Basis(current_rotation))
 
 func tween_axis_angle(object: Object, property: String, axis: Vector3, target_angle: float, duration: float, curve: Curve = null) -> Tween:
 	var normalized_axis = axis.normalized()
@@ -39,14 +45,13 @@ func tween_axis_angle(object: Object, property: String, axis: Vector3, target_an
 func _on_trick(_name: String, _accuracy: float) -> void:
 	var _anim := TrickManager.get_resource(_name)
 	var _duration := TrickManager.get_trick_duration(_name)
+	current_trick_duration = _duration
 	
-	if _anim.reset_velocities: get_parent().reset_velocities()
+	if _anim.reset_velocities: parent.reset_velocities()
 	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
 
 	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
-	if already_active != -1:
-		pass # TODO
-	elif abs(_anim.rot_angle) > 0.001:
+	if abs(_anim.rot_angle) > 0.001:
 		var trick := BasicTrick.new(_name)
 		print(_name)
 		active_tricks.push_back(trick)

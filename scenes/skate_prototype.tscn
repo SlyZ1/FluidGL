@@ -7,6 +7,16 @@
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate.tscn" id="4_wc5y2"]
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
+size = Vector3(2.0212402, 1, 5.1572266)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xi3o1"]
+albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
+metallic_specular = 0.51
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_wc5y2"]
+data = PackedVector3Array(-1.0106, 0.5, 2.5786, 1.0106, 0.5, 2.5786, -1.0106, -0.5, 2.5786, 1.0106, 0.5, 2.5786, 1.0106, -0.5, 2.5786, -1.0106, -0.5, 2.5786, 1.0106, 0.5, -2.5786, -1.0106, 0.5, -2.5786, 1.0106, -0.5, -2.5786, -1.0106, 0.5, -2.5786, -1.0106, -0.5, -2.5786, 1.0106, -0.5, -2.5786, 1.0106, 0.5, 2.5786, 1.0106, 0.5, -2.5786, 1.0106, -0.5, 2.5786, 1.0106, 0.5, -2.5786, 1.0106, -0.5, -2.5786, 1.0106, -0.5, 2.5786, -1.0106, 0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, -0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, -0.5, 2.5786, -1.0106, -0.5, -2.5786, 1.0106, 0.5, 2.5786, -1.0106, 0.5, 2.5786, 1.0106, 0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, 0.5, -2.5786, 1.0106, 0.5, -2.5786, -1.0106, -0.5, 2.5786, 1.0106, -0.5, 2.5786, -1.0106, -0.5, -2.5786, 1.0106, -0.5, 2.5786, 1.0106, -0.5, -2.5786, -1.0106, -0.5, -2.5786)
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_da84n"]
 sky_horizon_color = Color(0.5764706, 0.6666667, 0.70980394, 1)
 ground_bottom_color = Color(0.544, 0.60959995, 0.64, 1)
@@ -19,15 +29,31 @@ sky_material = SubResource("ProceduralSkyMaterial_da84n")
 background_mode = 2
 sky = SubResource("Sky_q1d6x")
 
-[node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container")]
+[node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container", "skate", "ragdoll")]
 script = ExtResource("1_2j8q1")
 spawn_distance = 80
 speed = 20.0
 container = NodePath("GroundContainer")
 sections = Array[PackedScene]([ExtResource("2_wc5y2"), ExtResource("4_vvnha")])
+skate = NodePath("Skate")
+ragdoll = NodePath("Ragdoll")
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.160342, 0)
+
+[node name="Ragdoll" type="RigidBody3D" parent="." unique_id=1062707097]
+transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.160342, 0)
+visible = false
+continuous_cd = true
+
+[node name="Skate" type="MeshInstance3D" parent="Ragdoll" unique_id=515265970]
+transform = Transform3D(1, 0, -3.991814e-15, 0, 1, 0, 3.991814e-15, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_qn4bn")
+surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ragdoll" unique_id=1513380359]
+transform = Transform3D(1, 0, -3.991814e-15, 0, 1, 0, 3.991814e-15, 0, 1, 0, 0, 0)
+shape = SubResource("ConcavePolygonShape3D_wc5y2")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=483684695 node_paths=PackedStringArray("target")]
 transform = Transform3D(0.6203616, 0.49924627, -0.60490054, 0, 0.7712461, 0.6365372, 0.78431594, -0.39488325, 0.47845143, -6.0490055, 7.4649754, 4.7845144)

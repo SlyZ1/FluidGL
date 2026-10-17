@@ -9,6 +9,13 @@ class_name MapLoader
 @export var container: Node3D
 @export var sections: Array[PackedScene]
 @export var skate: Node3D
+@export var ragdoll: RigidBody3D
+
+func set_active(node: Node3D, active: bool) -> void:
+	node.visible = active
+	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
+
+var is_running: bool = true
 
 static var s_speed: Vector3 = Vector3.ZERO
 static var s_angle: float = 0
@@ -17,8 +24,32 @@ var _spawned_sections: Array[Section] = []
 # Section "fantome" pour le prochain spawn
 var _next_spawn: Section
 
+static var instance: MapLoader
+
+func _enter_tree() -> void:
+	if instance and instance != self:
+		push_warning("Plusieurs instances de MapLoader dans la scène")
+	instance = self
+
+func _exit_tree() -> void:
+	if instance == self:
+		instance = null
+
 func _ready() -> void:
 	_next_spawn = _new_section(Vector3.ZERO)
+	set_active(ragdoll, false)
+	set_active(skate, true)
+	
+func stop() -> void:
+	is_running = false
+	ragdoll.global_transform = skate.global_transform
+	set_active(ragdoll, true)
+	ragdoll.apply_central_impulse(skate.get_normal() * 10 + Vector3.FORWARD * 5)
+	var axe := Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
+	ragdoll.apply_torque_impulse(axe * 10)
+	set_active(skate, false)
+	
+	create_tween().tween_property(self, "speed", 0.0, 2.0)
 	
 static func right() -> Vector3:
 	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.RIGHT

@@ -13,11 +13,15 @@ size = Vector3(2.0212402, 1, 5.1572266)
 albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
 metallic_specular = 0.51
 
-[node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "mesh_instance")]
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
+size = Vector3(1.575, 0.71, 4.605)
+
+[node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "mesh_instance")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 script = ExtResource("1_sgunh")
 capteur_back = NodePath("CapteurBack")
 capteur_front = NodePath("CapteurFront")
+capteur_mesh = NodePath("Skate/ShapeCast3D")
 mesh_instance = NodePath("Skate")
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
@@ -35,6 +39,10 @@ target_position = Vector3(0, 0, 0)
 transform = Transform3D(0.4449999, 0, 0, 0, 0.44499996, 0, 0, 0, 0.4449999, 0, 0, 0)
 mesh = SubResource("BoxMesh_qn4bn")
 surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
+
+[node name="ShapeCast3D" type="ShapeCast3D" parent="Skate" unique_id=640768866]
+shape = SubResource("BoxShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
 
 [node name="AnimController" type="Node" parent="." unique_id=671014669]
 script = ExtResource("2_2wimw")

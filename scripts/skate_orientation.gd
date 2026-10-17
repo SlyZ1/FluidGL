@@ -2,12 +2,23 @@ extends Node3D
 
 @export var capteur_back: ShapeCast3D
 @export var capteur_front: ShapeCast3D
+@export var capteur_mesh: ShapeCast3D
 @export var mesh_instance: MeshInstance3D
+
+signal on_fall()
+signal on_grounded()
+signal on_jump()
 
 var velocity_back: float = 0
 var velocity_front: float = 0
 var grounded_back: bool = false
 var grounded_front: bool = false
+var previous_grounded_back: bool = false
+var previous_grounded_front: bool = false
+var is_jumping: bool = false
+
+var impulsed_timer: float = 0
+var fall_timer: float = 0
 	
 func _limit_rotation(direction: Vector3) -> Vector3:
 	var up: Vector3 = MapLoader.up()
@@ -19,15 +30,16 @@ func _limit_rotation(direction: Vector3) -> Vector3:
 
 	var angle: float = atan2(direction.dot(up), longueur_h)
 	var max_rad: float = deg_to_rad(30)
-	if angle >= -max_rad && angle <= 0:
+	if angle >= 0 && angle <= max_rad:
 		return direction
 
-	angle = clamp(angle, -max_rad, max_rad)
+	angle = clamp(angle, -0, max_rad)
 	return (horizontal / longueur_h * cos(angle) + up * sin(angle)) * direction.length()
 
 func apply_impulse(impulse_back: float, impulse_front: float) -> void:
 	velocity_back += impulse_back
 	velocity_front += impulse_front
+	impulsed_timer = 0.1
 	
 func apply_rot(rot: Basis) -> void:
 	var p_back_offset: Vector3 = capteur_back.global_position - global_position
@@ -41,6 +53,22 @@ func set_rot(rot: Basis) -> void:
 	
 func is_grounded() -> bool:
 	return grounded_back and grounded_front
+	
+func is_colliding() -> bool:
+	return capteur_back.is_colliding() and capteur_front.is_colliding()
+	
+func is_mesh_colliding() -> bool:
+	return capteur_mesh.is_colliding()
+	
+func get_normal() -> Vector3:
+	var normal: Vector3 = Vector3.ZERO
+	if grounded_back:
+		var n_back: Vector3 = capteur_back.get_collision_normal(0)
+		normal += n_back
+	if grounded_front:
+		var n_front: Vector3 = capteur_front.get_collision_normal(0)
+		normal += n_front
+	return normal.normalized()
 	
 func reset_velocities() -> void:
 	velocity_back = 0
@@ -144,7 +172,27 @@ func _ground_snap(dt: float) -> void:
 func _process(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
-	#if Input.is_action_just_pressed("F"):
-		#apply_rotation(Basis.from_euler(Vector3(0,deg_to_rad(45),0)))
-	#if Input.is_action_just_pressed("H"):
-		#velocity_back += 10
+	if (grounded_back and grounded_front) and (not previous_grounded_back or not previous_grounded_front):
+		print("Grounded")
+		on_grounded.emit()
+		
+	if (not grounded_back and not grounded_front) and (previous_grounded_back or previous_grounded_front):
+		print(fall_timer)
+		if impulsed_timer > 0: 
+			print("On jump")
+			is_jumping = true
+			on_jump.emit()
+		elif fall_timer <= 0:
+			print("On fall") 
+			on_fall.emit()
+	else:
+		fall_timer = 0.5
+		
+	if grounded_back or grounded_front: is_jumping = false
+	
+	previous_grounded_back = grounded_back
+	previous_grounded_front = grounded_front
+	impulsed_timer -= dt
+	fall_timer -= dt
+	
+	if Input.is_action_just_pressed("B"): MapLoader.instance.stop()

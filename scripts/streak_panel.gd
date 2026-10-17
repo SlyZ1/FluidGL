@@ -28,12 +28,14 @@ func points_popup(points: int) -> void:
 func _on_trick_ended():
 	pass
 
-func _on_xp_changed(_new_val: float, _increased_by: int):
+func _on_xp_changed(_new_val: float, _increased_by: int, _total_points: int):
 	points_popup(_increased_by)
 	
 	create_tween().tween_property($Background/XPSlot/XPBar, "scale:x", _new_val, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	var tween = create_tween()
 	tween.tween_property($Background, "scale", Vector2(1.1, 1.1), 0.1).set_trans(Tween.TRANS_QUAD)
+	
+	$Background/Label.text = "%.d" % _total_points
 
 	await tween.finished
 	create_tween().tween_property($Background, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD)

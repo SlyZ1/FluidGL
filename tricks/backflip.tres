@@ -7,5 +7,6 @@
 script = ExtResource("1_vlq55")
 rot_axis = Vector3(1, 0, 0)
 rot_angle = -360.0
+reset_velocities = false
 curve = ExtResource("1_dy5s1")
 metadata/_custom_type_script = "uid://u4ge0gstrtnt"
