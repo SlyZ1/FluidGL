@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bykj6c41eouqh"]
 
-[ext_resource type="Script" uid="uid://bsk5i0bpxbhd4" path="res://streak_panel.gd" id="1_ymcwo"]
+[ext_resource type="Script" uid="uid://bsk5i0bpxbhd4" path="res://scripts/streak_panel.gd" id="1_ymcwo"]
 
 [node name="StreakPanel" type="Control" unique_id=199057457]
 layout_mode = 3
