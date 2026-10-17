@@ -39,7 +39,7 @@ func _ready() -> void:
 	_next_spawn = _new_section(Vector3.ZERO)
 	set_active(ragdoll, false)
 	set_active(skate, true)
-	
+
 func stop() -> void:
 	is_running = false
 	ragdoll.global_transform = skate.global_transform

@@ -22,7 +22,9 @@ var _is_grounded: bool = false
 
 var impulsed_timer: float = 0
 var fall_timer: float = 0
-	
+
+var current_rail: Path3D = null
+
 func _limit_rotation(direction: Vector3) -> Vector3:
 	var up: Vector3 = MapLoader.up()
 
@@ -72,7 +74,7 @@ func get_normal() -> Vector3:
 		var n_front: Vector3 = capteur_front.get_collision_normal(0)
 		normal += n_front
 	return normal.normalized()
-	
+
 func reset_velocities() -> void:
 	velocity_back = 0
 	velocity_front = 0
@@ -88,7 +90,7 @@ func _integrate(dt: float) -> void:
 	var longueur_h: float = Vector2(ecart.x, ecart.z).length()
 	if longueur_h < 0.001:
 		return
-		
+
 	var v_centre: float = (velocity_back + velocity_front) / 2.0
 	var omega: float = (velocity_front - velocity_back) / longueur_h
 	
@@ -171,10 +173,57 @@ func _ground_snap(dt: float) -> void:
 
 	if corrige:
 		set_pos(p_back, p_front, normal.normalized())
+		
+func touches_path(which: Path3D, threshold: float) -> bool:
+	var local_pos = which.to_local(global_position)
+	var closest_point = which.curve.get_closest_point(local_pos)
+	var distance = local_pos.distance_to(closest_point)
+	return distance <= threshold
+
+func _find_rail() -> void:
+	current_rail = null
+	for sec in MapLoader.instance._spawned_sections:
+		for rl in sec.rails:
+			if touches_path(rl, 1):
+				current_rail = rl
+
+func get_zy_from_x(target_x: float) -> Vector2:
+	if not current_rail: return Vector2.ZERO
+	current_rail.curve.bake_interval = 0.1
+	
+	var tf = current_rail.global_transform
+	var pts = current_rail.curve.get_baked_points()
+	if pts.is_empty(): return Vector2.ZERO
+
+	for i in range(pts.size()):
+		pts[i] = tf * pts[i]
+		
+	var asc = pts[0].x <= pts[-1].x
+	var low = 0
+	var high = pts.size() - 1
+	
+	while low <= high:
+		var mid = (low + high) >> 1
+		if (pts[mid].x < target_x) == asc: low = mid + 1
+		else: high = mid - 1
+		
+	var idx = clamp(low, 1, pts.size() - 1)
+	var p1 = pts[idx - 1]
+	var p2 = pts[idx]
+	var t = 0.0 if p1.x == p2.x else (target_x - p1.x) / (p2.x - p1.x)
+	
+	return Vector2(lerp(p1.z, p2.z, t), lerp(p1.y, p2.y, t)) # Returns global Vector2(Z, Y)
 
 func _process(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
+
+	_find_rail()
+	if current_rail != null:
+		print("rail !")
+		var zy = get_zy_from_x(global_position.x)
+		global_position.z = zy.x
+		global_position.y = zy.y
 	
 	if capteur_ground.is_colliding():
 		if !_is_grounded: 
