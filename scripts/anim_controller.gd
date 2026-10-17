@@ -53,7 +53,6 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
 	if abs(_anim.rot_angle) > 0.001:
 		var trick := BasicTrick.new(_name)
-		print(_name)
 		active_tricks.push_back(trick)
 		tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 
