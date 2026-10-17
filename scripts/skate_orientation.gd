@@ -1,8 +1,8 @@
-extends MeshInstance3D
+extends Node3D
 
 @export var capteur_back: ShapeCast3D
 @export var capteur_front: ShapeCast3D
-@export_range(0.5, 2) var ground_offset: float
+@export var mesh_instance: MeshInstance3D
 
 var velocity_back: float = 0
 var velocity_front: float = 0
@@ -19,7 +19,7 @@ func _limit_rotation(direction: Vector3) -> Vector3:
 
 	var angle: float = atan2(direction.dot(up), longueur_h)
 	var max_rad: float = deg_to_rad(30)
-	if abs(angle) <= max_rad:
+	if angle >= -max_rad && angle <= 0:
 		return direction
 
 	angle = clamp(angle, -max_rad, max_rad)
@@ -29,12 +29,22 @@ func apply_impulse(impulse_back: float, impulse_front: float) -> void:
 	velocity_back += impulse_back
 	velocity_front += impulse_front
 	
-func apply_rotation(rot: Basis) -> void:
+func apply_rot(rot: Basis) -> void:
 	var p_back_offset: Vector3 = capteur_back.global_position - global_position
 	var p_front_offset: Vector3 = capteur_front.global_position - global_position
 	p_back_offset = rot * p_back_offset
 	p_front_offset = rot * p_front_offset
 	set_pos(p_back_offset + global_position, p_front_offset + global_position)
+		
+func set_rot(rot: Basis) -> void:
+	mesh_instance.basis = rot
+	
+func is_grounded() -> bool:
+	return grounded_back and grounded_front
+	
+func reset_velocities() -> void:
+	velocity_back = 0
+	velocity_front = 0
 
 func _integrate(dt: float) -> void:
 	var acc: float = -20 * dt
@@ -134,7 +144,7 @@ func _ground_snap(dt: float) -> void:
 func _process(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
-	if Input.is_action_just_pressed("F"):
-		apply_rotation(Basis.from_euler(Vector3(0,deg_to_rad(45),0)))
-	if Input.is_action_just_pressed("H"):
-		velocity_back += 10
+	#if Input.is_action_just_pressed("F"):
+		#apply_rotation(Basis.from_euler(Vector3(0,deg_to_rad(45),0)))
+	#if Input.is_action_just_pressed("H"):
+		#velocity_back += 10

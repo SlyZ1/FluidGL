@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_fgb86")
 rot_axis = Vector3(1, 0, 0)
-impulse_front = 1.0
+impulse_front = 10.0
 metadata/_custom_type_script = "uid://u4ge0gstrtnt"

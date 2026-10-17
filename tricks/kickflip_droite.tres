@@ -2,8 +2,13 @@
 
 [ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_dy3i5"]
 
+[sub_resource type="Curve" id="Curve_dy3i5"]
+_data = [Vector2(0, 0), 0.0, 2.5064828, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [resource]
 script = ExtResource("1_dy3i5")
 rot_axis = Vector3(0, 0, 1)
-rot_angle = -360.0
+rot_angle = 360.0
+curve = SubResource("Curve_dy3i5")
 metadata/_custom_type_script = "uid://u4ge0gstrtnt"

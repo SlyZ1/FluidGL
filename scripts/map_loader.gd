@@ -27,7 +27,7 @@ static func up() -> Vector3:
 	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.UP
 	
 func _new_section(snap_to: Vector3) -> Section:
-	var new_section: Section = sections[0].instantiate() as Section
+	var new_section: Section = sections.pick_random().instantiate() as Section
 	container.add_child(new_section)
 	new_section.snap(snap_to)
 	new_section.visible = false

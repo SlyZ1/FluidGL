@@ -15,13 +15,13 @@ func _ready() -> void:
 	TrickManager.trick_ended.connect(_on_trick_end)
 
 func _process(delta: float) -> void:
-	var current_rotation: Quaternion = Quaternion(Vector3(0, 1, 0), -PI / 2)
+	var current_rotation: Quaternion = Quaternion.IDENTITY
 	for trick in active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
 	
 	#get_parent().rotation = (current_rotation.get_euler())
-	get_parent().apply_rotation(Basis(current_rotation))
+	get_parent().set_rot(Basis(current_rotation))
 
 func tween_axis_angle(object: Object, property: String, axis: Vector3, target_angle: float, duration: float, curve: Curve = null) -> Tween:
 	var normalized_axis = axis.normalized()
@@ -40,6 +40,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	var _anim := TrickManager.get_resource(_name)
 	var _duration := TrickManager.get_trick_duration(_name)
 	
+	if _anim.reset_velocities: get_parent().reset_velocities()
 	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
 
 	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
@@ -49,7 +50,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 		var trick := BasicTrick.new(_name)
 		print(_name)
 		active_tricks.push_back(trick)
-		tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _duration, _anim.curve)
+		tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 
 func _on_trick_end() -> void:
 	active_tricks.clear()
