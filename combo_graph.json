@@ -1,0 +1,41 @@
+{
+	"initial" : ["mauvais_saut", "debut_saut"],
+	"states" : [
+		{
+			"name" : "mauvais_saut",
+			"input" : "fhyb",
+			"duration" : 0.8,
+			"next" : ["kickflip_gauche", "kickflip_droite"]
+		},
+		{
+			"name" : "debut_saut",
+			"input" : "Fhyb",
+			"duration" : 0.4,
+			"next" : ["instable_saut"]
+		},
+		{
+			"name" : "instable_saut",
+			"input" : "fhyb",
+			"duration" : 0.9,
+			"next" : ["saut"]
+		},
+		{
+			"name" : "saut",
+			"input" : "fHyb",
+			"duration" : 1.4,
+			"next" : ["kickflip_gauche", "kickflip_droite"]
+		},
+		{
+			"name" : "kickflip_gauche",
+			"input" : "fhYb",
+			"duration" : 0.8,
+			"next" : []
+		},
+		{
+			"name" : "kickflip_droite",
+			"input" : "fhyB",
+			"duration" : 0.8,
+			"next" : []
+		}
+	]
+}

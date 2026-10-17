@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://bykj6c41eouqh"]
+
+[ext_resource type="Script" uid="uid://bsk5i0bpxbhd4" path="res://streak_panel.gd" id="1_ymcwo"]
+
+[node name="StreakPanel" type="Control" unique_id=199057457]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_right = -956.0
+offset_bottom = -291.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ymcwo")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2078055570]
+layout_mode = 0
+offset_right = 196.0
+offset_bottom = 356.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+color = Color(0.4955091, 0.4955091, 0.4955091, 0.5647059)
+
+[node name="Tier" type="Label" parent="Background" unique_id=40381478]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 20.0
+offset_right = 187.0
+offset_bottom = 107.0
+theme_override_constants/outline_size = 16
+theme_override_font_sizes/font_size = 63
+text = "D"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="XPSlot" type="ColorRect" parent="Background" unique_id=1041218188]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 118.0
+offset_right = 183.0
+offset_bottom = 140.0
+color = Color(0.60933006, 0.6093301, 0.60933006, 1)
+
+[node name="XPBar" type="ColorRect" parent="Background/XPSlot" unique_id=474760305]
+layout_mode = 0
+offset_right = 169.0
+offset_bottom = 22.0
+scale = Vector2(1e-05, 1)
+color = Color(0.5371229, 0.8142185, 1, 1)
