@@ -3,6 +3,7 @@ extends Node3D
 @export var capteur_back: ShapeCast3D
 @export var capteur_front: ShapeCast3D
 @export var capteur_mesh: ShapeCast3D
+@export var capteur_ground: ShapeCast3D
 @export var mesh_instance: MeshInstance3D
 
 signal on_fall()
@@ -16,6 +17,8 @@ var grounded_front: bool = false
 var previous_grounded_back: bool = false
 var previous_grounded_front: bool = false
 var is_jumping: bool = false
+
+var _is_grounded: bool = false
 
 var impulsed_timer: float = 0
 var fall_timer: float = 0
@@ -52,7 +55,7 @@ func set_rot(rot: Basis) -> void:
 	mesh_instance.basis = rot
 	
 func is_grounded() -> bool:
-	return grounded_back and grounded_front
+	return capteur_ground.is_colliding()
 	
 func is_colliding() -> bool:
 	return capteur_back.is_colliding() and capteur_front.is_colliding()
@@ -172,23 +175,20 @@ func _ground_snap(dt: float) -> void:
 func _process(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
-	if (grounded_back and grounded_front) and (not previous_grounded_back or not previous_grounded_front):
-		print("Grounded")
-		on_grounded.emit()
-		
-	if (not grounded_back and not grounded_front) and (previous_grounded_back or previous_grounded_front):
-		print(fall_timer)
-		if impulsed_timer > 0: 
-			print("On jump")
-			is_jumping = true
+	
+	if capteur_ground.is_colliding():
+		if !_is_grounded: 
+			print("Grounded")
+			on_grounded.emit()
+	elif _is_grounded:
+		if impulsed_timer >= 0:
+			print("Jump")
 			on_jump.emit()
-		elif fall_timer <= 0:
-			print("On fall") 
+		else:
+			print("Fall")
 			on_fall.emit()
-	else:
-		fall_timer = 0.5
 		
-	if grounded_back or grounded_front: is_jumping = false
+	_is_grounded = capteur_ground.is_colliding()
 	
 	previous_grounded_back = grounded_back
 	previous_grounded_front = grounded_front

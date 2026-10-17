@@ -10,7 +10,7 @@ wait_time = 0.67
 one_shot = true
 
 [node name="InputLag" type="Timer" parent="." unique_id=1158126311]
-wait_time = 0.055
+wait_time = 0.05
 one_shot = true
 
 [connection signal="timeout" from="TrickTiming" to="." method="_trick_ended"]

@@ -2,12 +2,6 @@
 	"initial" : ["debut_saut"],
 	"states" : [
 		{
-			"name" : "mauvais_saut",
-			"input" : "fhyb",
-			"duration" : 0.8,
-			"next" : ["kickflip_gauche", "kickflip_droite"]
-		},
-		{
 			"name" : "debut_saut",
 			"input" : "Fhyb",
 			"duration" : 0.4,

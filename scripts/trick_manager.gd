@@ -12,7 +12,6 @@ var _started := false
 var _nb_tricks_since_grounded := 0
 
 var _last_input := ""
-const input_lag_duration := 0.05
 
 const _xp_per_tier = [100, 200, 400, 800, 1600]
 var _xp := 0
@@ -28,6 +27,9 @@ func _reset() -> void:
 	_started = false
 	_possible_tricks = _tricks.get_neighbours("")
 	_nb_tricks_since_grounded = 0
+	if not $TrickTiming.is_stopped():
+		$TrickTiming.start()
+		$TrickTiming.stop()
 
 func _ready() -> void:
 	_tricks = TrickGraph.new("res://combo_graph.json")
@@ -40,9 +42,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
-	if bullet_timer.wait_time - bullet_timer.time_left < 0.0001:
-		print("RESET")
-	if not bullet_timer.is_stopped():
+	if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"]:
 		Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
 	var fhyb := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B")]
 	
@@ -53,7 +53,7 @@ func _process(delta: float) -> void:
 
 	if input_string == "FHyb" and not _started:
 		_started = true
-		$InputLag.start(input_lag_duration)
+		$InputLag.start()
 		print("GO !")
 
 	if _last_input != input_string:
@@ -76,11 +76,11 @@ func _process(delta: float) -> void:
 			break
 			
 func get_time_left() -> float:
+	if $TrickTiming.is_stopped():
+		return -INF
 	return $TrickTiming.time_left
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
-	print(_name)
-
 	bullet_timer.stop()
 	bullet_timer.start(bullet_time_duration)
 	_nb_tricks_since_grounded += 1
@@ -105,9 +105,10 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	
 
 func _trick_ended() -> void:
+	if not _started: return
 	print("trick ended")
 	trick_ended.emit()
-	_reset()
+	_possible_tricks = []
 
 func get_trick_duration(_name: String) -> float:
 	return _tricks.get_node(_name).duration
@@ -116,6 +117,8 @@ func get_resource(_name : String) -> Anim:
 	return load("res://tricks/" + _name + ".tres")
 	
 func on_airborne() -> void:
-	if _current_trick != "instable_saut":
-		print("jaaj")
-		_possible_tricks = _tricks.get_neighbours("instable_saut")
+	_possible_tricks = _tricks.get_neighbours("instable_saut")
+	_started = true
+	
+func on_ground() -> void:
+	_reset()

@@ -10,6 +10,7 @@ class BasicTrick:
 
 var active_tricks: Array[BasicTrick]
 var current_trick_duration: float = 0
+var current_anim_duration: float = 0
 
 var parent: Node3D
 
@@ -17,13 +18,17 @@ func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
 	TrickManager.trick_ended.connect(_on_trick_end)
 	parent = get_parent()
+	parent.on_fall.connect(TrickManager.on_airborne)
+	parent.on_grounded.connect(TrickManager.on_ground)
 
 func _process(delta: float) -> void:
 	var current_rotation: Quaternion = Quaternion.IDENTITY
 	for trick in active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
-	if ((TrickManager.get_time_left() > 0.5 * current_trick_duration) 
+		
+	print(current_trick_duration - TrickManager.get_time_left(), " ", current_anim_duration)
+	if ((current_trick_duration - TrickManager.get_time_left() < 0.5 * current_anim_duration) 
 		and parent.is_mesh_colliding() 
 		and parent.velocity_back + parent.velocity_front < 0): 
 		MapLoader.instance.stop()
@@ -46,6 +51,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	var _anim := TrickManager.get_resource(_name)
 	var _duration := TrickManager.get_trick_duration(_name)
 	current_trick_duration = _duration
+	current_anim_duration = _anim.animation_duration
 	
 	if _anim.reset_velocities: parent.reset_velocities()
 	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
@@ -53,6 +59,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
 	if abs(_anim.rot_angle) > 0.001:
 		var trick := BasicTrick.new(_name)
+		print(_name)
 		active_tricks.push_back(trick)
 		tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 

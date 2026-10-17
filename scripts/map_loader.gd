@@ -44,7 +44,7 @@ func stop() -> void:
 	is_running = false
 	ragdoll.global_transform = skate.global_transform
 	set_active(ragdoll, true)
-	ragdoll.apply_central_impulse(skate.get_normal() * 10 + Vector3.FORWARD * 5)
+	ragdoll.apply_central_impulse(Vector3.UP * 10 + Vector3.FORWARD * 5)
 	var axe := Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
 	ragdoll.apply_torque_impulse(axe * 10)
 	set_active(skate, false)
