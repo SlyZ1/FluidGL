@@ -90,3 +90,8 @@ func get_trick_duration(_name: String) -> float:
 
 func get_resource(_name : String) -> Anim:
 	return load("res://tricks/" + _name + ".tres")
+	
+func on_airborne() -> void:
+	if _current_trick != "instable_saut":
+		print("jaaj")
+		_possible_tricks = _tricks.get_neighbours("instable_saut")
