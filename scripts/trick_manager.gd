@@ -17,6 +17,8 @@ const _xp_per_tier = [100, 200, 400, 800, 1600]
 var _xp := 0
 var _tier := 0
 
+var _kickflip = preload("res://prefabs/kick_flip.tres")
+
 func _reset() -> void:
 	_current_trick = ""
 	_started = false
@@ -85,5 +87,8 @@ func _trick_ended() -> void:
 	trick_ended.emit()
 	_reset()
 
-func get_trick_duration(_name: String):
+func get_trick_duration(_name: String) -> float:
 	return _tricks.get_node(_name).duration
+
+func get_resource(_name : String) -> Anim:
+	return _kickflip

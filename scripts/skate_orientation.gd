@@ -12,7 +12,7 @@ func _ready() -> void:
 	previous_position = global_position
 
 func _integrate(dt: float) -> void:
-	if not grounded: velocity_y += -20 * dt
+	#if not grounded: velocity_y += -20 * dt
 	global_position += Vector3.UP * velocity_y * dt
 	
 func _grounded_logic(one_collide: bool, target_position: Vector3) -> void:

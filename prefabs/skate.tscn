@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://cb1r5a4npulm6"]
+
+[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_tjnl1"]
+[ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/anim_controller.gd" id="2_a3nxw"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
+size = Vector3(2.0212402, 1, 5.1572266)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xi3o1"]
+albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
+metallic_specular = 0.51
+
+[sub_resource type="SphereMesh" id="SphereMesh_tnd71"]
+
+[node name="Skate" type="MeshInstance3D" unique_id=1567484574 node_paths=PackedStringArray("ray_back", "ray_front")]
+transform = Transform3D(-1.9451564e-08, 0, 0.4449999, 0, 0.44499996, 0, -0.4449999, 0, -1.9451564e-08, 0, 0, 0)
+mesh = SubResource("BoxMesh_qn4bn")
+surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
+script = ExtResource("1_tjnl1")
+ray_back = NodePath("CapteurBack/RayCast3D")
+ray_front = NodePath("CapteurFront/RayCast3D2")
+ground_offset = 0.6779999999999999
+
+[node name="AnimController" type="Node" parent="." unique_id=671014669]
+script = ExtResource("2_a3nxw")
+
+[node name="CapteurBack" type="MeshInstance3D" parent="." unique_id=139213417]
+transform = Transform3D(0.99983346, 0, -0.018242473, 0, 0.99999994, 0, 0.018242473, 0, 0.99983346, 7.1054274e-15, -0.5470042, -1.8)
+mesh = SubResource("SphereMesh_tnd71")
+
+[node name="RayCast3D" type="RayCast3D" parent="CapteurBack" unique_id=549186315]
+target_position = Vector3(0, -2.29, 0)
+
+[node name="CapteurFront" type="MeshInstance3D" parent="." unique_id=1674666939]
+transform = Transform3D(0.9999999, 0, 0, 0, 0.99999994, 0, 0, 0, 0.9999999, -7.1054274e-15, -0.5470042, 1.8)
+mesh = SubResource("SphereMesh_tnd71")
+
+[node name="RayCast3D2" type="RayCast3D" parent="CapteurFront" unique_id=1753449793]
+target_position = Vector3(0, -1.155, 0)

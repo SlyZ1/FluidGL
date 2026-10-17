@@ -17,6 +17,7 @@ var _spawned_sections: Array[Section] = []
 var _next_spawn: Section
 
 func _ready() -> void:
+	
 	_next_spawn = _new_section(Vector3.ZERO)
 	
 func _new_section(snap_to: Vector3) -> Section:

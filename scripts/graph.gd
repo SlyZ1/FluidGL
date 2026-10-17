@@ -36,6 +36,7 @@ func load_json_file(file_path: String) -> Variant:
 		return null
 	
 	return json.get_data()
+	
 
 func _init(file_path : String) -> void:
 	var data = load_json_file(file_path)
