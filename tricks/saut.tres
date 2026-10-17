@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Anim" format=3 uid="uid://dunktfced5pfd"]
+
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_d838m"]
+
+[resource]
+script = ExtResource("1_d838m")
+rot_axis = Vector3(1, 0, 0)
+impulse_front = -1.0
+metadata/_custom_type_script = "uid://u4ge0gstrtnt"

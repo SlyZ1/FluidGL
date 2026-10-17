@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://beer4lbtggjgq"]
-
-[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_psmtb"]
-
-[node name="Node" type="Node" unique_id=680828578]
-script = ExtResource("1_psmtb")
