@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_k67ne"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="1_rudyk"]
 [ext_resource type="PackedScene" uid="uid://ci1irpvc67c13" path="res://templates/section_1.tscn" id="4_vvnha"]
+[ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
 size = Vector3(2.0212402, 1, 5.1572266)
@@ -73,3 +74,9 @@ transform = Transform3D(1, 0, 0, 0, 0.37240097, 0.9280719, 0, -0.9280719, 0.3724
 shadow_enabled = true
 
 [node name="GroundContainer" type="Node3D" parent="." unique_id=474625706]
+
+[node name="StreakPanel" parent="." unique_id=199057457 instance=ExtResource("5_uorgy")]
+offset_left = 920.0
+offset_top = 24.0
+offset_right = -38.0
+offset_bottom = -267.0
