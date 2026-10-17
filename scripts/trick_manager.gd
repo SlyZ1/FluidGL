@@ -17,6 +17,10 @@ const _xp_per_tier = [100, 200, 400, 800, 1600]
 var _xp := 0
 var _tier := 0
 
+var bullet_time_curve : Curve = preload("res://prefabs/bullet_time_curve.tres")
+const bullet_time_duration := 0.5
+var bullet_timer : Timer
+
 func _reset() -> void:
 	_current_trick = ""
 	_started = false
@@ -25,9 +29,17 @@ func _reset() -> void:
 
 func _ready() -> void:
 	_tricks = TrickGraph.new("res://combo_graph.json")
+	bullet_timer = Timer.new()
+	bullet_timer.one_shot = true
+	bullet_timer.ignore_time_scale = true
+	add_child(bullet_timer)
 	_reset()
 
 func _process(delta: float) -> void:
+	if bullet_timer.wait_time - bullet_timer.time_left < 0.0001:
+		print("RESET")
+	if not bullet_timer.is_stopped():
+		Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
 	var fhyb := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B")]
 	
 	var input_string := "fhyb"
@@ -60,7 +72,10 @@ func _process(delta: float) -> void:
 			break
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
-	#print(_name)
+	print(_name)
+
+	bullet_timer.stop()
+	bullet_timer.start(bullet_time_duration)
 	_nb_tricks_since_grounded += 1
 
 	var increased_by: int = 50 * _nb_tricks_since_grounded
@@ -79,6 +94,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	$TrickTiming.start(get_trick_duration(_name))
 
 	trick_performed.emit(_name, _accuracy)
+	
 
 func _trick_ended() -> void:
 	print("trick ended")
