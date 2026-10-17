@@ -1,24 +1,55 @@
 extends Node
 
+class BasicTrick:
+	var trick_name: String
+	var q: Quaternion
+	
+	func _init(_trick_name: String) -> void:
+		trick_name = _trick_name
+		q = Quaternion.IDENTITY
+
+var active_tricks: Array[BasicTrick]
+
 func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
+	TrickManager.trick_ended.connect(_on_trick_end)
 
 func _process(delta: float) -> void:
-	pass
+	var current_rotation: Quaternion = Quaternion(Vector3(0, 1, 0), -PI / 2)
+	for trick in active_tricks:
+		current_rotation *= trick.q
+		current_rotation = current_rotation.normalized()
+	
+	#get_parent().rotation = (current_rotation.get_euler())
+	get_parent().apply_rotation(Basis(current_rotation))
 
-func tween_tour(noeud: Node3D, axe: Vector3, _angle: float, duree: float) -> Tween:
-	var depart: Basis = noeud.basis
-	var tween := noeud.create_tween()
+func tween_axis_angle(object: Object, property: String, axis: Vector3, target_angle: float, duration: float, curve: Curve = null) -> Tween:
+	var normalized_axis = axis.normalized()
+	var tween = create_tween()
+	
 	tween.tween_method(
-		func(angle: float) -> void:
-			noeud.basis = depart * Basis(axe.normalized(), angle), 0.0, deg_to_rad(_angle), duree)\
-	.set_trans(Tween.TRANS_QUAD)\
-	.set_ease(Tween.EASE_OUT)
+		func(progress: float):
+			var curve_val = curve.sample(progress) if curve else progress
+			var current_angle = target_angle * curve_val
+			var q = Quaternion(normalized_axis, current_angle)
+			object.set(property, q), 
+			0.0, 1.0, duration)
 	return tween
 
 func _on_trick(_name: String, _accuracy: float) -> void:
 	var _anim := TrickManager.get_resource(_name)
 	var _duration := TrickManager.get_trick_duration(_name)
 	
-	tween_tour(get_parent(), _anim.rot_axis, _anim.rot_angle, _duration)
-	
+	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
+
+	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
+	if already_active != -1:
+		pass # TODO
+	elif abs(_anim.rot_angle) > 0.001:
+		var trick := BasicTrick.new(_name)
+		print(_name)
+		active_tricks.push_back(trick)
+		tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _duration, _anim.curve)
+
+func _on_trick_end() -> void:
+	active_tricks.clear()

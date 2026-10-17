@@ -27,7 +27,7 @@ container = NodePath("GroundContainer")
 sections = Array[PackedScene]([ExtResource("2_wc5y2"), ExtResource("4_vvnha")])
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
-transform = Transform3D(-1.9451564e-08, 0, 0.4449999, 0, 0.44499996, 0, -0.4449999, 0, -1.9451564e-08, 0, 3.160342, 0)
+transform = Transform3D(0.4449999, 0, 0, 0, 0.44499996, 0, 0, 0, 0.4449999, 0, 3.160342, 0)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=483684695 node_paths=PackedStringArray("target")]
 transform = Transform3D(0.6203616, 0.49924627, -0.60490054, 0, 0.7712461, 0.6365372, 0.78431594, -0.39488325, 0.47845143, -6.0490055, 7.4649754, 4.7845144)

@@ -17,8 +17,6 @@ const _xp_per_tier = [100, 200, 400, 800, 1600]
 var _xp := 0
 var _tier := 0
 
-var _kickflip = preload("res://prefabs/kick_flip.tres")
-
 func _reset() -> void:
 	_current_trick = ""
 	_started = false
@@ -62,7 +60,7 @@ func _process(delta: float) -> void:
 			break
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
-	print(_name)
+	#print(_name)
 	_nb_tricks_since_grounded += 1
 
 	var increased_by: int = 50 * _nb_tricks_since_grounded
@@ -83,7 +81,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	trick_performed.emit(_name, _accuracy)
 
 func _trick_ended() -> void:
-	print("flop")
+	print("trick ended")
 	trick_ended.emit()
 	_reset()
 
@@ -91,4 +89,4 @@ func get_trick_duration(_name: String) -> float:
 	return _tricks.get_node(_name).duration
 
 func get_resource(_name : String) -> Anim:
-	return _kickflip
+	return load("res://tricks/" + _name + ".tres")

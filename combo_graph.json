@@ -1,5 +1,5 @@
 {
-	"initial" : ["mauvais_saut", "debut_saut"],
+	"initial" : ["debut_saut"],
 	"states" : [
 		{
 			"name" : "mauvais_saut",
@@ -23,7 +23,7 @@
 			"name" : "saut",
 			"input" : "fHyb",
 			"duration" : 1.4,
-			"next" : ["kickflip_gauche", "kickflip_droite"]
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip"]
 		},
 		{
 			"name" : "kickflip_gauche",
@@ -36,6 +36,12 @@
 			"input" : "fhyB",
 			"duration" : 0.8,
 			"next" : []
+		},
+		{
+			"name" : "backflip",
+			"input" : "Fhyb",
+			"duration" : 1.2,
+			"next" : ["kickflip_droite", "kickflip_gauche"]
 		}
 	]
 }
