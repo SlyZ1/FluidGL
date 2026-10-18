@@ -98,7 +98,6 @@ func reset_velocities() -> void:
 	velocity_front = 0
 
 func _integrate(dt: float) -> void:
-	print(scale)
 	var acc: float = -gravity * dt
 	if not grounded_back: velocity_back += acc
 	if not grounded_front: velocity_front += acc

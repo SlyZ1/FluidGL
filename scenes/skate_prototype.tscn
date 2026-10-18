@@ -4,16 +4,16 @@
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="1_rudyk"]
 [ext_resource type="PackedScene" uid="uid://cwwjjwqrl3o8r" path="res://sections/section_rail.tscn" id="3_p1m0m"]
 [ext_resource type="PackedScene" uid="uid://shgwedsytslb" path="res://sections/section_flat.tscn" id="3_wc5y2"]
-[ext_resource type="Script" uid="uid://jkpmkae3y0n0" path="res://scripts/quest.gd" id="4_s3shx"]
+[ext_resource type="Script" uid="uid://jkpmkae3y0n0" path="res://scripts/quest.gd" id="4_vfgxo"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate.tscn" id="4_wc5y2"]
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
 [ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="5_vfgxo"]
 [ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="7_p1m0m"]
 
-[sub_resource type="Resource" id="Resource_p1m0m"]
-script = ExtResource("4_s3shx")
+[sub_resource type="Resource" id="Resource_s3shx"]
+script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "kickflip_gauche"])
-reward = 750
+reward = 150
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
@@ -51,7 +51,7 @@ container = NodePath("GroundContainer")
 sections = Array[PackedScene]([ExtResource("3_wc5y2"), ExtResource("3_p1m0m")])
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
-quests = Array[ExtResource("4_s3shx")]([SubResource("Resource_p1m0m")])
+quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx")])
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.16, 0)

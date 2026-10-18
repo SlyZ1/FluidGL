@@ -160,7 +160,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	$TrickTiming.start(get_trick_duration(_name))
 
 	trick_performed.emit(_name, _accuracy)
-	
+	trick_validated.emit(_nb_tricks_since_grounded)
 
 
 
