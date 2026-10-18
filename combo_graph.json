@@ -1,15 +1,21 @@
 {
-	"initial" : ["debut_saut"],
+	"initial" : ["instable_saut"],
 	"states" : [
 		{
-			"name" : "debut_saut",
-			"input" : "Fhyb",
-			"duration" : 0.4,
-			"next" : ["instable_saut"]
+			"name" : "catch",
+			"input" : "FHyb",
+			"duration" : 0.9,
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche"]
 		},
 		{
 			"name" : "instable_saut",
 			"input" : "fhyb",
+			"duration" : 0.9,
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche"]
+		},
+		{
+			"name" : "tourne_gauche",
+			"input" : "FhYb",
 			"duration" : 0.9,
 			"next" : ["kickflip_gauche", "kickflip_droite", "backflip"]
 		},

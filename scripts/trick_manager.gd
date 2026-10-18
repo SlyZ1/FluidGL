@@ -2,6 +2,7 @@ extends Node
 
 signal trick_performed(_name: String, _accuracy: float)
 signal trick_ended
+signal trick_catched(_progression: float, _dt: float)
 signal xp_changed(_new_val: int, _out_of: int, _total_points: int)
 signal tier_changed(_new_tier: int)
 
@@ -42,8 +43,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
-	if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"]:
+	if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
 		Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
+	else:
+		Engine.time_scale = 1
 	var fhyb := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B")]
 	
 	var input_string := "fhyb"
@@ -51,18 +54,27 @@ func _process(delta: float) -> void:
 		if fhyb[i]:
 			input_string[i] = input_string[i].to_upper()
 
+	# Start tricks
 	if input_string == "FHyb" and not _started:
-		_started = true
-		$InputLag.start()
-		print("GO !")
+			_started = true
+			$InputLag.start()
+			print("GO !")
 
+	# Set input lag when changing inputs
 	if _last_input != input_string:
 		$InputLag.start()
-		_last_input = input_string
-
+	_last_input = input_string
+	
+	# Applying input lag
 	if not (_started and $InputLag.is_stopped()):
 		return
-	
+		
+	# If catching the skate
+	if input_string == "FHyb":
+		var t: float = ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
+		trick_catched.emit(t, delta)
+		return
+		
 	for trick_name : String in _possible_tricks:
 		var trick := _tricks.get_node(trick_name)
 		if trick.input == input_string:
@@ -75,12 +87,13 @@ func _process(delta: float) -> void:
 			_trick_performed(trick_name, good_timing)
 			break
 			
-func get_time_left() -> float:
+func get_time_left(stopped_val: float = -INF) -> float:
 	if $TrickTiming.is_stopped():
-		return -INF
+		return stopped_val
 	return $TrickTiming.time_left
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
+	$InputLag.start()
 	bullet_timer.stop()
 	bullet_timer.start(bullet_time_duration)
 	_nb_tricks_since_grounded += 1
@@ -122,3 +135,6 @@ func on_airborne() -> void:
 	
 func on_ground() -> void:
 	_reset()
+	
+func on_successful_catch() -> void: 
+	$TrickTiming.stop()

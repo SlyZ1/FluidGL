@@ -4,7 +4,7 @@ extends Node3D
 @export var capteur_front: ShapeCast3D
 @export var capteur_mesh: ShapeCast3D
 @export var capteur_ground: ShapeCast3D
-@export var mesh_instance: MeshInstance3D
+@export var mesh_instance: Node3D
 
 signal on_fall()
 signal on_grounded()

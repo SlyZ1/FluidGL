@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Anim" format=3 uid="uid://bdpni0fpcq0a6"]
+
+[ext_resource type="Curve" uid="uid://bs6qtligyoqs0" path="res://scenes/hard_ease_out.tres" id="1_4mk1q"]
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_cqer7"]
+
+[resource]
+script = ExtResource("1_cqer7")
+rot_axis = Vector3(0, 1, 0)
+rot_angle = 360.0
+reset_velocities = false
+curve = ExtResource("1_4mk1q")
+metadata/_custom_type_script = "uid://u4ge0gstrtnt"
