@@ -22,6 +22,9 @@ var current_anim_duration: float = 0
 
 var trick_catched: bool = true
 var catch_pressed: bool = false
+var rail := false
+
+@onready var rail_pose := Quaternion.IDENTITY
 
 var parent: Node3D
 
@@ -32,9 +35,11 @@ func _ready() -> void:
 	parent = get_parent()
 	parent.on_fall.connect(TrickManager.on_airborne)
 	parent.on_grounded.connect(TrickManager.on_ground)
+	parent.on_rail.connect(_on_rail)
+	parent.off_rail.connect(_off_rail)
 
 func _process(delta: float) -> void:
-	var current_rotation: Quaternion = Quaternion.IDENTITY
+	var current_rotation: Quaternion = rail_pose
 	for trick in active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
@@ -77,12 +82,21 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	if abs(_anim.rot_angle) > 0.001:
 		trick_catched = false
 		var trick := BasicTrick.new(_name)
-		print(_name)
+
 		active_tricks.push_back(trick)
 		trick.tween = tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 
 func _on_trick_end() -> void:
 	active_tricks.clear()
+
+func _on_rail() -> void:
+	var target_quat := Quaternion.from_euler(Vector3(0, PI / 2.0, 0)) * Quaternion.from_euler(Vector3(-PI / 4.0, 0, 0))
+	tween_axis_angle(self, "rail_pose", target_quat.get_axis(), target_quat.get_angle(), 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	rail = true
+
+func _off_rail() -> void:
+	create_tween().tween_property(self, "rail_pose", Quaternion.IDENTITY, 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	rail = false
 	
 func _cancel_tricks() -> void:
 	if active_tricks.is_empty():
