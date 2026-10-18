@@ -8,8 +8,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 2.0
+offset_top = 1.0
 offset_right = -956.0
-offset_bottom = -291.0
+offset_bottom = -469.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ymcwo")
@@ -17,7 +18,7 @@ script = ExtResource("1_ymcwo")
 [node name="Background" type="ColorRect" parent="." unique_id=2078055570]
 layout_mode = 0
 offset_right = 196.0
-offset_bottom = 356.0
+offset_bottom = 176.0
 pivot_offset_ratio = Vector2(0.5, 0.5)
 color = Color(0.4955091, 0.4955091, 0.4955091, 0.5647059)
 
@@ -50,15 +51,15 @@ color = Color(0.5371229, 0.8142185, 1, 1)
 
 [node name="Label" type="Label" parent="Background" unique_id=880287802]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -34.175
-offset_top = -24.259995
-offset_right = 31.825348
-offset_bottom = -1.2599945
+anchor_bottom = 1.0
+offset_left = -35.0
+offset_top = -29.0
+offset_right = 31.000366
+offset_bottom = -6.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 horizontal_alignment = 1

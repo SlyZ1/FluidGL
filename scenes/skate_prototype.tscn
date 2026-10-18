@@ -4,8 +4,16 @@
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="1_rudyk"]
 [ext_resource type="PackedScene" uid="uid://cwwjjwqrl3o8r" path="res://sections/section_rail.tscn" id="3_p1m0m"]
 [ext_resource type="PackedScene" uid="uid://shgwedsytslb" path="res://sections/section_flat.tscn" id="3_wc5y2"]
+[ext_resource type="Script" uid="uid://jkpmkae3y0n0" path="res://scripts/quest.gd" id="4_s3shx"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate.tscn" id="4_wc5y2"]
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
+[ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="7_p1m0m"]
+
+[sub_resource type="Resource" id="Resource_p1m0m"]
+script = ExtResource("4_s3shx")
+steps = Array[String](["backflip", "kickflip_gauche"])
+reward = 750
+metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
 size = Vector3(2.0212402, 1, 5.1572266)
@@ -37,6 +45,7 @@ container = NodePath("GroundContainer")
 sections = Array[PackedScene]([ExtResource("3_wc5y2"), ExtResource("3_p1m0m")])
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
+quests = Array[ExtResource("4_s3shx")]([SubResource("Resource_p1m0m")])
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.16, 0)
@@ -73,8 +82,59 @@ shadow_enabled = true
 
 [node name="GroundContainer" type="Node3D" parent="." unique_id=474625706]
 
-[node name="StreakPanel" parent="." unique_id=199057457 instance=ExtResource("5_uorgy")]
-offset_left = 920.0
-offset_top = 24.0
-offset_right = -38.0
-offset_bottom = -267.0
+[node name="NewQuest" type="Timer" parent="." unique_id=113593961]
+wait_time = 5.0
+one_shot = true
+autostart = true
+
+[node name="QuestEnd" type="Timer" parent="." unique_id=277929585]
+wait_time = 11.0
+one_shot = true
+
+[node name="UI" type="Control" parent="." unique_id=1938638467]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1149.0
+offset_bottom = 644.0
+
+[node name="StreakPanel" parent="UI" unique_id=199057457 instance=ExtResource("5_uorgy")]
+layout_mode = 1
+offset_left = 949.0
+offset_top = 465.0
+offset_right = -9.0
+offset_bottom = -4.0
+
+[node name="Input1" parent="UI" unique_id=7957100 instance=ExtResource("7_p1m0m")]
+layout_mode = 1
+offset_left = 330.0
+offset_top = 680.0
+offset_right = -731.0
+offset_bottom = 116.0
+scale = Vector2(0.8, 0.8)
+
+[node name="Input2" parent="UI" unique_id=1297023805 instance=ExtResource("7_p1m0m")]
+layout_mode = 1
+offset_left = 448.0
+offset_top = 680.0
+offset_right = -613.0
+offset_bottom = 116.0
+scale = Vector2(0.8, 0.8)
+
+[node name="Input3" parent="UI" unique_id=506145894 instance=ExtResource("7_p1m0m")]
+layout_mode = 1
+offset_left = 566.0
+offset_top = 680.0
+offset_right = -495.0
+offset_bottom = 116.0
+scale = Vector2(0.8, 0.8)
+
+[node name="Input4" parent="UI" unique_id=703435643 instance=ExtResource("7_p1m0m")]
+layout_mode = 1
+offset_left = 684.0
+offset_top = 680.0
+offset_right = -377.0
+offset_bottom = 116.0
+scale = Vector2(0.8, 0.8)
+
+[connection signal="timeout" from="NewQuest" to="." method="_on_new_quest_timeout"]
+[connection signal="timeout" from="QuestEnd" to="." method="_on_quest_end_timeout"]

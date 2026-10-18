@@ -7,7 +7,7 @@ signal trick_catched(_progression: float, _dt: float)
 signal go_left
 signal go_right
 
-signal xp_changed(_new_val: int, _out_of: int, _total_points: int)
+signal xp_changed(_new_val: int, _out_of: int, _total_points: int, _with_popup: bool)
 signal tier_changed(_new_tier: int)
 
 var _current_trick : String = ""
@@ -19,7 +19,8 @@ var _nb_tricks_since_grounded := 0
 var _last_input := ""
 
 const _xp_per_tier = [100, 200, 400, 800, 1600]
-var _xp := 0
+var _xp := 0.0
+var _xp_buffer := 0.0
 var _points := 0
 var _tier := 0
 
@@ -58,6 +59,7 @@ func catch_pressed() -> bool:
 	return input_string == "FHybrv"
 
 func _process(delta: float) -> void:
+	_update_xp(0, lerp(20, 200, tanh(float(_tier) * _xp / 1000.0)) * delta)
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
 	if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
@@ -100,7 +102,7 @@ func _process(delta: float) -> void:
 		go_right.emit()
 		$InputLag.start()
 		return
-		
+
 	for trick_name : String in _possible_tricks:
 		var trick := _tricks.get_node(trick_name)
 		if trick.input == input_string:
@@ -112,11 +114,32 @@ func _process(delta: float) -> void:
 			good_timing = exp(-good_timing * good_timing)
 			_trick_performed(trick_name, good_timing)
 			break
-			
+
 func get_time_left(stopped_val: float = -INF) -> float:
 	if $TrickTiming.is_stopped():
 		return stopped_val
 	return $TrickTiming.time_left
+
+func _update_xp(increased_by: float, decreased_by: float):
+	var sum := increased_by - decreased_by
+	_xp += sum
+	_points += int(increased_by)
+
+	if _xp <= 0 and _tier > 0:
+		_xp -= 1
+		_tier -= 1
+		_xp += _xp_per_tier[_tier]
+		tier_changed.emit(_tier)
+	
+	_xp = max(0.0, _xp)
+	
+	if _xp >= _xp_per_tier[_tier] and _tier < _xp_per_tier.size() - 1:
+		_xp -= _xp_per_tier[_tier]
+		_tier += 1
+		tier_changed.emit(_tier)
+
+	xp_changed.emit(_xp / _xp_per_tier[_tier], sum, _points, sum > 0)
+
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
 	$InputLag.start()
@@ -125,23 +148,17 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	_nb_tricks_since_grounded += 1
 
 	var increased_by: int = 50 * _nb_tricks_since_grounded
-	_xp += increased_by
-	_points += increased_by
+	_xp_buffer += increased_by
 
-	while _xp >= _xp_per_tier[_tier] and _tier < _xp_per_tier.size() - 1:
-		_xp -= _xp_per_tier[_tier]
-		_tier += 1
-		tier_changed.emit(_tier)
-
-	xp_changed.emit(float(_xp) / _xp_per_tier[_tier], increased_by, _points)
-	
 	_current_trick = _name
 	_possible_tricks = _tricks.get_neighbours(_name)
 
 	$TrickTiming.start(get_trick_duration(_name))
 
 	trick_performed.emit(_name, _accuracy)
-	
+
+
+
 
 func _trick_ended() -> void:
 	if not _started: return
@@ -164,3 +181,5 @@ func on_ground() -> void:
 	
 func on_successful_catch() -> void: 
 	$TrickTiming.stop()
+	_update_xp(_xp_buffer, 0)
+	_xp_buffer = 0
