@@ -60,3 +60,9 @@ mesh_instance = NodePath("../Skate/Skate2")
 [node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
 shape = SubResource("BoxShape3D_q1d6x")
 target_position = Vector3(0, 0, 0.365)
+
+[node name="RailCooldown" type="Timer" parent="." unique_id=1380579839]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="RailCooldown" to="." method="_on_rail_cooldown_timeout"]
