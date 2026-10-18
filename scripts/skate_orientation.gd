@@ -5,6 +5,8 @@ extends Node3D
 @export var capteur_mesh: ShapeCast3D
 @export var capteur_ground: ShapeCast3D
 @export var mesh_instance: Node3D
+@export var gravity: float = 20
+@export_range(0, 1) var slope_thresh: float = 0.3
 
 signal on_fall()
 signal on_grounded()
@@ -32,8 +34,8 @@ func _limit_rotation(direction: Vector3) -> Vector3:
 		return direction
 
 	var angle: float = atan2(direction.dot(up), longueur_h)
-	var max_rad: float = deg_to_rad(30)
-	if angle >= 0 && angle <= max_rad:
+	var max_rad: float = deg_to_rad(40)
+	if abs(angle) <= max_rad:
 		return direction
 
 	angle = clamp(angle, -0, max_rad)
@@ -78,7 +80,7 @@ func reset_velocities() -> void:
 	velocity_front = 0
 
 func _integrate(dt: float) -> void:
-	var acc: float = -20 * dt
+	var acc: float = -gravity * dt
 	if not grounded_back: velocity_back += acc
 	if not grounded_front: velocity_front += acc
 		
@@ -133,8 +135,9 @@ func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
 	var rayon: float = (capteur.shape as SphereShape3D).radius * capteur.global_basis.get_scale().x
 	var g: Vector3 = capteur.get_collision_point(0)
 	var n: Vector3 = capteur.get_collision_normal(0)
-	if n.y < 0.1:
-		return -INF
+	if n.y < slope_thresh:
+		MapLoader.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
+		return 0
 	return g.y + (rayon - n.x * (p.x - g.x) - n.z * (p.z - g.z)) / n.y
 
 func _ground_snap(dt: float) -> void:
@@ -156,7 +159,7 @@ func _ground_snap(dt: float) -> void:
 		normal += n_back
 		var theta_back: float = acos(n_back.dot(-MapLoader.s_speed.normalized()))
 		velocity_back = MapLoader.s_speed.length() / tan(theta_back)
-		velocity_back = max(velocity_back, 0.0)
+		velocity_back = max(velocity_back, -10.0)
 
 	var y_front: float = _corriger_roue(capteur_front, p_front)
 	grounded_front = p_front.y <= y_front + 0.01
@@ -167,7 +170,7 @@ func _ground_snap(dt: float) -> void:
 		normal += n_front
 		var theta_front: float = acos(n_front.dot(-MapLoader.s_speed.normalized()))
 		velocity_front = MapLoader.s_speed.length() / tan(theta_front)
-		velocity_front = max(velocity_front, 0.0)
+		velocity_front = max(velocity_front, -10.0)
 
 	if corrige:
 		set_pos(p_back, p_front, normal.normalized())
@@ -194,5 +197,3 @@ func _process(dt: float) -> void:
 	previous_grounded_front = grounded_front
 	impulsed_timer -= dt
 	fall_timer -= dt
-	
-	if Input.is_action_just_pressed("B"): MapLoader.instance.stop()

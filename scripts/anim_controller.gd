@@ -3,6 +3,7 @@ extends Node
 @export_range(0, 1) var trick_cancel_end: float = 0.1
 @export_range(0, 1) var trick_catchable_start: float = 0.7
 @export_range(0, 1) var trick_ground_collision: float = 0.75
+@export var lane_position: float = 2.5
 @export var catch_fall_speed: float = 20
 @export var catch_start_speed: float = -1.5
 @export var mesh_instance: MeshInstance3D
@@ -25,10 +26,14 @@ var catch_pressed: bool = false
 
 var parent: Node3D
 
+var lane_tween: Tween
+
 func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
 	TrickManager.trick_ended.connect(_on_trick_end)
 	TrickManager.trick_catched.connect(_on_trick_catched)
+	TrickManager.go_left.connect(_on_go_left)
+	TrickManager.go_right.connect(_on_go_right)
 	parent = get_parent()
 	parent.on_fall.connect(TrickManager.on_airborne)
 	parent.on_grounded.connect(TrickManager.on_ground)
@@ -41,6 +46,11 @@ func _process(delta: float) -> void:
 		
 	if ((parent.is_grounded() or parent.is_mesh_colliding()) and not trick_catched):
 		MapLoader.instance.stop()
+		
+	# Snap To Lane
+	if abs(parent.global_position.z - lane_position) > 0.1 and (lane_tween == null or !lane_tween.is_valid() or !lane_tween.is_running()):
+		if parent.global_position.z < 0: _on_go_left()
+		else: _on_go_right()
 		
 	parent.set_rot(Basis(current_rotation))
 
@@ -134,3 +144,13 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		
 	print(_progression)
 	MapLoader.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)
+	
+func _on_go_left(force: bool = false) -> void:
+	if not force and parent.is_grounded(): return
+	lane_tween = create_tween()
+	lane_tween.tween_property(parent, "global_position:z", -lane_position, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
+func _on_go_right(force: bool = false) -> void:
+	if not force and parent.is_grounded(): return
+	lane_tween = create_tween()
+	lane_tween.tween_property(parent, "global_position:z", lane_position, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)

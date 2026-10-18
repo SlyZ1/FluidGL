@@ -3,6 +3,10 @@ extends Node
 signal trick_performed(_name: String, _accuracy: float)
 signal trick_ended
 signal trick_catched(_progression: float, _dt: float)
+
+signal go_left
+signal go_right
+
 signal xp_changed(_new_val: int, _out_of: int, _total_points: int)
 signal tier_changed(_new_tier: int)
 
@@ -47,15 +51,15 @@ func _process(delta: float) -> void:
 		Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
 	else:
 		Engine.time_scale = 1
-	var fhyb := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B")]
+	var fhybrv := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B"), Input.is_action_pressed("R"), Input.is_action_pressed("V")]
 	
-	var input_string := "fhyb"
-	for i : int in range(4):
-		if fhyb[i]:
+	var input_string := "fhybrv"
+	for i : int in range(6):
+		if fhybrv[i]:
 			input_string[i] = input_string[i].to_upper()
 
 	# Start tricks
-	if input_string == "FHyb" and not _started:
+	if input_string == "FHybrv" and not _started:
 			_started = true
 			$InputLag.start()
 			print("GO !")
@@ -70,9 +74,22 @@ func _process(delta: float) -> void:
 		return
 		
 	# If catching the skate
-	if input_string == "FHyb":
+	if input_string == "FHybrv":
 		var t: float = ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 		trick_catched.emit(t, delta)
+		return
+		
+	# If going left
+	if input_string == "fhYbRv":
+		print("Going Left")
+		go_left.emit()
+		$InputLag.start()
+		return
+	# If going right
+	if input_string == "fhyBrV":
+		print("Going Right")
+		go_right.emit()
+		$InputLag.start()
 		return
 		
 	for trick_name : String in _possible_tricks:
