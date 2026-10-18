@@ -56,7 +56,8 @@ script = ExtResource("2_2wimw")
 trick_cancel_end = 0.08
 trick_catchable_start = 0.3
 mesh_instance = NodePath("../Skate/Skate2")
-rail_z_thresh = 0.5
+rail_z_thresh = 2.5
+rail_y_thresh = 0.75
 
 [node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
 shape = SubResource("BoxShape3D_q1d6x")

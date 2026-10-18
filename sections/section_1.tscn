@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://ci1irpvc67c13"]
+[gd_scene format=3 uid="uid://be5rkmetn7lhf"]
 
 [ext_resource type="Material" uid="uid://buubyxe1kb33a" path="res://materials/ground_material.tres" id="1_csdh0"]
 [ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="2_rei88"]

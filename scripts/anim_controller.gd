@@ -64,20 +64,29 @@ func _ready() -> void:
 	parent.on_fall.connect(TrickManager.on_airborne)
 	parent.on_grounded.connect(TrickManager.on_ground)
 	
-func touches_path(rail: Path3D) -> bool:
+func touches_path(rail: Path3D) -> float:
 	var zyt: Vector3 = get_zy_from_x(rail, parent.global_position.x)
-	if zyt == Vector3.BACK:
-		return false
-	var dz: float = abs(parent.global_position.z - zyt.x) 
+	if zyt.z == -1:
+		return -INF
+	#var voie: float = lane_position * signf(parent.global_position.z)
+	#if absf(zyt.x - voie) > lane_position:
+		#return false
 	var dy: float = parent.global_position.y - zyt.y
-	return dz <= rail_z_thresh and dy <= rail_y_thresh
+	var dz: float = abs(parent.global_position.z - zyt.x) 
+	if dz <= rail_z_thresh and dy <= rail_y_thresh:
+		return zyt.z
+	else:
+		return -INF
 
 func _find_rail() -> void:
 	current_rail = null
+	var closest_t: float = -INF
 	for sec in MapLoader.instance._spawned_sections:
 		for rl in sec.rails:
-			if touches_path(rl):
+			var current_t := touches_path(rl)
+			if closest_t < current_t and current_t <= 2:
 				current_rail = rl
+				closest_t = current_t
 				
 func get_zy_from_x(rail: Path3D, target_x: float) -> Vector3:
 	if not rail: return Vector3(0,0,-1)
@@ -149,6 +158,7 @@ func _rail_logic():
 	_find_rail()
 	if current_rail:
 		var zyt := get_zy_from_x(current_rail, parent.global_position.x)
+		print(zyt.z)
 		if zyt.z > 1 or zyt.z < 0: 
 			# When Fall from rail
 			if zyt.z > 1 and prev_rail: parent.reset_velocities()
@@ -172,7 +182,6 @@ func _rail_logic():
 				return
 				
 		if not prev_rail:
-			parent.reset_orientation()
 			_rail_offset = Vector2(parent.global_position.z - zyt.x, parent.global_position.y - zyt.y)
 			_rail_offset_weight = 1.0
 			if _rail_tween and _rail_tween.is_valid():
@@ -184,6 +193,7 @@ func _rail_logic():
 			if lane_tween and lane_tween.is_valid():
 				lane_tween.kill()
 				
+		parent.reset_orientation()
 		parent.global_position.z = zyt.x + _rail_offset.x * _rail_offset_weight
 		parent.global_position.y = zyt.y + _rail_offset.y * _rail_offset_weight
 			
@@ -311,7 +321,6 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		
 	# Successful Catch
 	if _progression > trick_catchable_start and not parent.is_grounded():
-		print("Catched!")
 		_cancel_tricks()
 		_catch_trick(_dt)
 		TrickManager.on_successful_catch()
