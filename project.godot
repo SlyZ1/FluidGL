@@ -23,6 +23,7 @@ TrickManager="*uid://4qaamgw26etu"
 
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/vsync/vsync_mode=0
 
 [input]
 
