@@ -31,7 +31,7 @@ mesh = SubResource("SphereMesh_tnd71")
 [node name="Path3D" type="Path3D" parent="." unique_id=161870261]
 curve = SubResource("Curve3D_vqc4j")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1280276265]
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1700045353]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1980835888]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1597031927]
 shape = SubResource("ConcavePolygonShape3D_vqc4j")

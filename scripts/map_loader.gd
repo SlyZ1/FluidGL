@@ -10,12 +10,16 @@ class_name MapLoader
 @export var sections: Array[PackedScene]
 @export var skate: Node3D
 @export var ragdoll: RigidBody3D
+@export var substep: float = 1.0 / 300.0
+@export var max_steps_par_frame: int = 30
 
 func set_active(node: Node3D, active: bool) -> void:
 	node.visible = active
 	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
 
 var is_running: bool = true
+
+var _step_accumulateur: float = 0
 
 static var s_speed: Vector3 = Vector3.ZERO
 static var s_angle: float = 0
@@ -101,4 +105,12 @@ func _process(delta: float) -> void:
 	s_angle = angle
 	container.rotation_degrees.z = angle
 	_control_spawn()
-	_control_speed(delta)
+	
+	_step_accumulateur += delta
+	var steps: int = 0
+	while _step_accumulateur >= substep and steps < max_steps_par_frame:
+		_control_speed(substep)
+		if skate and skate.can_process() and skate.has_method("step"):
+			skate.step(substep)
+		_step_accumulateur -= substep
+		steps += 1

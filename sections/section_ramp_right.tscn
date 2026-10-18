@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="2_rmii1"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_tnd71"]
-size = Vector3(50, 1, 10)
+size = Vector3(50, 0.98072267, 10)
 
 [sub_resource type="SphereMesh" id="SphereMesh_tnd71"]
 
@@ -21,6 +21,7 @@ data = PackedVector3Array(1, 2, 2.5, 1, -2, 2.5, -1, -2, 2.5, 1, 2, -2.5, -1, -2
 data = PackedVector3Array(-25, 0.5, 5, 25, 0.5, 5, -25, -0.5, 5, 25, 0.5, 5, 25, -0.5, 5, -25, -0.5, 5, 25, 0.5, -5, -25, 0.5, -5, 25, -0.5, -5, -25, 0.5, -5, -25, -0.5, -5, 25, -0.5, -5, 25, 0.5, 5, 25, 0.5, -5, 25, -0.5, 5, 25, 0.5, -5, 25, -0.5, -5, 25, -0.5, 5, -25, 0.5, -5, -25, 0.5, 5, -25, -0.5, -5, -25, 0.5, 5, -25, -0.5, 5, -25, -0.5, -5, 25, 0.5, 5, -25, 0.5, 5, 25, 0.5, -5, -25, 0.5, 5, -25, 0.5, -5, 25, 0.5, -5, -25, -0.5, 5, 25, -0.5, 5, -25, -0.5, -5, 25, -0.5, 5, 25, -0.5, -5, -25, -0.5, -5)
 
 [node name="StraightBase" type="MeshInstance3D" unique_id=1808011952 node_paths=PackedStringArray("snap_back", "snap_front")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
 mesh = SubResource("BoxMesh_tnd71")
 surface_material_override/0 = ExtResource("1_vqc4j")
 script = ExtResource("2_rmii1")

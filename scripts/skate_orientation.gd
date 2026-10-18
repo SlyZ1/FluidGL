@@ -226,7 +226,7 @@ func get_zy_from_x(target_x: float) -> Vector2:
 	
 	return Vector2(lerp(p1.z, p2.z, t), lerp(p1.y, p2.y, t)) # Returns global Vector2(Z, Y)
 
-func _process(dt: float) -> void:
+func step(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
 
@@ -266,6 +266,9 @@ func _process(dt: float) -> void:
 	previous_grounded_front = grounded_front
 	impulsed_timer -= dt
 	fall_timer -= dt
+
+func _process(dt: float) -> void:
+	pass
 
 
 func _on_rail_cooldown_timeout() -> void:
