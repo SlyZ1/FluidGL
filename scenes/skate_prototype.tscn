@@ -49,6 +49,7 @@ spawn_distance = 80
 speed = 20.0
 container = NodePath("GroundContainer")
 sections = Array[PackedScene]([ExtResource("3_wc5y2"), ExtResource("3_p1m0m")])
+empty_section = ExtResource("3_wc5y2")
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
 quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx")])
@@ -155,5 +156,9 @@ offset_right = -377.0
 offset_bottom = 116.0
 scale = Vector2(0.8, 0.8)
 
+[node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
+one_shot = true
+
 [connection signal="timeout" from="NewQuest" to="." method="_on_new_quest_timeout"]
 [connection signal="timeout" from="QuestEnd" to="." method="_on_quest_end_timeout"]
+[connection signal="timeout" from="RestartLag" to="." method="_on_restart_lag_timeout"]

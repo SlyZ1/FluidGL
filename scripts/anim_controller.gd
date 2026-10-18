@@ -155,8 +155,7 @@ func _tween_rail_weight(cible: float) -> void:
 	if _rail_weight_tween and _rail_weight_tween.is_valid():
 		_rail_weight_tween.kill()
 	_rail_weight_tween = create_tween()
-	_rail_weight_tween.tween_property(self, "_rail_pose_weight", cible, rail_pose_duration) \
-			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_rail_weight_tween.tween_property(self, "_rail_pose_weight", cible, rail_pose_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func _rail_logic():
 	_find_rail()
@@ -258,21 +257,21 @@ func tween_axis_angle(object: Object, property: String, axis: Vector3, target_an
 			object.set(property, q), 
 			0.0, 1.0, duration)
 	return tween
-	
+
 func _confirm_trick():
 	mesh_instance.scale = _mesh_instance_scale * 1.3
 	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
 func _on_trick(_name: String, _accuracy: float) -> void:
 	catch_pressed = false
-	var _anim := TrickManager.get_resource(_name)
-	var _duration := TrickManager.get_trick_duration(_name)
+	var _anim :Anim = TrickManager.get_resource(_name)
+	var _duration :float = TrickManager.get_trick_duration(_name)
 	current_trick_duration = _duration
 	current_anim_duration = _anim.animation_duration
 	
 	if _anim.reset_velocities: parent.reset_velocities()
 	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
-	
+
 	_confirm_trick()
 
 	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)

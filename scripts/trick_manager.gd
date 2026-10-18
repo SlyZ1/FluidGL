@@ -174,7 +174,7 @@ func get_trick_duration(_name: String) -> float:
 	return _tricks.get_node(_name).duration
 
 func get_resource(_name : String) -> Anim:
-	return load("res://tricks/" + _name + ".tres")
+	return load("res://tricks/" + _name + ".tres") as Anim
 	
 func on_airborne() -> void:
 	_possible_tricks = _tricks.get_neighbours("instable_saut")
