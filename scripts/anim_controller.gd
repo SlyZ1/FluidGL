@@ -4,7 +4,7 @@ extends Node
 @export_range(0, 1) var trick_cancel_end: float = 0.1
 @export_range(0, 1) var trick_catchable_start: float = 0.7
 @export_range(0, 1) var trick_ground_collision: float = 0.75
-@export var mesh_instance: MeshInstance3D
+@export var mesh_instance: Node3D
 @export_group("Lane")
 @export var lane_position: float = 2.5
 @export_group("Catch")
@@ -14,6 +14,7 @@ extends Node
 @export_group("Rail")
 @export var rail_z_thresh: float = 0.4
 @export var rail_y_thresh: float = 1
+@export var rail_y_offset: float = 0.3
 @export var rail_entry_duration: float = 0.15
 @export var rail_slide_angles: Vector3 = Vector3(-20, 90, 0)
 @export var rail_pose_duration: float = 0.12
@@ -54,7 +55,10 @@ var lane_tween: Tween
 var current_rail: Path3D = null
 var prev_rail: Path3D = null
 
+var _mesh_instance_scale: Vector3
+
 func _ready() -> void:
+	_mesh_instance_scale = mesh_instance.scale
 	TrickManager.trick_performed.connect(_on_trick)
 	TrickManager.trick_ended.connect(_on_trick_end)
 	TrickManager.trick_catched.connect(_on_trick_catched)
@@ -112,7 +116,7 @@ func get_zy_from_x(rail: Path3D, target_x: float) -> Vector3:
 	var p1 = pts[idx - 1]
 	var p2 = pts[idx]
 	var t = 0.0 if p1.x == p2.x else (target_x - p1.x) / (p2.x - p1.x)
-	return Vector3(lerp(p1.z, p2.z, t), lerp(p1.y, p2.y, t), t) # Returns global Vector2(Z, Y)
+	return Vector3(lerp(p1.z, p2.z, t), lerp(p1.y, p2.y, t) - rail_y_offset, t) # Returns global Vector2(Z, Y)
 
 func _rail_courbure(rail: Path3D, x: float) -> float:
 	var h: float = 1.0
@@ -158,7 +162,6 @@ func _rail_logic():
 	_find_rail()
 	if current_rail:
 		var zyt := get_zy_from_x(current_rail, parent.global_position.x)
-		print(zyt.z)
 		if zyt.z > 1 or zyt.z < 0: 
 			# When Fall from rail
 			if zyt.z > 1 and prev_rail: parent.reset_velocities()
@@ -166,7 +169,6 @@ func _rail_logic():
 			prev_rail = current_rail
 			return
 			
-		TrickManager._possible_tricks = ["instable_saut"]
 		if not TrickManager.catch_pressed():
 			# When arrive on rail without catch
 			if not prev_rail: 
@@ -182,6 +184,8 @@ func _rail_logic():
 				return
 				
 		if not prev_rail:
+			TrickManager._nb_tricks_since_grounded += 1
+			TrickManager._possible_tricks = ["instable_saut"]
 			_rail_offset = Vector2(parent.global_position.z - zyt.x, parent.global_position.y - zyt.y)
 			_rail_offset_weight = 1.0
 			if _rail_tween and _rail_tween.is_valid():
@@ -256,8 +260,8 @@ func tween_axis_angle(object: Object, property: String, axis: Vector3, target_an
 	return tween
 	
 func _confirm_trick():
-	mesh_instance.scale = Vector3.ONE * 1.3
-	create_tween().tween_property(mesh_instance, "scale", Vector3.ONE, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
+	mesh_instance.scale = _mesh_instance_scale * 1.3
+	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
 func _on_trick(_name: String, _accuracy: float) -> void:
 	catch_pressed = false
@@ -307,7 +311,7 @@ func _catch_trick(_dt: float) -> void:
 	if not catch_pressed:
 		parent.velocity_back = min(parent.velocity_back, catch_start_speed)
 		parent.velocity_front = min(parent.velocity_front, catch_start_speed)
-		_confirm_trick()
+		#_confirm_trick()
 		
 	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
 	trick_catched = true

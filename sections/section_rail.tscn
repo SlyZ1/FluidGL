@@ -79,7 +79,7 @@ path_u_distance = 0.1
 path_joined = false
 
 [node name="Ramp" type="MeshInstance3D" parent="." unique_id=171679891]
-transform = Transform3D(7.179515, 0, 0, 0, 1, 0, 0, 0, 1, -7.172, 2.451, -2.5)
+transform = Transform3D(7.179515, 0, 0, 0, 1, 0, 0, 0, 1, -7.172, 2.4452295, -2.5)
 mesh = SubResource("PrismMesh_lwk0x")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Ramp" unique_id=1542885025]

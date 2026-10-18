@@ -3,6 +3,7 @@ extends Node
 signal trick_performed(_name: String, _accuracy: float)
 signal trick_ended
 signal trick_catched(_progression: float, _dt: float)
+signal trick_validated(_num_combo: int)
 
 signal go_left
 signal go_right
@@ -17,6 +18,7 @@ var _started := false
 var _nb_tricks_since_grounded := 0
 
 var _last_input := ""
+var _last_input_executed := ""
 
 const _xp_per_tier = [100, 200, 400, 800, 1600]
 var _xp := 0
@@ -86,24 +88,27 @@ func _process(delta: float) -> void:
 	if catch_pressed():
 		var t: float = ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 		trick_catched.emit(t, delta)
+		_last_input_executed = ""
 		return
 		
 	# If going left
 	if input_string == "fhYbRv":
 		print("Going Left")
 		go_left.emit()
-		$InputLag.start()
 		return
 	# If going right
 	if input_string == "fhyBrV":
 		print("Going Right")
 		go_right.emit()
-		$InputLag.start()
 		return
 		
+	
 	for trick_name : String in _possible_tricks:
 		var trick := _tricks.get_node(trick_name)
 		if trick.input == input_string:
+			if trick.input == _last_input_executed:
+				break
+			_last_input_executed = trick.input
 			var tot: float = $TrickTiming.wait_time
 			var t: float = $TrickTiming.time_left
 			
@@ -141,6 +146,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	$TrickTiming.start(get_trick_duration(_name))
 
 	trick_performed.emit(_name, _accuracy)
+	trick_validated.emit(_nb_tricks_since_grounded)
 	
 
 func _trick_ended() -> void:
@@ -163,4 +169,5 @@ func on_ground() -> void:
 	_reset()
 	
 func on_successful_catch() -> void: 
+	#trick_validated.emit()
 	$TrickTiming.stop()

@@ -36,18 +36,6 @@
 			"input" : "Fhybrv",
 			"duration" : 1.2,
 			"next" : ["kickflip_droite", "kickflip_gauche"]
-		},
-		{
-			"name" : "go_left",
-			"input" : "fhYbRv",
-			"duration" : 1.2,
-			"next" : []
-		},
-		{
-			"name" : "go_right",
-			"input" : "FhyBrV",
-			"duration" : 1.2,
-			"next" : []
 		}
 	]
 }

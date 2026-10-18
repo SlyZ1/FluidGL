@@ -13,6 +13,8 @@ class_name MapLoader
 @export var substep: float = 1.0 / 300.0
 @export var max_steps_par_frame: int = 30
 
+signal on_stop
+
 func set_active(node: Node3D, active: bool) -> void:
 	node.visible = active
 	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
@@ -45,6 +47,7 @@ func _ready() -> void:
 	set_active(skate, true)
 	
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
+	on_stop.emit()
 	is_running = false
 	if not no_ragdoll:
 		ragdoll.global_transform = skate.global_transform

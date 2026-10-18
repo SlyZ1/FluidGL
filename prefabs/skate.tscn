@@ -15,10 +15,10 @@ albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
 metallic_specular = 0.51
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
-size = Vector3(1.575, 0.865, 4.57)
+size = Vector3(1.575, 0.865, 6.205)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
-size = Vector3(1.55, 1.145, 2.99)
+size = Vector3(1.55, 1.145, 3.385)
 
 [node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
@@ -41,31 +41,32 @@ visible = false
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
-[node name="Skate" type="Node3D" parent="." unique_id=54906917]
-transform = Transform3D(0.445, 0, 0, 0, 0.445, 0, 0, 0, 0.605, 0, 0, 0)
-
-[node name="Skate2" type="MeshInstance3D" parent="Skate" unique_id=1399617927]
-transform = Transform3D(0.99999994, 0, -3.5527137e-15, 0, 1, 0, 3.5527137e-15, 0, 0.99999994, 0, 0, 0)
+[node name="Skate2" type="MeshInstance3D" parent="." unique_id=1399617927]
+transform = Transform3D(0.44499996, 0, -1.7763568e-15, 0, 0.445, 0, 1.7763568e-15, 0, 0.60499996, 0, 0, 0)
 visible = false
 mesh = SubResource("BoxMesh_qn4bn")
 surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
+
+[node name="Skate" type="Node3D" parent="." unique_id=54906917]
 
 [node name="ShapeCast3D" type="ShapeCast3D" parent="Skate" unique_id=640768866]
 shape = SubResource("BoxShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
 [node name="skate" parent="Skate" unique_id=70394129 instance=ExtResource("2_ke4g0")]
-transform = Transform3D(0.9999998, 0, 0, 0, 1, 0, 3.5527137e-15, 0, 0.73553693, 0, -0.26350078, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0, -0.26332742, 0)
 
 [node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
 script = ExtResource("2_2wimw")
 trick_cancel_end = 0.08
 trick_catchable_start = 0.3
-mesh_instance = NodePath("../Skate/Skate2")
+mesh_instance = NodePath("../Skate/skate")
 rail_z_thresh = 2.5
 rail_y_thresh = 0.75
+rail_y_offset = 0.5
 
 [node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5916979e-08, 0, -0.59291136)
 shape = SubResource("BoxShape3D_q1d6x")
 target_position = Vector3(0, 0, 0.365)
 

@@ -25,6 +25,12 @@ var _is_grounded: bool = false
 var impulsed_timer: float = 0
 var fall_timer: float = 0
 
+var _scale: Vector3
+var _mesh_scale: Vector3
+
+func _ready() -> void:
+	_scale = global_basis.get_scale()
+	_mesh_scale = mesh_instance.basis.get_scale()
 
 func _limit_rotation(direction: Vector3) -> Vector3:
 	var up: Vector3 = MapLoader.up()
@@ -66,7 +72,7 @@ func reset_orientation() -> void:
 	set_pos(p_back, p_front)
 		
 func set_rot(rot: Basis) -> void:
-	mesh_instance.basis = rot
+	mesh_instance.basis = rot * Basis.from_scale(_mesh_scale)
 
 func is_grounded() -> bool:
 	return capteur_ground.is_colliding()
@@ -92,6 +98,7 @@ func reset_velocities() -> void:
 	velocity_front = 0
 
 func _integrate(dt: float) -> void:
+	print(scale)
 	var acc: float = -gravity * dt
 	if not grounded_back: velocity_back += acc
 	if not grounded_front: velocity_front += acc
@@ -130,12 +137,11 @@ func set_pos(back: Vector3, front: Vector3, normal: Vector3 = Vector3.UP) -> voi
 	if direction.length() < 0.001:
 		return
 
-	var echelle: Vector3 = global_basis.get_scale()
 	var dir_locale: Vector3 = (capteur_front.position - capteur_back.position).normalized()
 
 	var rot: Basis = Basis.looking_at(direction.normalized(), normal) \
 			* Basis.looking_at(dir_locale, Vector3.UP).inverse()
-	global_basis = rot * Basis.from_scale(echelle)
+	global_basis = rot * Basis.from_scale(_scale)
 
 	var milieu_local: Vector3 = (capteur_front.position + capteur_back.position) / 2.0
 	global_position = (back + front) / 2.0 - global_basis * milieu_local
