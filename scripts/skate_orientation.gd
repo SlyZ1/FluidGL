@@ -234,6 +234,7 @@ func _process(dt: float) -> void:
 	if current_rail and not prev_rail:
 		on_rail.emit()
 	if not current_rail and prev_rail:
+		if impulsed_timer < 0: reset_velocities()
 		off_rail.emit()
 
 	prev_rail = current_rail
