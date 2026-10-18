@@ -9,6 +9,8 @@ extends Node3D
 signal on_fall()
 signal on_grounded()
 signal on_jump()
+signal on_rail()
+signal off_rail()
 
 var velocity_back: float = 0
 var velocity_front: float = 0
@@ -24,6 +26,8 @@ var impulsed_timer: float = 0
 var fall_timer: float = 0
 
 var current_rail: Path3D = null
+var prev_rail: Path3D = null
+
 
 func _limit_rotation(direction: Vector3) -> Vector3:
 	var up: Vector3 = MapLoader.up()
@@ -55,7 +59,7 @@ func apply_rot(rot: Basis) -> void:
 		
 func set_rot(rot: Basis) -> void:
 	mesh_instance.basis = rot
-	
+
 func is_grounded() -> bool:
 	return capteur_ground.is_colliding()
 	
@@ -78,6 +82,8 @@ func get_normal() -> Vector3:
 func reset_velocities() -> void:
 	velocity_back = 0
 	velocity_front = 0
+	$RailCooldown.start()
+	current_rail = null
 
 func _integrate(dt: float) -> void:
 	var acc: float = -20 * dt
@@ -186,6 +192,9 @@ func _find_rail() -> void:
 		for rl in sec.rails:
 			if touches_path(rl, 1):
 				current_rail = rl
+	if current_rail and not is_grounded():
+		TrickManager._current_trick = ""
+		TrickManager._possible_tricks = TrickManager._tricks.get_neighbours("")
 
 func get_zy_from_x(target_x: float) -> Vector2:
 	if not current_rail: return Vector2.ZERO
@@ -218,12 +227,16 @@ func _process(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
 
-	_find_rail()
-	if current_rail != null:
-		print("rail !")
-		var zy = get_zy_from_x(global_position.x)
-		global_position.z = zy.x
-		global_position.y = zy.y
+	#if velocity_back + velocity_front < 0:
+	if $RailCooldown.is_stopped():
+		_find_rail()
+
+	if current_rail and not prev_rail:
+		on_rail.emit()
+	if not current_rail and prev_rail:
+		off_rail.emit()
+
+	prev_rail = current_rail
 	
 	if capteur_ground.is_colliding():
 		if !_is_grounded: 
@@ -236,6 +249,12 @@ func _process(dt: float) -> void:
 		else:
 			print("Fall")
 			on_fall.emit()
+			
+	if current_rail and $RailCooldown.is_stopped():
+		#print("Rail")
+		var zy = get_zy_from_x(global_position.x)
+		global_position.z = zy.x
+		global_position.y = zy.y
 		
 	_is_grounded = capteur_ground.is_colliding()
 	
@@ -245,3 +264,7 @@ func _process(dt: float) -> void:
 	fall_timer -= dt
 	
 	if Input.is_action_just_pressed("B"): MapLoader.instance.stop()
+
+
+func _on_rail_cooldown_timeout() -> void:
+	_find_rail()
