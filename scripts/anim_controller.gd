@@ -1,12 +1,35 @@
 extends Node
 
+@export_group("Tricks")
 @export_range(0, 1) var trick_cancel_end: float = 0.1
 @export_range(0, 1) var trick_catchable_start: float = 0.7
 @export_range(0, 1) var trick_ground_collision: float = 0.75
+@export var mesh_instance: MeshInstance3D
+@export_group("Lane")
 @export var lane_position: float = 2.5
+@export_group("Catch")
 @export var catch_fall_speed: float = 20
 @export var catch_start_speed: float = -1.5
-@export var mesh_instance: MeshInstance3D
+
+@export_group("Rail")
+@export var rail_z_thresh: float = 0.4
+@export var rail_y_thresh: float = 1
+@export var rail_entry_duration: float = 0.15
+@export var rail_slide_angles: Vector3 = Vector3(-20, 90, 0)
+@export var rail_pose_duration: float = 0.12
+@export var rail_suivre_direction: bool = true
+@export var rail_seuil_courbure: float = 0.02
+@export var rail_duree_changement_cote: float = 0.25
+
+var _rail_offset: Vector2 = Vector2.ZERO
+var _rail_offset_weight: float = 0.0
+var _rail_tween: Tween
+var rail_pose: Quaternion = Quaternion.IDENTITY
+var _rail_cote: float = 1.0
+var _rail_pose_weight: float = 0.0
+var _rail_pose_cible: Quaternion = Quaternion.IDENTITY
+var _rail_weight_tween: Tween
+var _rail_cote_cible: float = 1.0
 
 class BasicTrick:
 	var trick_name: String
@@ -23,13 +46,13 @@ var current_anim_duration: float = 0
 
 var trick_catched: bool = true
 var catch_pressed: bool = false
-var rail := false
-
-@onready var rail_pose := Quaternion.IDENTITY
 
 var parent: Node3D
 
 var lane_tween: Tween
+
+var current_rail: Path3D = null
+var prev_rail: Path3D = null
 
 func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
@@ -40,23 +63,173 @@ func _ready() -> void:
 	parent = get_parent()
 	parent.on_fall.connect(TrickManager.on_airborne)
 	parent.on_grounded.connect(TrickManager.on_ground)
-	parent.on_rail.connect(_on_rail)
-	parent.off_rail.connect(_off_rail)
+	
+func touches_path(rail: Path3D) -> bool:
+	var zyt: Vector3 = get_zy_from_x(rail, parent.global_position.x)
+	if zyt == Vector3.BACK:
+		return false
+	var dz: float = abs(parent.global_position.z - zyt.x) 
+	var dy: float = parent.global_position.y - zyt.y
+	return dz <= rail_z_thresh and dy <= rail_y_thresh
 
-func _process(delta: float) -> void:
+func _find_rail() -> void:
+	current_rail = null
+	for sec in MapLoader.instance._spawned_sections:
+		for rl in sec.rails:
+			if touches_path(rl):
+				current_rail = rl
+				
+func get_zy_from_x(rail: Path3D, target_x: float) -> Vector3:
+	if not rail: return Vector3(0,0,-1)
+	#rail.curve.bake_interval = 0.1
+	
+	var tf = rail.global_transform
+	var pts = rail.curve.get_baked_points()
+	if pts.is_empty(): return Vector3(0,0,-1)
+
+	for i in range(pts.size()):
+		pts[i] = tf * pts[i]
+		
+	var asc = pts[0].x <= pts[-1].x
+	var low = 0
+	var high = pts.size() - 1
+	
+	while low <= high:
+		var mid = (low + high) >> 1
+		if (pts[mid].x < target_x) == asc: low = mid + 1
+		else: high = mid - 1
+		
+	var idx = clamp(low, 1, pts.size() - 1)
+	var p1 = pts[idx - 1]
+	var p2 = pts[idx]
+	var t = 0.0 if p1.x == p2.x else (target_x - p1.x) / (p2.x - p1.x)
+	return Vector3(lerp(p1.z, p2.z, t), lerp(p1.y, p2.y, t), t) # Returns global Vector2(Z, Y)
+
+func _rail_courbure(rail: Path3D, x: float) -> float:
+	var h: float = 1.0
+	var a: float = get_zy_from_x(rail, x - h).x
+	var b: float = get_zy_from_x(rail, x).x
+	var c: float = get_zy_from_x(rail, x + h).x
+	var pente: float = (c - a) / (2.0 * h)
+	var d2: float = (c - 2.0 * b + a) / (h * h)
+	return d2 / pow(1.0 + pente * pente, 1.5)
+
+func _rail_cote_interieur(rail: Path3D) -> float:
+	var pts: PackedVector3Array = rail.curve.get_baked_points()
+	if pts.size() < 3:
+		return 1.0
+	var tf: Transform3D = rail.global_transform
+	var debut: Vector3 = tf * pts[0]
+	var fin: Vector3 = tf * pts[-1]
+	var milieu: Vector3 = tf * pts[pts.size() / 2]
+	var bombe: float = milieu.z - (debut.z + fin.z) / 2.0
+	return -1.0 if bombe > 0.0 else 1.0
+
+func _rail_pente(rail: Path3D, x: float) -> float:
+	var h: float = 0.3
+	var a: Vector3 = get_zy_from_x(rail, x - h)
+	var b: Vector3 = get_zy_from_x(rail, x + h)
+	return (b.x - a.x) / (2.0 * h)
+
+func _calc_rail_pose() -> Quaternion:
+	var angles: Vector3 = rail_slide_angles * PI / 180.0
+	angles.x *= _rail_cote  # inclinaison vers l'intérieur du virage
+	if rail_suivre_direction:
+		angles.y -= atan(_rail_pente(current_rail, parent.global_position.x))
+	return Quaternion.from_euler(angles)
+
+func _tween_rail_weight(cible: float) -> void:
+	if _rail_weight_tween and _rail_weight_tween.is_valid():
+		_rail_weight_tween.kill()
+	_rail_weight_tween = create_tween()
+	_rail_weight_tween.tween_property(self, "_rail_pose_weight", cible, rail_pose_duration) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+func _rail_logic():
+	_find_rail()
+	if current_rail:
+		var zyt := get_zy_from_x(current_rail, parent.global_position.x)
+		if zyt.z > 1 or zyt.z < 0: 
+			# When Fall from rail
+			if zyt.z > 1 and prev_rail: parent.reset_velocities()
+			current_rail = null
+			prev_rail = current_rail
+			return
+			
+		TrickManager._possible_tricks = ["instable_saut"]
+		if not TrickManager.catch_pressed():
+			# When arrive on rail without catch
+			if not prev_rail: 
+				if parent.just_impulsed(): 
+					current_rail = null
+					return
+				MapLoader.instance.stop()
+			# When jump from rail
+			else: 
+				current_rail = null
+				parent.reset_velocities()
+				prev_rail = current_rail
+				return
+				
+		if not prev_rail:
+			parent.reset_orientation()
+			_rail_offset = Vector2(parent.global_position.z - zyt.x, parent.global_position.y - zyt.y)
+			_rail_offset_weight = 1.0
+			if _rail_tween and _rail_tween.is_valid():
+				_rail_tween.kill()
+			_rail_tween = create_tween()
+			_rail_tween.tween_property(self, "_rail_offset_weight", 0.0, rail_entry_duration) \
+					.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+					
+			if lane_tween and lane_tween.is_valid():
+				lane_tween.kill()
+				
+		parent.global_position.z = zyt.x + _rail_offset.x * _rail_offset_weight
+		parent.global_position.y = zyt.y + _rail_offset.y * _rail_offset_weight
+			
+	prev_rail = current_rail
+
+
+func _process(delta: float) -> void:	
+	if ((parent.is_grounded() or parent.is_mesh_colliding()) and not trick_catched):
+		MapLoader.instance.stop()
+		
+	var etait_sur_rail: bool = prev_rail != null
+	_rail_logic()
+	var est_sur_rail: bool = current_rail != null
+	var inversion: float = -1.0 if false else 1.0
+
+	if est_sur_rail:
+		var k: float = _rail_courbure(current_rail, parent.global_position.x)
+		if absf(k) > rail_seuil_courbure:
+			_rail_cote_cible = signf(k) * inversion
+
+		if not etait_sur_rail:
+			if absf(k) <= rail_seuil_courbure:
+				_rail_cote_cible = _rail_cote_interieur(current_rail) * inversion
+			_rail_cote = _rail_cote_cible
+			_tween_rail_weight(1.0)
+
+		_rail_cote = move_toward(_rail_cote, _rail_cote_cible, delta * 2.0 / rail_duree_changement_cote)
+		_rail_pose_cible = _calc_rail_pose()
+
+	elif etait_sur_rail:
+		_tween_rail_weight(0.0)
+
+	rail_pose = Quaternion.IDENTITY.slerp(_rail_pose_cible, _rail_pose_weight)
+	
+	# Snap To Lane
+	if (abs(parent.global_position.z - lane_position) > 0.1 
+		and (lane_tween == null or !lane_tween.is_valid() or !lane_tween.is_running())
+		and not current_rail
+	):
+		if parent.global_position.z < 0: _on_go_left()
+		else: _on_go_right()
+	
 	var current_rotation: Quaternion = rail_pose
 	for trick in active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
-		
-	if ((parent.is_grounded() or parent.is_mesh_colliding()) and not trick_catched):
-		MapLoader.instance.stop()
-		
-	# Snap To Lane
-	if abs(parent.global_position.z - lane_position) > 0.1 and (lane_tween == null or !lane_tween.is_valid() or !lane_tween.is_running()):
-		if parent.global_position.z < 0: _on_go_left()
-		else: _on_go_right()
-		
 	parent.set_rot(Basis(current_rotation))
 
 func tween_axis_angle(object: Object, property: String, axis: Vector3, target_angle: float, duration: float, curve: Curve = null) -> Tween:
@@ -92,21 +265,12 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	if abs(_anim.rot_angle) > 0.001:
 		trick_catched = false
 		var trick := BasicTrick.new(_name)
-
+		print(_name)
 		active_tricks.push_back(trick)
 		trick.tween = tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 
 func _on_trick_end() -> void:
 	active_tricks.clear()
-
-func _on_rail() -> void:
-	var target_quat := Quaternion.from_euler(Vector3(0, PI / 2.0, 0)) * Quaternion.from_euler(Vector3(-PI / 4.0, 0, 0))
-	tween_axis_angle(self, "rail_pose", target_quat.get_axis(), target_quat.get_angle(), 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	rail = true
-
-func _off_rail() -> void:
-	create_tween().tween_property(self, "rail_pose", Quaternion.IDENTITY, 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	rail = false
 	
 func _cancel_tricks() -> void:
 	if active_tricks.is_empty():

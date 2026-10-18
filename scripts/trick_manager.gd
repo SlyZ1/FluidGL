@@ -43,6 +43,19 @@ func _ready() -> void:
 	bullet_timer.ignore_time_scale = true
 	add_child(bullet_timer)
 	_reset()
+	
+func _compute_input() -> String:
+	var fhybrv := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B"), Input.is_action_pressed("R"), Input.is_action_pressed("V")]
+	
+	var input_string := "fhybrv"
+	for i : int in range(6):
+		if fhybrv[i]:
+			input_string[i] = input_string[i].to_upper()
+	return input_string
+	
+func catch_pressed() -> bool:
+	var input_string := _compute_input()
+	return input_string == "FHybrv"
 
 func _process(delta: float) -> void:
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
@@ -51,18 +64,14 @@ func _process(delta: float) -> void:
 		Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
 	else:
 		Engine.time_scale = 1
-	var fhybrv := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B"), Input.is_action_pressed("R"), Input.is_action_pressed("V")]
-	
-	var input_string := "fhybrv"
-	for i : int in range(6):
-		if fhybrv[i]:
-			input_string[i] = input_string[i].to_upper()
+		
+	var input_string := _compute_input()
 
 	# Start tricks
-	if input_string == "FHybrv" and not _started:
-			_started = true
-			$InputLag.start()
-			print("GO !")
+	if catch_pressed() and not _started:
+		_started = true
+		$InputLag.start()
+		print("GO !")
 
 	# Set input lag when changing inputs
 	if _last_input != input_string:
@@ -74,7 +83,7 @@ func _process(delta: float) -> void:
 		return
 		
 	# If catching the skate
-	if input_string == "FHybrv":
+	if catch_pressed():
 		var t: float = ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 		trick_catched.emit(t, delta)
 		return

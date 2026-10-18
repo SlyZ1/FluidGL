@@ -11,8 +11,6 @@ extends Node3D
 signal on_fall()
 signal on_grounded()
 signal on_jump()
-signal on_rail()
-signal off_rail()
 
 var velocity_back: float = 0
 var velocity_front: float = 0
@@ -26,9 +24,6 @@ var _is_grounded: bool = false
 
 var impulsed_timer: float = 0
 var fall_timer: float = 0
-
-var current_rail: Path3D = null
-var prev_rail: Path3D = null
 
 
 func _limit_rotation(direction: Vector3) -> Vector3:
@@ -52,12 +47,23 @@ func apply_impulse(impulse_back: float, impulse_front: float) -> void:
 	velocity_front += impulse_front
 	impulsed_timer = 0.1
 	
+func just_impulsed() -> bool:
+	return impulsed_timer > 0
+	
 func apply_rot(rot: Basis) -> void:
 	var p_back_offset: Vector3 = capteur_back.global_position - global_position
 	var p_front_offset: Vector3 = capteur_front.global_position - global_position
 	p_back_offset = rot * p_back_offset
 	p_front_offset = rot * p_front_offset
 	set_pos(p_back_offset + global_position, p_front_offset + global_position)
+	
+func reset_orientation() -> void:
+	var p_back = capteur_back.global_position
+	var p_front = capteur_front.global_position
+	var center = (p_back + p_front) / 2.0
+	p_back.y = center.y
+	p_front.y = center.y
+	set_pos(p_back, p_front)
 		
 func set_rot(rot: Basis) -> void:
 	mesh_instance.basis = rot
@@ -84,8 +90,6 @@ func get_normal() -> Vector3:
 func reset_velocities() -> void:
 	velocity_back = 0
 	velocity_front = 0
-	$RailCooldown.start()
-	current_rail = null
 
 func _integrate(dt: float) -> void:
 	var acc: float = -gravity * dt
@@ -182,65 +186,10 @@ func _ground_snap(dt: float) -> void:
 
 	if corrige:
 		set_pos(p_back, p_front, normal.normalized())
-		
-func touches_path(which: Path3D, threshold: float) -> bool:
-	var local_pos = which.to_local(global_position)
-	var closest_point = which.curve.get_closest_point(local_pos)
-	var distance = local_pos.distance_to(closest_point)
-	return distance <= threshold
-
-func _find_rail() -> void:
-	current_rail = null
-	for sec in MapLoader.instance._spawned_sections:
-		for rl in sec.rails:
-			if touches_path(rl, 1):
-				current_rail = rl
-	if current_rail and not is_grounded():
-		TrickManager._current_trick = ""
-		TrickManager._possible_tricks = TrickManager._tricks.get_neighbours("")
-
-func get_zy_from_x(target_x: float) -> Vector2:
-	if not current_rail: return Vector2.ZERO
-	current_rail.curve.bake_interval = 0.1
-	
-	var tf = current_rail.global_transform
-	var pts = current_rail.curve.get_baked_points()
-	if pts.is_empty(): return Vector2.ZERO
-
-	for i in range(pts.size()):
-		pts[i] = tf * pts[i]
-		
-	var asc = pts[0].x <= pts[-1].x
-	var low = 0
-	var high = pts.size() - 1
-	
-	while low <= high:
-		var mid = (low + high) >> 1
-		if (pts[mid].x < target_x) == asc: low = mid + 1
-		else: high = mid - 1
-		
-	var idx = clamp(low, 1, pts.size() - 1)
-	var p1 = pts[idx - 1]
-	var p2 = pts[idx]
-	var t = 0.0 if p1.x == p2.x else (target_x - p1.x) / (p2.x - p1.x)
-	
-	return Vector2(lerp(p1.z, p2.z, t), lerp(p1.y, p2.y, t)) # Returns global Vector2(Z, Y)
 
 func step(dt: float) -> void:
 	_integrate(dt)
 	_ground_snap(dt)
-
-	#if velocity_back + velocity_front < 0:
-	if $RailCooldown.is_stopped():
-		_find_rail()
-
-	if current_rail and not prev_rail:
-		on_rail.emit()
-	if not current_rail and prev_rail:
-		if impulsed_timer < 0: reset_velocities()
-		off_rail.emit()
-
-	prev_rail = current_rail
 	
 	if capteur_ground.is_colliding():
 		if !_is_grounded: 
@@ -253,12 +202,6 @@ func step(dt: float) -> void:
 		else:
 			print("Fall")
 			on_fall.emit()
-			
-	if current_rail and $RailCooldown.is_stopped():
-		#print("Rail")
-		var zy = get_zy_from_x(global_position.x)
-		global_position.z = zy.x
-		global_position.y = zy.y
 		
 	_is_grounded = capteur_ground.is_colliding()
 	
@@ -266,10 +209,3 @@ func step(dt: float) -> void:
 	previous_grounded_front = grounded_front
 	impulsed_timer -= dt
 	fall_timer -= dt
-
-func _process(dt: float) -> void:
-	pass
-
-
-func _on_rail_cooldown_timeout() -> void:
-	_find_rail()

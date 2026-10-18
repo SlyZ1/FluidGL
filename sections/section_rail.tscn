@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://cwwjjwqrl3o8r"]
+
+[ext_resource type="Material" uid="uid://buubyxe1kb33a" path="res://materials/ground_material.tres" id="1_lwk0x"]
+[ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="2_8l0xq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_tnd71"]
+size = Vector3(50, 0.98072267, 10)
+
+[sub_resource type="SphereMesh" id="SphereMesh_tnd71"]
+
+[sub_resource type="Curve3D" id="Curve3D_vqc4j"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_jfcpt"]
+data = PackedVector3Array(-25, 0.5, 5, 25, 0.5, 5, -25, -0.5, 5, 25, 0.5, 5, 25, -0.5, 5, -25, -0.5, 5, 25, 0.5, -5, -25, 0.5, -5, 25, -0.5, -5, -25, 0.5, -5, -25, -0.5, -5, 25, -0.5, -5, 25, 0.5, 5, 25, 0.5, -5, 25, -0.5, 5, 25, 0.5, -5, 25, -0.5, -5, 25, -0.5, 5, -25, 0.5, -5, -25, 0.5, 5, -25, -0.5, -5, -25, 0.5, 5, -25, -0.5, 5, -25, -0.5, -5, 25, 0.5, 5, -25, 0.5, 5, 25, 0.5, -5, -25, 0.5, 5, -25, 0.5, -5, 25, 0.5, -5, -25, -0.5, 5, 25, -0.5, 5, -25, -0.5, -5, 25, -0.5, 5, 25, -0.5, -5, -25, -0.5, -5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
+size = Vector3(25.871155, 2.2407227, 3.7539063)
+
+[sub_resource type="Curve3D" id="Curve3D_lwk0x"]
+bake_interval = 0.1
+_data = {
+"points": PackedVector3Array(0, 0, 0, 2.69, 0, 0, 0.478, 0, 1.75, -2.4112964, -0.07074714, -0.19242859, 2.4112964, 0.07074714, 0.19242859, 6.849193, -0.87105775, 0.7484746, -2.5725422, 0.006566763, -1.0360682, 2.5725422, -0.006566763, 1.0360682, 11.535164, -0.67844725, 2.405272, -1.78, 0, 0, 1.5, 0, 0, 25.237032, -0.060476422, 1.88294),
+"tilts": PackedFloat32Array(0, 0, 0, 0)
+}
+point_count = 4
+
+[node name="StraightBase" type="MeshInstance3D" unique_id=1808011952 node_paths=PackedStringArray("snap_back", "snap_front", "rails")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
+mesh = SubResource("BoxMesh_tnd71")
+surface_material_override/0 = ExtResource("1_lwk0x")
+script = ExtResource("2_8l0xq")
+snap_back = NodePath("SnapBack")
+snap_front = NodePath("SnapFront")
+rails = [NodePath("Path3D2")]
+
+[node name="SnapBack" type="MeshInstance3D" parent="." unique_id=110243719]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25, 0, 0)
+mesh = SubResource("SphereMesh_tnd71")
+
+[node name="SnapFront" type="MeshInstance3D" parent="." unique_id=584793037]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 25, 0, 0)
+mesh = SubResource("SphereMesh_tnd71")
+
+[node name="Path3D" type="Path3D" parent="." unique_id=161870261]
+curve = SubResource("Curve3D_vqc4j")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1828548897]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=352766047]
+shape = SubResource("ConcavePolygonShape3D_jfcpt")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="StaticBody3D" unique_id=1739066365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9600525, 0.6203613, 2.1201172)
+shape = SubResource("BoxShape3D_tnd71")
+
+[node name="Path3D2" type="Path3D" parent="." unique_id=869447975]
+transform = Transform3D(0.9996106, -0.0012133142, 0.02787748, 0.00105768, 0.9999838, 0.00559704, -0.027883817, -0.005565376, 0.9995957, -7.349991, 4.446102, 0.79769874)
+curve = SubResource("Curve3D_lwk0x")
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="Path3D2" unique_id=1501227188]
+transform = Transform3D(0.99999964, -1.4551915e-10, 1.8626451e-09, -2.910383e-10, 0.99999964, 0, -1.1175871e-08, -2.3283064e-09, 0.99999964, -0.08156562, -1.727104, -0.60720086)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 1
+path_interval = 0.09
+path_simplify_angle = 0.0
+path_rotation = 1
+path_rotation_accurate = false
+path_local = true
+path_continuous_u = false
+path_u_distance = 0.1
+path_joined = false

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c054pv2r252hh" path="res://scripts/map_loader.gd" id="1_2j8q1"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="1_rudyk"]
+[ext_resource type="PackedScene" uid="uid://cwwjjwqrl3o8r" path="res://sections/section_rail.tscn" id="3_p1m0m"]
 [ext_resource type="PackedScene" uid="uid://shgwedsytslb" path="res://sections/section_flat.tscn" id="3_wc5y2"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate.tscn" id="4_wc5y2"]
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
@@ -33,7 +34,7 @@ script = ExtResource("1_2j8q1")
 spawn_distance = 80
 speed = 20.0
 container = NodePath("GroundContainer")
-sections = Array[PackedScene]([ExtResource("3_wc5y2")])
+sections = Array[PackedScene]([ExtResource("3_wc5y2"), ExtResource("3_p1m0m")])
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
 
