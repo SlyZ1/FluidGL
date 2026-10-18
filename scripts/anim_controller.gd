@@ -147,7 +147,6 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		
 	# Successful Catch
 	if _progression > trick_catchable_start and not parent.is_grounded():
-		print("Catched!")
 		_cancel_tricks()
 		_catch_trick(_dt)
 		TrickManager.on_successful_catch()
