@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_sgunh"]
 [ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/anim_controller.gd" id="2_2wimw"]
+[ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="2_ke4g0"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
 radius = 1.0
@@ -30,26 +31,31 @@ mesh_instance = NodePath("Skate")
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
 transform = Transform3D(0.44470334, 0, -0.01623308, 0, 0.4449999, 0, 0.01623308, 0, 0.44470334, 0.015574996, 0, 0.88999975)
+visible = false
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
-metadata/_edit_lock_ = true
 
 [node name="CapteurBack" type="ShapeCast3D" parent="." unique_id=491530469]
 transform = Transform3D(0.44492567, 0, -0.008117892, 0, 0.44499993, 0, 0.008117892, 0, 0.44492567, 3.5527137e-15, 0, -0.88999975)
+visible = false
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
 [node name="Skate" type="Node3D" parent="." unique_id=54906917]
-transform = Transform3D(0.4449999, 0, 0, 0, 0.44499996, 0, 0, 0, 0.4449999, 0, 0, 0)
+transform = Transform3D(0.445, 0, 0, 0, 0.445, 0, 0, 0, 0.605, 0, 0, 0)
 
 [node name="Skate2" type="MeshInstance3D" parent="Skate" unique_id=1399617927]
 transform = Transform3D(0.99999994, 0, -3.5527137e-15, 0, 1, 0, 3.5527137e-15, 0, 0.99999994, 0, 0, 0)
+visible = false
 mesh = SubResource("BoxMesh_qn4bn")
 surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
 
 [node name="ShapeCast3D" type="ShapeCast3D" parent="Skate" unique_id=640768866]
 shape = SubResource("BoxShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
+
+[node name="skate" parent="Skate" unique_id=70394129 instance=ExtResource("2_ke4g0")]
+transform = Transform3D(0.9999998, 0, 0, 0, 1, 0, 3.5527137e-15, 0, 0.73553693, 0, -0.26350078, 0)
 
 [node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
 script = ExtResource("2_2wimw")
