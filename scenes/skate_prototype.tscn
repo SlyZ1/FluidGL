@@ -23,6 +23,18 @@
 [ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="21_w7e2e"]
 [ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="22_gt7vr"]
 [ext_resource type="AudioStream" uid="uid://b7yvn1nwfygf5" path="res://audio/fingertrick.mp3" id="23_gt7vr"]
+[ext_resource type="AudioStream" uid="uid://cpf3mv1wfo53x" path="res://audio/stop.mp3" id="24_d607h"]
+[ext_resource type="AudioStream" uid="uid://c216etn8vteih" path="res://audio/ok.mp3" id="25_llao1"]
+[ext_resource type="AudioStream" uid="uid://c3y0pli1lmtg3" path="res://audio/rail.mp3" id="26_5jkam"]
+[ext_resource type="AudioStream" uid="uid://dmwq5bp2hf8gn" path="res://audio/nice.mp3" id="27_qm51x"]
+[ext_resource type="AudioStream" uid="uid://doikql1wh2wnj" path="res://audio/mort.mp3" id="28_mod57"]
+[ext_resource type="AudioStream" uid="uid://bi3q06tnk8eat" path="res://audio/legendary.mp3" id="29_oxw7f"]
+[ext_resource type="AudioStream" uid="uid://cvnwvbl7q806w" path="res://audio/jump.mp3" id="30_ahj2r"]
+[ext_resource type="AudioStream" uid="uid://c1sk7y8myvq6j" path="res://audio/catch.mp3" id="31_q2wpr"]
+[ext_resource type="AudioStream" uid="uid://o1nrqjuv3ak1" path="res://audio/amazing.mp3" id="32_8o721"]
+[ext_resource type="AudioStream" uid="uid://01xk2iuk0yyf" path="res://audio/godlike.mp3" id="33_irawf"]
+[ext_resource type="AudioStream" uid="uid://dawyj0alt0gya" path="res://audio/epic.mp3" id="34_8ecev"]
+[ext_resource type="AudioStream" uid="uid://cg84onv3ff72v" path="res://audio/great.mp3" id="35_lty3c"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -441,10 +453,52 @@ mouse_filter = 2
 [node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
 one_shot = true
 
-[node name="Fingertrick" type="AudioStreamPlayer2D" parent="." unique_id=1363387467]
-position = Vector2(496, 1651)
+[node name="Fingertrick" type="AudioStreamPlayer" parent="." unique_id=1838622770]
 stream = ExtResource("23_gt7vr")
+volume_db = -10.667
 autoplay = true
+
+[node name="SFX" type="Node" parent="." unique_id=291289615]
+
+[node name="Stop" type="AudioStreamPlayer" parent="SFX" unique_id=1913514310]
+stream = ExtResource("24_d607h")
+
+[node name="Ok" type="AudioStreamPlayer" parent="SFX" unique_id=1393909303]
+stream = ExtResource("25_llao1")
+
+[node name="Rail" type="AudioStreamPlayer" parent="SFX" unique_id=1653412726]
+stream = ExtResource("26_5jkam")
+
+[node name="Nice" type="AudioStreamPlayer" parent="SFX" unique_id=2053019184]
+stream = ExtResource("27_qm51x")
+
+[node name="Mort" type="AudioStreamPlayer" parent="SFX" unique_id=100031872]
+stream = ExtResource("28_mod57")
+volume_db = 10.0
+
+[node name="Legendary" type="AudioStreamPlayer" parent="SFX" unique_id=1623831714]
+stream = ExtResource("29_oxw7f")
+
+[node name="Jump" type="AudioStreamPlayer" parent="SFX" unique_id=2016010652]
+stream = ExtResource("30_ahj2r")
+
+[node name="Catch" type="AudioStreamPlayer" parent="SFX" unique_id=2076263500]
+stream = ExtResource("31_q2wpr")
+
+[node name="Amazing" type="AudioStreamPlayer" parent="SFX" unique_id=771814367]
+stream = ExtResource("32_8o721")
+
+[node name="Crazy" type="AudioStreamPlayer" parent="SFX" unique_id=707435217]
+stream = ExtResource("33_irawf")
+
+[node name="Epic" type="AudioStreamPlayer" parent="SFX" unique_id=1630445451]
+stream = ExtResource("34_8ecev")
+
+[node name="Godlike" type="AudioStreamPlayer" parent="SFX" unique_id=1210249202]
+stream = ExtResource("33_irawf")
+
+[node name="Great" type="AudioStreamPlayer" parent="SFX" unique_id=2013314048]
+stream = ExtResource("35_lty3c")
 
 [connection signal="timeout" from="NewQuest" to="." method="_on_new_quest_timeout"]
 [connection signal="timeout" from="QuestEnd" to="." method="_on_quest_end_timeout"]

@@ -72,6 +72,7 @@ func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
 
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
+	$SFX/Mort.play()
 	on_stop.emit()
 	is_running = false
 	if not no_ragdoll:
