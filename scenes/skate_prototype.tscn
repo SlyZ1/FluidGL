@@ -35,7 +35,7 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_gt7vr"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite", "diago_gauche"])
-reward = 300
+reward = 500
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_hc6xd"]
@@ -53,7 +53,7 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_v4aj5"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["kickflip_gauche", "lenvers"])
-reward = 150
+reward = 250
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_l05ud"]
@@ -92,10 +92,6 @@ steps = Array[String](["kickflip_gauche", "lenvers", "helicopter"])
 reward = 400
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
-[sub_resource type="Resource" id="Resource_ogiks"]
-script = ExtResource("4_vfgxo")
-metadata/_custom_type_script = "uid://jkpmkae3y0n0"
-
 [sub_resource type="Resource" id="Resource_elfsb"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "grab", "wave"])
@@ -105,13 +101,13 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_b0vpq"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "grab", "wave", "tourne_gauche"])
-reward = 500
+reward = 590
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_3bmp5"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite"])
-reward = 250
+reward = 360
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_6fw6x"]
@@ -150,7 +146,7 @@ sections = Array[PackedScene]([ExtResource("9_cb56l"), ExtResource("4_xffk5"), E
 empty_section = ExtResource("5_3o3sw")
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
-quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx"), SubResource("Resource_xffk5"), SubResource("Resource_gt7vr"), SubResource("Resource_hc6xd"), SubResource("Resource_g3l2w"), SubResource("Resource_v4aj5"), SubResource("Resource_l05ud"), SubResource("Resource_m41q0"), SubResource("Resource_vv0j5"), SubResource("Resource_bdnmn"), SubResource("Resource_vfkyp"), SubResource("Resource_dnbj5"), SubResource("Resource_ogiks"), SubResource("Resource_elfsb"), SubResource("Resource_b0vpq"), SubResource("Resource_3bmp5"), SubResource("Resource_6fw6x")])
+quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx"), SubResource("Resource_xffk5"), SubResource("Resource_gt7vr"), SubResource("Resource_hc6xd"), SubResource("Resource_g3l2w"), SubResource("Resource_v4aj5"), SubResource("Resource_l05ud"), SubResource("Resource_m41q0"), SubResource("Resource_vv0j5"), SubResource("Resource_bdnmn"), SubResource("Resource_vfkyp"), SubResource("Resource_dnbj5"), SubResource("Resource_elfsb"), SubResource("Resource_b0vpq"), SubResource("Resource_3bmp5"), SubResource("Resource_6fw6x")])
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-3.059797e-08, 0, 0.7, 0, 0.7, 0, -0.7, 0, -3.059797e-08, 0, 3.16, 0)

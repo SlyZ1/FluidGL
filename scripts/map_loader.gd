@@ -64,7 +64,10 @@ func _ready() -> void:
 	set_active(skate, true)
 	freezed_skate = $Skate.duplicate()
 	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
-	
+	quests.sort_custom(func(q, l): return q.reward < l.reward)
+	for i in quests:
+		print(i.reward, " ", len(i.steps))
+
 func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
 
@@ -160,25 +163,28 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 		$NewQuest.start()
 		$QuestEnd.stop()
 		# TODO : féliciter le joueur
+		la_jaajiniere = (1 + la_jaajiniere) % len(quests)
 	else:
 		_reset_quest()
-		
+
 var appear_tw : Tween
-		
+
 func _move_quests(target_y: float) -> void:
 	for i in range(len(_current_quest.steps)):
 		var whom = get_node("UI/Input" + str(i + 1))
 		get_tree().create_tween().tween_property(whom, "position:y", target_y, 1.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT).set_delay(0.3 * i)
 
 func _reset_quest() -> void:
-	get_node("UI/Input" + str(_quest_progression + 1)).incorrect()
+	for i in range(_quest_progression):
+		get_node("UI/Input" + str(i + 1)).incorrect()
 	_quest_progression = 0
 
 func _on_catch(_progression: float, _dt: float) -> void:
 	_reset_quest()
 
+var la_jaajiniere := 0
 func _on_new_quest_timeout() -> void:
-	_current_quest = quests.pick_random()
+	_current_quest = quests[la_jaajiniere]
 	print(_current_quest.reward)
 	for i in range(len(_current_quest.steps)):
 		var input : String = TrickManager._tricks.get_node(_current_quest.steps[i]).input
