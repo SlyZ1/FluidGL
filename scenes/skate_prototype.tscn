@@ -18,7 +18,10 @@
 [ext_resource type="Environment" uid="uid://cmks0nm0sqiqg" path="res://sky/main_environment.tres" id="13_xffk5"]
 [ext_resource type="Script" uid="uid://v3s70tvc6v62" path="res://scripts/skybox_ratio.gd" id="14_hc6xd"]
 [ext_resource type="Material" uid="uid://d34r84cfcwtw3" path="res://sky/main_sky_material.tres" id="15_g3l2w"]
+[ext_resource type="Shader" uid="uid://bk5hvsujij6nr" path="res://shaders/sky_canvas.gdshader" id="20_g3l2w"]
 [ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="20_hc6xd"]
+[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="21_w7e2e"]
+[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="22_gt7vr"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -133,6 +136,19 @@ point_count = 3
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3o3sw"]
 shader = ExtResource("10_a10lx")
 shader_parameter/blur_amount = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37qun"]
+shader = ExtResource("20_g3l2w")
+shader_parameter/backgroundColor = Color(0.18431373, 0.41960785, 0.76862746, 1)
+shader_parameter/imageColor = Color(0.3647059, 0.59607846, 0.9411765, 1)
+shader_parameter/image2Color = Color(0.70980394, 0.827451, 1, 1)
+shader_parameter/image = ExtResource("22_gt7vr")
+shader_parameter/image2 = ExtResource("21_w7e2e")
+shader_parameter/scale = 0.08
+shader_parameter/padding = Vector2(1.22, 1.23)
+shader_parameter/vitesse = Vector2(0.777, -0.51)
+shader_parameter/opacite = 1.0
+shader_parameter/decalage_colonne = 1.745
 
 [node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container", "skate", "ragdoll")]
 script = ExtResource("1_2j8q1")
@@ -408,6 +424,18 @@ theme_override_fonts/font = ExtResource("20_hc6xd")
 theme_override_font_sizes/font_size = 60
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="UI" unique_id=1399466621]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="UI/CanvasLayer" unique_id=2003284729]
+material = SubResource("ShaderMaterial_37qun")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
 one_shot = true

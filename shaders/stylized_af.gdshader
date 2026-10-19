@@ -31,5 +31,5 @@ void light() {
 	const float end = 1.0;
 	const float subdiv = 5.0;
 	float lilevel = start + float(int(level * subdiv)) * (end - start) / subdiv;
-	DIFFUSE_LIGHT += lilevel * clr;
+	DIFFUSE_LIGHT += lilevel * lilevel * clr * clr;
 }
