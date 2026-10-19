@@ -11,6 +11,12 @@
 			"name" : "instable_saut",
 			"input" : "fhybrv",
 			"duration" : 0.9,
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche", "wave"]
+		},
+		{
+			"name" : "wave",
+			"input" : "fHybrv",
+			"duration" : 0.9,
 			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche"]
 		},
 		{

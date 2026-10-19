@@ -287,6 +287,10 @@ func _confirm_trick():
 	mesh_instance.scale = _mesh_instance_scale * 1.3
 	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
+func set_trick_vfx(t : float) -> void:
+	print("imp = ", t)
+	$"../TrickVFX".material_override.set_shader_parameter("imp", t)
+
 func _on_trick(_name: String, _accuracy: float) -> void:
 	catch_pressed = false
 	var _anim :Anim = TrickManager.get_resource(_name)
@@ -306,6 +310,13 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 		print(_name)
 		active_tricks.push_back(trick)
 		trick.tween = tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
+	
+	if not _name in ["catch", "instable_saut"]:
+		var tw:Tween = create_tween()
+		$"../TrickVFX".visible = true
+		tw.tween_method(set_trick_vfx, 0., 1., 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		await tw.finished
+		$"../TrickVFX".visible = false
 
 func _on_trick_end() -> void:
 	active_tricks.clear()
@@ -340,6 +351,10 @@ func _catch_trick(_dt: float) -> void:
 	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
 	trick_catched = true
 	catch_pressed = true
+
+func can_catch() -> bool:
+	var prog := TrickManager.get_progression()
+	return prog >= trick_cancel_end and prog > trick_catchable_start and not parent.is_grounded()
 	
 func _on_trick_catched(_progression: float, _dt: float) -> void:
 	# On Cancel
