@@ -8,10 +8,14 @@ class_name MapLoader
 @export var speed: float = 1
 @export var container: Node3D
 @export var sections: Array[PackedScene]
+@export var empty_section: PackedScene
 @export var skate: Node3D
 @export var ragdoll: RigidBody3D
 @export var substep: float = 1.0 / 300.0
 @export var max_steps_par_frame: int = 30
+
+@onready var freezed_skate : Node3D
+@onready var initial_skate_pos :Vector3 = $Skate.global_position
 
 signal on_stop
 
@@ -20,6 +24,8 @@ func set_active(node: Node3D, active: bool) -> void:
 	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
 
 var is_running: bool = true
+var speed_ref : float
+var ready_to_restart := false
 
 var _step_accumulateur: float = 0
 
@@ -29,6 +35,8 @@ static var s_angle: float = 0
 var _spawned_sections: Array[Section] = []
 # Section "fantome" pour le prochain spawn
 var _next_spawn: Section
+
+var waiting_for_restart := false
 
 static var instance: MapLoader
 
@@ -42,13 +50,15 @@ func _exit_tree() -> void:
 		instance = null
 
 func _ready() -> void:
-	_next_spawn = _new_section(Vector3.ZERO)
+	_next_spawn = _new_section(Vector3.ZERO, true)
 	TrickManager.trick_performed.connect(_on_trick)
 	TrickManager.trick_ended.connect(_reset_quest)
 	TrickManager.trick_catched.connect(_on_catch)
 	set_active(ragdoll, false)
 	set_active(skate, true)
-	
+	freezed_skate = $Skate.duplicate()
+	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
+
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
 	on_stop.emit()
 	is_running = false
@@ -62,9 +72,13 @@ func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -
 		var axe := Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
 		ragdoll.apply_torque_impulse(axe * 10)
 		set_active(skate, false)
+		
+		$RestartLag.start()
+
 	else:
 		skate.process_mode = Node.PROCESS_MODE_DISABLED
 
+	speed_ref = speed
 	create_tween().tween_property(self, "speed", 0.0, 2.0)
 
 static func right() -> Vector3:
@@ -72,21 +86,26 @@ static func right() -> Vector3:
 	
 static func up() -> Vector3:
 	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.UP
-	
-func _new_section(snap_to: Vector3) -> Section:
-	var new_section: Section = sections.pick_random().instantiate() as Section
+
+func _new_section(snap_to: Vector3, empty := false) -> Section:
+	if empty:
+		print("empty!!")
+	var new_section: Section = (sections.pick_random().instantiate() if not empty else empty_section.instantiate()) as Section
 	container.add_child(new_section)
 	new_section.snap(snap_to)
 	new_section.visible = false
 	return new_section
 
-func _control_spawn():
+func _control_spawn(should_spawn_empty := false):
 	# Spawn le prochain fantome
-	if _next_spawn == null && _spawned_sections.size() > 0:
-		_next_spawn = _new_section(_spawned_sections.back().snap_front.global_position)
-	
+	#if waiting_for_restart: return
+	if should_spawn_empty:
+		_next_spawn = _new_section(_spawned_sections.back().snap_front.global_position, true)
+	elif _next_spawn == null && _spawned_sections.size() > 0:
+		_next_spawn = _new_section(_spawned_sections.back().snap_front.global_position, false)
+
 	# Check si le fantome est valide
-	if _next_spawn && _next_spawn.snap_back.global_position.length_squared() <= spawn_distance * spawn_distance:
+	if _next_spawn && (_next_spawn.snap_back.global_position.length_squared() <= spawn_distance * spawn_distance || should_spawn_empty):
 		_next_spawn.visible = true
 		_spawned_sections.append(_next_spawn)
 		_next_spawn = null
@@ -99,7 +118,7 @@ func _control_spawn():
 	):
 		front_section.queue_free()
 		_spawned_sections.pop_front()
-	
+
 func _control_speed(delta: float):
 	for section: Section in _spawned_sections:
 		section.position -= speed * Vector3.RIGHT * delta
@@ -164,9 +183,48 @@ func _process(delta: float) -> void:
 			skate.step(substep)
 		_step_accumulateur -= substep
 		steps += 1
+	if ready_to_restart and TrickManager.catch_pressed():
+		waiting_for_restart = false
+		ready_to_restart = false
+		
+		print("RESTART")
+		TrickManager._points = 0
+		TrickManager._xp = 0
+		TrickManager._xp_buffer = 0
+		TrickManager._tier = 0
+		get_tree().change_scene_to_file("res://scenes/skate_prototype.tscn")
+		#_control_spawn(true)
+		#_control_spawn(true)
+		#_control_spawn(true)
+		##var d : float = (_spawned_sections.back().snap_back.global_position).distance_to(Vector3($Camera3D.global_position.x, 0, $Camera3D.global_position.z))
+			#
+		#var tw1:Tween = create_tween()
+		#tw1.tween_property(self, "speed", 7 * speed_ref, 1.0).set_trans(Tween.TRANS_QUAD)
+		#await tw1.finished
+		#var tw2:Tween = create_tween()
+		#tw2.tween_property(self, "speed", speed_ref, 1.0).set_trans(Tween.TRANS_QUAD)
+		#await tw2.finished
+		#
+		## TODO : spawn skate 2
+		#skate.reset_orientation()
+		#skate.reset_velocities()
+		#skate.global_position = initial_skate_pos + 3 * Vector3.UP
+		#skate.process_mode = Node.PROCESS_MODE_INHERIT
+		#print(skate.name)
+		#set_active(ragdoll, false)
+		#ragdoll.global_position = skate.global_position
+		#set_active(skate, true)
+		#is_running = true
+		
+	if waiting_for_restart and not TrickManager.catch_pressed():
+		ready_to_restart = true
 
 func _on_quest_end_timeout() -> void:
 	_move_quests(680)
 	_current_quest = null
 	_quest_progression = 0
 	$NewQuest.start()
+
+
+func _on_restart_lag_timeout() -> void:
+	waiting_for_restart = true
