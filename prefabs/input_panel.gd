@@ -1,9 +1,9 @@
 class_name InputPanel
 extends Control
 
-@export var quest_color : Color = Color.RED
-@export var correct_color : Color = Color.GREEN
-@export var passive_color : Color = Color.WHITE_SMOKE
+@export var quest_color : Color = Color("e5535b")
+@export var correct_color : Color = Color("55e47d")
+@export var passive_color : Color = Color.WHITE
 @export var roundness: int = 4
 
 var _last_input : String
@@ -19,7 +19,7 @@ func _update_with_color(input: String, clr: Color) -> void:
 		get_node(input[i].to_upper()).modulate = clr if input[i] == input[i].to_upper() else passive_color
 
 func _ready():
-	set_input_ref("rfVYhn")
+	set_input_ref("rfVYhb")
 
 func correct():
 	_update_with_color(_last_input, correct_color)

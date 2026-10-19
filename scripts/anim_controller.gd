@@ -313,7 +313,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	if not _name in ["catch", "instable_saut"]:
 		var tw:Tween = create_tween()
 		$"../TrickVFX".visible = true
-		tw.tween_method(set_trick_vfx, 0., 1., 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_method(set_trick_vfx, 0., 1., 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		await tw.finished
 		$"../TrickVFX".visible = false
 
