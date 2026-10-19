@@ -35,7 +35,7 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_gt7vr"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite", "diago_gauche"])
-reward = 300
+reward = 500
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_hc6xd"]
@@ -53,7 +53,7 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_v4aj5"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["kickflip_gauche", "lenvers"])
-reward = 150
+reward = 250
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_l05ud"]
@@ -92,10 +92,6 @@ steps = Array[String](["kickflip_gauche", "lenvers", "helicopter"])
 reward = 400
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
-[sub_resource type="Resource" id="Resource_ogiks"]
-script = ExtResource("4_vfgxo")
-metadata/_custom_type_script = "uid://jkpmkae3y0n0"
-
 [sub_resource type="Resource" id="Resource_elfsb"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "grab", "wave"])
@@ -105,13 +101,13 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_b0vpq"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "grab", "wave", "tourne_gauche"])
-reward = 500
+reward = 590
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_3bmp5"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite"])
-reward = 250
+reward = 360
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_6fw6x"]
@@ -150,7 +146,7 @@ sections = Array[PackedScene]([ExtResource("9_cb56l"), ExtResource("4_xffk5"), E
 empty_section = ExtResource("5_3o3sw")
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
-quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx"), SubResource("Resource_xffk5"), SubResource("Resource_gt7vr"), SubResource("Resource_hc6xd"), SubResource("Resource_g3l2w"), SubResource("Resource_v4aj5"), SubResource("Resource_l05ud"), SubResource("Resource_m41q0"), SubResource("Resource_vv0j5"), SubResource("Resource_bdnmn"), SubResource("Resource_vfkyp"), SubResource("Resource_dnbj5"), SubResource("Resource_ogiks"), SubResource("Resource_elfsb"), SubResource("Resource_b0vpq"), SubResource("Resource_3bmp5"), SubResource("Resource_6fw6x")])
+quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx"), SubResource("Resource_xffk5"), SubResource("Resource_gt7vr"), SubResource("Resource_hc6xd"), SubResource("Resource_g3l2w"), SubResource("Resource_v4aj5"), SubResource("Resource_l05ud"), SubResource("Resource_m41q0"), SubResource("Resource_vv0j5"), SubResource("Resource_bdnmn"), SubResource("Resource_vfkyp"), SubResource("Resource_dnbj5"), SubResource("Resource_elfsb"), SubResource("Resource_b0vpq"), SubResource("Resource_3bmp5"), SubResource("Resource_6fw6x")])
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-3.059797e-08, 0, 0.7, 0, 0.7, 0, -0.7, 0, -3.059797e-08, 0, 3.16, 0)
@@ -219,9 +215,11 @@ one_shot = true
 
 [node name="UI" type="Control" parent="." unique_id=1938638467]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1149.0
-offset_bottom = 644.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="StreakPanel" parent="UI" unique_id=199057457 instance=ExtResource("5_uorgy")]
 layout_mode = 1
@@ -229,51 +227,101 @@ popup_color = Color(0.9607843, 0.654902, 0.2901961, 1)
 
 [node name="Input1" parent="UI" unique_id=7957100 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
-offset_left = 243.0
-offset_top = 685.0
-offset_right = -818.0
-offset_bottom = 121.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -333.0
+offset_top = 37.0
+offset_right = -333.0
+offset_bottom = 37.0
+grow_vertical = 0
 scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
 
 [node name="Input2" parent="UI" unique_id=1297023805 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
-offset_left = 361.0
-offset_top = 685.0
-offset_right = -700.0
-offset_bottom = 121.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -215.0
+offset_top = 37.0
+offset_right = -215.0
+offset_bottom = 37.0
+grow_vertical = 0
 scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
 
 [node name="Input3" parent="UI" unique_id=506145894 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
-offset_left = 479.0
-offset_top = 685.0
-offset_right = -582.0
-offset_bottom = 121.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -97.0
+offset_top = 37.0
+offset_right = -97.0
+offset_bottom = 37.0
+grow_vertical = 0
 scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
 
 [node name="Input4" parent="UI" unique_id=703435643 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
-offset_left = 597.0
-offset_top = 685.0
-offset_right = -464.0
-offset_bottom = 121.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 21.0
+offset_top = 37.0
+offset_right = 21.0
+offset_bottom = 37.0
+grow_vertical = 0
 scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
 
 [node name="Input5" parent="UI" unique_id=502797229 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
-offset_left = 708.0
-offset_top = 682.0
-offset_right = -353.0
-offset_bottom = 118.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 132.0
+offset_top = 37.0
+offset_right = 132.0
+offset_bottom = 37.0
+grow_vertical = 0
 scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
 
 [node name="Input6" parent="UI" unique_id=328165781 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
-offset_left = 826.0
-offset_top = 682.0
-offset_right = -235.0
-offset_bottom = 118.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 250.0
+offset_top = 37.0
+offset_right = 250.0
+offset_bottom = 37.0
+grow_vertical = 0
 scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Inputs" type="Control" parent="UI" unique_id=481270804]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -2.3079224
+offset_right = 1.0
+offset_bottom = 3.3079834
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset_ratio = Vector2(1, 1)
 
 [node name="PauseLayer" type="CanvasLayer" parent="UI" unique_id=243726203]
 visible = false
@@ -291,23 +339,49 @@ offset_right = 100.1736
 offset_bottom = 100.62208
 
 [node name="Label" type="Label" parent="UI/PauseLayer" unique_id=1928187016]
-offset_left = 324.0
-offset_top = 90.0
-offset_right = 836.0
-offset_bottom = 203.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -256.0
+offset_top = 141.0
+offset_right = 256.0
+offset_bottom = 254.0
+grow_horizontal = 2
 theme_override_fonts/font = ExtResource("20_hc6xd")
 theme_override_font_sizes/font_size = 74
 text = "Pause"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Label2" type="Label" parent="UI/PauseLayer" unique_id=202121254]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -256.0
+offset_top = 252.0
+offset_right = 256.0
+offset_bottom = 365.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("20_hc6xd")
+theme_override_font_sizes/font_size = 40
+text = "ESC to resume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Label2" type="Label" parent="UI" unique_id=1666461984]
 visible = false
-layout_mode = 0
-offset_left = -4.0
-offset_top = 327.0
-offset_right = 1145.0
-offset_bottom = 611.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -62.0
+offset_right = 574.5
+offset_bottom = 222.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("20_hc6xd")
 theme_override_font_sizes/font_size = 31
 text = "Hold F And H"
@@ -318,11 +392,18 @@ vertical_alignment = 1
 wait_time = 0.5
 
 [node name="Label3" type="Label" parent="UI" unique_id=893113799]
-layout_mode = 0
-offset_left = -4.0
-offset_top = 174.0
-offset_right = 1145.0
-offset_bottom = 458.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -142.0
+offset_right = 574.5
+offset_bottom = 142.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("20_hc6xd")
 theme_override_font_sizes/font_size = 60
 horizontal_alignment = 1

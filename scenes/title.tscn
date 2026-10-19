@@ -16,9 +16,11 @@ script = ExtResource("1_4ignj")
 
 [node name="Control" type="Control" parent="." unique_id=1733424851]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1150.0
-offset_bottom = 646.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="BackBufferCopy" type="BackBufferCopy" parent="Control" unique_id=152467745]
 position = Vector2(576, 324.5)
@@ -33,11 +35,18 @@ offset_right = 100.1736
 offset_bottom = 100.62208
 
 [node name="Label" type="Label" parent="Control" unique_id=451288771]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 124.0
-offset_right = 1151.0
-offset_bottom = 408.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -230.0
+offset_right = 574.5
+offset_bottom = 54.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("4_pyl7j")
 theme_override_font_sizes/font_size = 82
 text = "FINGERTRICK"
@@ -45,11 +54,18 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label2" type="Label" parent="Control" unique_id=1382014618]
-layout_mode = 0
-offset_left = -4.0
-offset_top = 220.0
-offset_right = 1145.0
-offset_bottom = 504.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -121.0
+offset_right = 574.5
+offset_bottom = 163.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("4_pyl7j")
 theme_override_font_sizes/font_size = 31
 text = "Hold F And H"
