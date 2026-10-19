@@ -64,10 +64,10 @@ func _process(delta: float) -> void:
 	_update_xp(0, lerp(20, 200, tanh(float(_tier) * _xp / 1000.0)) * delta)
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
-	if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
-		Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
-	else:
-		Engine.time_scale = 1
+	#if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
+		#Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
+	#else:
+		#Engine.time_scale = 1
 		
 	var input_string := _compute_input()
 

@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
 [ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="5_vfgxo"]
 [ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="7_p1m0m"]
+[ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="10_a10lx"]
+[ext_resource type="FontFile" uid="uid://b04tg4kppbq28" path="res://fonts/Next Ups.ttf" id="11_3o3sw"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -43,6 +45,10 @@ sky_material = SubResource("ProceduralSkyMaterial_lwk0x")
 background_mode = 2
 sky = SubResource("Sky_q1d6x")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3o3sw"]
+shader = ExtResource("10_a10lx")
+shader_parameter/blur_amount = 2.0
+
 [node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container", "skate", "ragdoll")]
 script = ExtResource("1_2j8q1")
 spawn_distance = 80
@@ -64,7 +70,6 @@ continuous_cd = true
 
 [node name="Skate" type="MeshInstance3D" parent="Ragdoll" unique_id=515265970]
 transform = Transform3D(1, 0, -3.991814e-15, 0, 1, 0, 3.991814e-15, 0, 1, 0, 0, 0)
-visible = false
 mesh = SubResource("BoxMesh_qn4bn")
 surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
 
@@ -119,10 +124,10 @@ offset_bottom = 644.0
 
 [node name="StreakPanel" parent="UI" unique_id=199057457 instance=ExtResource("5_uorgy")]
 layout_mode = 1
-offset_left = 949.0
-offset_top = 465.0
-offset_right = -9.0
-offset_bottom = -4.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -950.0
+offset_bottom = -461.0
 
 [node name="Input1" parent="UI" unique_id=7957100 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
@@ -156,9 +161,54 @@ offset_right = -377.0
 offset_bottom = 116.0
 scale = Vector2(0.8, 0.8)
 
+[node name="PauseLayer" type="CanvasLayer" parent="UI" unique_id=243726203]
+visible = false
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="UI/PauseLayer" unique_id=1808567820]
+position = Vector2(576, 324.5)
+scale = Vector2(5.76, 3.215)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="UI/PauseLayer/BackBufferCopy" unique_id=1437553092]
+material = SubResource("ShaderMaterial_3o3sw")
+offset_left = -99.826385
+offset_top = -100.93313
+offset_right = 100.1736
+offset_bottom = 100.62208
+
+[node name="Label" type="Label" parent="UI/PauseLayer" unique_id=1928187016]
+offset_left = 324.0
+offset_top = 90.0
+offset_right = 836.0
+offset_bottom = 203.0
+theme_override_constants/outline_size = 16
+theme_override_fonts/font = ExtResource("11_3o3sw")
+theme_override_font_sizes/font_size = 74
+text = "PAUSE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="UI" unique_id=1666461984]
+visible = false
+layout_mode = 0
+offset_left = -4.0
+offset_top = 327.0
+offset_right = 1145.0
+offset_bottom = 611.0
+theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("11_3o3sw")
+theme_override_font_sizes/font_size = 31
+text = "HOLD F AND H"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="UI/Label2" unique_id=58528195]
+wait_time = 0.5
+
 [node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
 one_shot = true
 
 [connection signal="timeout" from="NewQuest" to="." method="_on_new_quest_timeout"]
 [connection signal="timeout" from="QuestEnd" to="." method="_on_quest_end_timeout"]
+[connection signal="timeout" from="UI/Label2/Timer" to="." method="_on_holdfh_timeout"]
 [connection signal="timeout" from="RestartLag" to="." method="_on_restart_lag_timeout"]

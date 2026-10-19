@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_sgunh"]
 [ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/anim_controller.gd" id="2_2wimw"]
 [ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="2_ke4g0"]
+[ext_resource type="PackedScene" uid="uid://24mdef8cocin" path="res://models/2doigts.glb" id="4_y7iwp"]
+[ext_resource type="PackedScene" uid="uid://cpwbbde2fmvo3" path="res://models/2doigts_up.glb" id="5_uad4r"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
 radius = 1.0
@@ -73,5 +75,12 @@ target_position = Vector3(0, 0, 0.365)
 [node name="RailCooldown" type="Timer" parent="." unique_id=1380579839]
 wait_time = 0.5
 one_shot = true
+
+[node name="2doigts" parent="." unique_id=50656219 instance=ExtResource("4_y7iwp")]
+transform = Transform3D(-0.99989665, 0, -0.014375461, 0, 1, 0, 0.014375461, 0, -0.99989665, 0.07142835, 0.1837039, -1.1229382)
+
+[node name="2doigts_up" parent="." unique_id=1336449554 instance=ExtResource("5_uad4r")]
+transform = Transform3D(-0.9735946, 0, 0.22828381, 0, 1, 0, -0.22828381, 0, -0.9735946, 0.20473056, 4.2311506, -0.94309807)
+visible = false
 
 [connection signal="timeout" from="RailCooldown" to="." method="_on_rail_cooldown_timeout"]
