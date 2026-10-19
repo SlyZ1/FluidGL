@@ -77,7 +77,7 @@ func touches_path(rail: Path3D) -> float:
 		#return false
 	var dy: float = parent.global_position.y - zyt.y
 	var dz: float = abs(parent.global_position.z - zyt.x) 
-	if dz <= rail_z_thresh and dy <= rail_y_thresh:
+	if dz <= rail_z_thresh and dy <= rail_y_thresh and dy >= -2:
 		return zyt.z
 	else:
 		return -INF
@@ -237,7 +237,7 @@ func _process(delta: float) -> void:
 		and (lane_tween == null or !lane_tween.is_valid() or !lane_tween.is_running())
 		and not current_rail
 	):
-		if parent.global_position.z < 0: _on_go_left()
+		if parent.global_position.z <= 0: _on_go_left()
 		else: _on_go_right()
 	
 	var current_rotation: Quaternion = rail_pose

@@ -15,10 +15,10 @@ albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
 metallic_specular = 0.51
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
-size = Vector3(1.575, 0.865, 6.205)
+size = Vector3(1.575, 0.865, 5.835)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
-size = Vector3(1.55, 1.145, 3.385)
+size = Vector3(1.55, 1.145, 3.45)
 
 [node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
@@ -30,13 +30,13 @@ capteur_ground = NodePath("Ground")
 mesh_instance = NodePath("Skate")
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
-transform = Transform3D(0.44470334, 0, -0.01623308, 0, 0.4449999, 0, 0.01623308, 0, 0.44470334, 0.015574996, 0, 0.88999975)
+transform = Transform3D(0.44470334, 0, -0.01623308, 0, 0.4449999, 0, 0.01623308, 0, 0.44470334, 0.015574941, 0, 2.1507378)
 visible = false
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
 [node name="CapteurBack" type="ShapeCast3D" parent="." unique_id=491530469]
-transform = Transform3D(0.44492567, 0, -0.008117892, 0, 0.44499993, 0, 0.008117892, 0, 0.44492567, 3.5527137e-15, 0, -0.88999975)
+transform = Transform3D(0.44492567, 0, -0.008117892, 0, 0.44499993, 0, 0.008117892, 0, 0.44492567, 5.1708295e-08, 0, -2.0729475)
 visible = false
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)

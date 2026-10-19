@@ -19,17 +19,10 @@ size = Vector3(10.964973, 2.2407227, 2.1992188)
 [sub_resource type="Curve3D" id="Curve3D_lwk0x"]
 bake_interval = 0.1
 _data = {
-"points": PackedVector3Array(0, 0, 0, 2.69, 0, 0, -9.5, 0, 3, -2.411, 0, 0, 2.411, 0, 0.192, 1.5, 0, 3, -2.573, 0, -1.036, 2.573, 0, 0, 11.535, 0, -3, -1.78, 0, 0, 1.5, 0, 0, 26.512, 0, -3),
+"points": PackedVector3Array(0, 0, 0, 2.69, 0, 0, -9.5, 0, 3, -2.411, 0, 0, 2.411, 0, 0.192, 1.5, 0, 3, -2.573, 0, 0, 2.573, 0, 0, 11.535, 5, 3, -1.78, 0, 0, 1.5, 0, 0, 26.512, 5, 3),
 "tilts": PackedFloat32Array(0, 0, 0, 0)
 }
 point_count = 4
-
-[sub_resource type="PrismMesh" id="PrismMesh_lwk0x"]
-left_to_right = 1.0
-size = Vector3(2, 4, 5)
-
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_8l0xq"]
-data = PackedVector3Array(1, 2, 2.5, 1, -2, 2.5, -1, -2, 2.5, 1, 2, -2.5, -1, -2, -2.5, 1, -2, -2.5, 1, 2, 2.5, 1, 2, -2.5, 1, -2, 2.5, 1, 2, -2.5, 1, -2, -2.5, 1, -2, 2.5, 1, 2, -2.5, 1, 2, 2.5, -1, -2, -2.5, 1, 2, 2.5, -1, -2, 2.5, -1, -2, -2.5, -1, -2, 2.5, 1, -2, 2.5, -1, -2, -2.5, 1, -2, 2.5, 1, -2, -2.5, -1, -2, -2.5)
 
 [node name="StraightBase" type="MeshInstance3D" unique_id=1808011952 node_paths=PackedStringArray("snap_back", "snap_front", "rails")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
@@ -77,12 +70,3 @@ path_local = true
 path_continuous_u = false
 path_u_distance = 0.1
 path_joined = false
-
-[node name="Ramp" type="MeshInstance3D" parent="." unique_id=171679891]
-transform = Transform3D(7.179515, 0, 0, 0, 1, 0, 0, 0, 1, -7.172, 2.4452295, -2.5)
-mesh = SubResource("PrismMesh_lwk0x")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Ramp" unique_id=1542885025]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp/StaticBody3D" unique_id=18211685]
-shape = SubResource("ConcavePolygonShape3D_8l0xq")

@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://dqi8e4nn6yni4"]
+
+[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_sgunh"]
+[ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/anim_controller.gd" id="2_2wimw"]
+[ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="2_ke4g0"]
+[ext_resource type="Script" uid="uid://cbfq3755hcvd0" path="res://scripts/ground_particles.gd" id="4_y7iwp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
+radius = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
+size = Vector3(2.0212402, 1, 5.1572266)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xi3o1"]
+albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
+metallic_specular = 0.51
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
+size = Vector3(1.575, 0.865, 5.835)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
+size = Vector3(1.55, 1.145, 3.45)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oh2xr"]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_y7iwp"]
+material = SubResource("StandardMaterial3D_oh2xr")
+
+[sub_resource type="Curve" id="Curve_ke4g0"]
+_limits = [-360.0, 360.0, 0.0, 1.0]
+_data = [Vector2(0, -360), 0.0, 1008.0, 0, 0, Vector2(1, 360), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_uad4r"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.9122963, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_55io4"]
+offsets = PackedFloat32Array(0, 0.12542373, 0.54915255, 0.82711864)
+colors = PackedColorArray(1, 1, 1, 1, 0.96949154, 0.96949154, 0.96949154, 1, 0.25616652, 0.25616652, 0.25616652, 1, 0.06879827, 0.06879828, 0.06879828, 1)
+
+[node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("1_sgunh")
+capteur_back = NodePath("CapteurBack")
+capteur_front = NodePath("CapteurFront")
+capteur_mesh = NodePath("Skate/ShapeCast3D")
+capteur_ground = NodePath("Ground")
+mesh_instance = NodePath("Skate")
+
+[node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
+transform = Transform3D(0.44470334, 0, -0.01623308, 0, 0.4449999, 0, 0.01623308, 0, 0.44470334, 0.015574941, 0, 2.1507378)
+visible = false
+shape = SubResource("SphereShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
+
+[node name="CapteurBack" type="ShapeCast3D" parent="." unique_id=491530469]
+transform = Transform3D(0.44492567, 0, -0.008117892, 0, 0.44499993, 0, 0.008117892, 0, 0.44492567, 5.1708295e-08, 0, -2.0729475)
+visible = false
+shape = SubResource("SphereShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
+
+[node name="Skate2" type="MeshInstance3D" parent="." unique_id=1399617927]
+transform = Transform3D(0.44499996, 0, -1.7763568e-15, 0, 0.445, 0, 1.7763568e-15, 0, 0.60499996, 0, 0, 0)
+visible = false
+mesh = SubResource("BoxMesh_qn4bn")
+surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
+
+[node name="Skate" type="Node3D" parent="." unique_id=54906917]
+
+[node name="ShapeCast3D" type="ShapeCast3D" parent="Skate" unique_id=640768866]
+shape = SubResource("BoxShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
+
+[node name="skate" parent="Skate" unique_id=70394129 instance=ExtResource("2_ke4g0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0, -0.26332742, 0)
+
+[node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
+script = ExtResource("2_2wimw")
+trick_cancel_end = 0.08
+trick_catchable_start = 0.3
+mesh_instance = NodePath("../Skate/skate")
+rail_z_thresh = 2.5
+rail_y_thresh = 0.75
+rail_y_offset = 0.5
+
+[node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5916979e-08, 0, -0.59291136)
+shape = SubResource("BoxShape3D_q1d6x")
+target_position = Vector3(0, 0, 0.365)
+
+[node name="RailCooldown" type="Timer" parent="." unique_id=1380579839]
+wait_time = 0.5
+one_shot = true
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="." unique_id=1764218334 node_paths=PackedStringArray("skate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.314429e-08, -0.35157037, -1.9021196)
+amount = 15
+lifetime = 1.5
+randomness = 0.5
+lifetime_randomness = 0.73
+local_coords = true
+mesh = SubResource("SphereMesh_y7iwp")
+emission_shape = 3
+emission_box_extents = Vector3(1, 0.01, 1)
+direction = Vector3(0, 0, -1)
+spread = 0.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 10.0
+initial_velocity_max = 10.0
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+angular_velocity_curve = SubResource("Curve_ke4g0")
+angle_max = 360.0
+scale_amount_min = 0.1
+scale_amount_max = 0.5
+scale_amount_curve = SubResource("Curve_uad4r")
+color_ramp = SubResource("Gradient_55io4")
+script = ExtResource("4_y7iwp")
+skate = NodePath("..")
+
+[connection signal="timeout" from="RailCooldown" to="." method="_on_rail_cooldown_timeout"]
