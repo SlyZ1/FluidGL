@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://cwwjjwqrl3o8r"]
+
+[ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="2_8l0xq"]
+[ext_resource type="PackedScene" uid="uid://hnfxr788kwrt" path="res://models/street.glb" id="2_lwk0x"]
+[ext_resource type="PackedScene" uid="uid://b2sp7hr4nsvqo" path="res://models/props/banc.glb" id="3_rmii1"]
+[ext_resource type="PackedScene" uid="uid://hrsu00kp1q71" path="res://models/props/lampadaire.glb" id="4_fj1nu"]
+[ext_resource type="PackedScene" uid="uid://bdux62utmnc3s" path="res://models/props/carton1.glb" id="6_5pr8c"]
+[ext_resource type="PackedScene" uid="uid://b401pj113dbvv" path="res://models/props/dechets1.glb" id="7_bc28g"]
+[ext_resource type="PackedScene" uid="uid://bm4d1l8lqkv67" path="res://models/props/cailloux_small.glb" id="8_bc28g"]
+[ext_resource type="PackedScene" uid="uid://cogu32dkthm8x" path="res://models/props/cailloux_large.glb" id="9_5o71f"]
+[ext_resource type="PackedScene" uid="uid://38kkscfco8en" path="res://models/props/poubelle.glb" id="10_5o71f"]
+
+[sub_resource type="Curve3D" id="Curve3D_vqc4j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
+size = Vector3(51, 1, 18.49)
+
+[node name="StraightBase" type="Node3D" unique_id=665315059 node_paths=PackedStringArray("snap_back", "snap_front")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
+script = ExtResource("2_8l0xq")
+snap_back = NodePath("SnapBack")
+snap_front = NodePath("SnapFront")
+
+[node name="SnapBack" type="Node3D" parent="." unique_id=1930366446]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25.5, 0.96846294, 0)
+
+[node name="SnapFront" type="Node3D" parent="." unique_id=819480016]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 25.5, 0.96846294, 0)
+
+[node name="Path3D" type="Path3D" parent="." unique_id=161870261]
+curve = SubResource("Curve3D_vqc4j")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1828548897]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=747005081]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+shape = SubResource("BoxShape3D_q1d6x")
+
+[node name="street" parent="." unique_id=955985399 instance=ExtResource("2_lwk0x")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
+
+[node name="banc2" parent="." unique_id=150066097 instance=ExtResource("3_rmii1")]
+transform = Transform3D(0.9895371, 0, -0.14427835, 0, 1, 0, 0.14427835, 0, 0.9895371, -19.528557, 2.8358974, 16.249535)
+
+[node name="lampadaire" parent="." unique_id=676455285 instance=ExtResource("4_fj1nu")]
+transform = Transform3D(0.044464186, 0, 0.999011, 0, 1, 0, -0.999011, 0, 0.044464186, 12.335581, 9.082295, 11.06534)
+
+[node name="carton1" parent="." unique_id=471766101 instance=ExtResource("6_5pr8c")]
+transform = Transform3D(-0.7531579, 0.19663008, 0.6277654, 0.2302672, 0.9727125, -0.028413445, -0.6162222, 0.123154, -0.77788377, -10.4009285, 1.4366341, -17.297459)
+
+[node name="dechets1" parent="." unique_id=1577236643 instance=ExtResource("7_bc28g")]
+transform = Transform3D(0.34912154, 0, -0.93707746, 0, 1, 0, 0.93707746, 0, 0.34912154, 16.058022, 1.5303621, 15.53581)
+
+[node name="cailloux_small" parent="." unique_id=1498361113 instance=ExtResource("8_bc28g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.646795, 0.9322748, -20.37616)
+
+[node name="cailloux_large" parent="." unique_id=2112423955 instance=ExtResource("9_5o71f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.515676, 0.8443346, 14.383624)
+
+[node name="poubelle" parent="." unique_id=547786317 instance=ExtResource("10_5o71f")]
+transform = Transform3D(-3.2346428e-08, 0, 0.74, 0, 0.74, 0, -0.74, 0, -3.2346428e-08, -8.213637, 3.9307556, -21.52109)

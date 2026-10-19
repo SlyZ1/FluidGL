@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://55ciu1ybrl1o"]
+
+[ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="1_d87wr"]
+[ext_resource type="PackedScene" uid="uid://hnfxr788kwrt" path="res://models/street.glb" id="2_4c2ua"]
+
+[sub_resource type="Curve3D" id="Curve3D_vqc4j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
+size = Vector3(51, 1, 18.49)
+
+[node name="StraightBase" type="Node3D" unique_id=665315059 node_paths=PackedStringArray("snap_back", "snap_front")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
+script = ExtResource("1_d87wr")
+snap_back = NodePath("SnapBack")
+snap_front = NodePath("SnapFront")
+
+[node name="SnapBack" type="Node3D" parent="." unique_id=1930366446]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25.5, 0.96846294, 0)
+
+[node name="SnapFront" type="Node3D" parent="." unique_id=819480016]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 25.5, 0.96846294, 0)
+
+[node name="Path3D" type="Path3D" parent="." unique_id=161870261]
+curve = SubResource("Curve3D_vqc4j")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1828548897]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=747005081]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+shape = SubResource("BoxShape3D_q1d6x")
+
+[node name="street" parent="." unique_id=955985399 instance=ExtResource("2_4c2ua")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)

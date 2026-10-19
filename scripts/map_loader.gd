@@ -37,6 +37,7 @@ var _spawned_sections: Array[Section] = []
 var _next_spawn: Section
 
 var waiting_for_restart := false
+var previous_spawn_index: int = -1
 
 static var instance: MapLoader
 
@@ -90,7 +91,14 @@ static func up() -> Vector3:
 func _new_section(snap_to: Vector3, empty := false) -> Section:
 	if empty:
 		print("empty!!")
-	var new_section: Section = (sections.pick_random().instantiate() if not empty else empty_section.instantiate()) as Section
+	var index: int = randi() % sections.size()
+	for i in range(10):
+		if index == previous_spawn_index:
+			index = randi() % sections.size()
+		else: break
+	previous_spawn_index = index
+	var scene: PackedScene = sections[index]
+	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
 	container.add_child(new_section)
 	new_section.snap(snap_to)
 	new_section.visible = false

@@ -98,7 +98,7 @@ func reset_velocities() -> void:
 	velocity_front = 0
 
 func _integrate(dt: float) -> void:
-	var acc: float = -gravity * dt
+	var acc: float = -80 * dt
 	if not grounded_back: velocity_back += acc
 	if not grounded_front: velocity_front += acc
 		
@@ -144,6 +144,13 @@ func set_pos(back: Vector3, front: Vector3, normal: Vector3 = Vector3.UP) -> voi
 
 	var milieu_local: Vector3 = (capteur_front.position + capteur_back.position) / 2.0
 	global_position = (back + front) / 2.0 - global_basis * milieu_local
+	
+func _get_most_up_normal(capteur: ShapeCast3D) -> Vector3:
+	var result: Vector3 = capteur.get_collision_normal(0)
+	for i in range(1, capteur.get_collision_count()):
+		if result.y > capteur.get_collision_normal(i).y:
+			result = capteur.get_collision_normal(i)
+	return result
 			
 func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
 	capteur.force_shapecast_update()
@@ -151,7 +158,7 @@ func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
 		return -INF
 	var rayon: float = (capteur.shape as SphereShape3D).radius * capteur.global_basis.get_scale().x
 	var g: Vector3 = capteur.get_collision_point(0)
-	var n: Vector3 = capteur.get_collision_normal(0)
+	var n: Vector3 = _get_most_up_normal(capteur)
 	if n.y < slope_thresh:
 		MapLoader.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
 		return 0

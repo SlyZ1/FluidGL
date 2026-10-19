@@ -22,12 +22,14 @@ size = Vector3(1.55, 1.145, 3.45)
 
 [node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+visible = false
 script = ExtResource("1_sgunh")
 capteur_back = NodePath("CapteurBack")
 capteur_front = NodePath("CapteurFront")
 capteur_mesh = NodePath("Skate/ShapeCast3D")
 capteur_ground = NodePath("Ground")
 mesh_instance = NodePath("Skate")
+gravity = 90.0
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
 transform = Transform3D(0.44470334, 0, -0.01623308, 0, 0.4449999, 0, 0.01623308, 0, 0.44470334, 0.015574941, 0, 2.1507378)
@@ -61,9 +63,10 @@ script = ExtResource("2_2wimw")
 trick_cancel_end = 0.08
 trick_catchable_start = 0.3
 mesh_instance = NodePath("../Skate/skate")
+lane_position = 5.0
 rail_z_thresh = 2.5
 rail_y_thresh = 0.75
-rail_y_offset = 0.5
+rail_y_offset = -0.3
 
 [node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5916979e-08, 0, -0.59291136)

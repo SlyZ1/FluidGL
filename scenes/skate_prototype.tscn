@@ -2,13 +2,19 @@
 
 [ext_resource type="Script" uid="uid://c054pv2r252hh" path="res://scripts/map_loader.gd" id="1_2j8q1"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="1_rudyk"]
-[ext_resource type="PackedScene" uid="uid://cwwjjwqrl3o8r" path="res://sections/section_rail.tscn" id="3_p1m0m"]
-[ext_resource type="PackedScene" uid="uid://shgwedsytslb" path="res://sections/section_flat.tscn" id="3_wc5y2"]
+[ext_resource type="PackedScene" uid="uid://8085c456c7g8" path="res://sections/section_flat_2.tscn" id="3_3om3a"]
+[ext_resource type="PackedScene" uid="uid://cwwjjwqrl3o8r" path="res://sections/section_flat_1.tscn" id="3_p1m0m"]
+[ext_resource type="PackedScene" uid="uid://briofgnybt16n" path="res://sections/section_ramp_1.tscn" id="4_a10lx"]
 [ext_resource type="Script" uid="uid://jkpmkae3y0n0" path="res://scripts/quest.gd" id="4_vfgxo"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate.tscn" id="4_wc5y2"]
+[ext_resource type="PackedScene" uid="uid://55ciu1ybrl1o" path="res://sections/section_empty.tscn" id="5_3o3sw"]
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
 [ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="5_vfgxo"]
+[ext_resource type="PackedScene" uid="uid://cidsrnocieany" path="res://sections/section_ramp_2.tscn" id="6_3om3a"]
+[ext_resource type="PackedScene" uid="uid://bxjsr5t8tqo5q" path="res://sections/section_ramp_3.tscn" id="7_7k1aa"]
 [ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="7_p1m0m"]
+[ext_resource type="PackedScene" uid="uid://wh5nmjkf5hu1" path="res://sections/section_ramp_4.tscn" id="8_fo1cg"]
+[ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="9_cb56l"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -26,36 +32,68 @@ metallic_specular = 0.51
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_wc5y2"]
 data = PackedVector3Array(-1.0106, 0.5, 2.5786, 1.0106, 0.5, 2.5786, -1.0106, -0.5, 2.5786, 1.0106, 0.5, 2.5786, 1.0106, -0.5, 2.5786, -1.0106, -0.5, 2.5786, 1.0106, 0.5, -2.5786, -1.0106, 0.5, -2.5786, 1.0106, -0.5, -2.5786, -1.0106, 0.5, -2.5786, -1.0106, -0.5, -2.5786, 1.0106, -0.5, -2.5786, 1.0106, 0.5, 2.5786, 1.0106, 0.5, -2.5786, 1.0106, -0.5, 2.5786, 1.0106, 0.5, -2.5786, 1.0106, -0.5, -2.5786, 1.0106, -0.5, 2.5786, -1.0106, 0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, -0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, -0.5, 2.5786, -1.0106, -0.5, -2.5786, 1.0106, 0.5, 2.5786, -1.0106, 0.5, 2.5786, 1.0106, 0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, 0.5, -2.5786, 1.0106, 0.5, -2.5786, -1.0106, -0.5, 2.5786, 1.0106, -0.5, 2.5786, -1.0106, -0.5, -2.5786, 1.0106, -0.5, 2.5786, 1.0106, -0.5, -2.5786, -1.0106, -0.5, -2.5786)
 
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_5o71f"]
+dof_blur_far_distance = 118.47
+dof_blur_far_transition = 100.0
+dof_blur_near_distance = 27.3
+dof_blur_near_transition = -1.0
+dof_blur_amount = 0.04
+
 [sub_resource type="Curve" id="Curve_p1m0m"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.096573204, 0.6209677), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lwk0x"]
-sky_top_color = Color(0.34030002, 0.60147333, 0.83, 1)
-sky_horizon_color = Color(0.6643, 0.79534, 0.91, 1)
-ground_bottom_color = Color(0.52156866, 0.52156866, 0.52156866, 1)
-ground_horizon_color = Color(0.6627451, 0.79607844, 0.9098039, 1)
+sky_top_color = Color(0.34117648, 0.6, 0.83137256, 1)
+sky_horizon_color = Color(0.5176471, 0.7254902, 0.9098039, 1)
+ground_bottom_color = Color(0.54600006, 0.74013335, 0.91, 1)
+ground_horizon_color = Color(0.5176471, 0.7254902, 0.9098039, 1)
 
 [sub_resource type="Sky" id="Sky_q1d6x"]
 sky_material = SubResource("ProceduralSkyMaterial_lwk0x")
 
 [sub_resource type="Environment" id="Environment_tnd71"]
 background_mode = 2
+background_energy_multiplier = 0.41
 sky = SubResource("Sky_q1d6x")
+tonemap_mode = 4
+tonemap_exposure = 2.48
+tonemap_white = 3.1
+tonemap_agx_white = 11.64
+ssao_enabled = true
+ssao_radius = 16.0
+ssao_intensity = 2.66
+ssil_enabled = true
+ssil_radius = 9.01
+ssil_intensity = 3.16
+sdfgi_bounce_feedback = 0.54
+glow_enabled = true
+glow_intensity = 0.58
+glow_strength = 0.41
+glow_bloom = 0.2
+glow_hdr_threshold = 0.83
+fog_mode = 1
+fog_light_color = Color(0.42745098, 0.6392157, 0.7882353, 1)
+fog_density = 1.0
+fog_depth_begin = 200.0
+fog_depth_end = 369.9
 
 [node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container", "skate", "ragdoll")]
 script = ExtResource("1_2j8q1")
-spawn_distance = 80
-speed = 20.0
+spawn_distance = 299
+kill_distance = 60
+angle = -1.655
+speed = 41.595
 container = NodePath("GroundContainer")
-sections = Array[PackedScene]([ExtResource("3_wc5y2"), ExtResource("3_p1m0m")])
-empty_section = ExtResource("3_wc5y2")
+sections = Array[PackedScene]([ExtResource("3_p1m0m"), ExtResource("3_3om3a"), ExtResource("4_a10lx"), ExtResource("5_3o3sw"), ExtResource("6_3om3a"), ExtResource("7_7k1aa"), ExtResource("8_fo1cg"), ExtResource("9_cb56l")])
+empty_section = ExtResource("5_3o3sw")
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
 quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx")])
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
-transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.16, 0)
+transform = Transform3D(-3.059797e-08, 0, 0.7, 0, 0.7, 0, -0.7, 0, -3.059797e-08, 0, 3.16, 0)
+visible = true
 gravity = 30.0
 
 [node name="Ragdoll" type="RigidBody3D" parent="." unique_id=1062707097]
@@ -77,12 +115,14 @@ transform = Transform3D(0.9999997, 0, -7.1054274e-15, 0, 1, 0, 3.5527137e-15, 0,
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=483684695 node_paths=PackedStringArray("target", "skate")]
 transform = Transform3D(0.59655654, 0.5615719, -0.5733737, 0, 0.7144211, 0.6997161, 0.80257106, -0.4174202, 0.42619258, -6.7924123, 14.084747, 6.004562)
+attributes = SubResource("CameraAttributesPractical_5o71f")
 fov = 60.0
+near = 0.2
 script = ExtResource("1_rudyk")
 target = NodePath("../CameraTarget")
 skate = NodePath("../Skate")
-distance = 18.5
-angles = Vector2(-2.21, -0.775)
+distance = 27.49
+angles = Vector2(-2.37, -0.55)
 offset = Vector3(3.815, 1.14, -1.88)
 skate_min_height = 7.0
 lerp_speed_multiplier = 5.0
@@ -97,8 +137,16 @@ impact_max_combo = 5
 environment = SubResource("Environment_tnd71")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2012255489]
-transform = Transform3D(1, 0, 0, 0, 0.37240097, 0.9280719, 0, -0.9280719, 0.37240097, 0, 3.8094516, 0)
+transform = Transform3D(-0.5055673, 0.63080204, 0.58863425, -0.11391028, -0.7250761, 0.6791826, 0.8552345, 0.27632093, 0.4384297, -1.1963387, 3.8094516, 0)
 shadow_enabled = true
+shadow_opacity = 0.55
+shadow_blur = 0.0
+directional_shadow_split_1 = 0.208
+directional_shadow_split_2 = 0.422
+directional_shadow_split_3 = 0.644
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
+directional_shadow_pancake_size = 22.7
 
 [node name="GroundContainer" type="Node3D" parent="." unique_id=474625706]
 

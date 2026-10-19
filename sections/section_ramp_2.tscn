@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://cidsrnocieany"]
+
+[ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="1_kea1h"]
+[ext_resource type="PackedScene" uid="uid://hnfxr788kwrt" path="res://models/street.glb" id="2_sseam"]
+[ext_resource type="PackedScene" uid="uid://c3tv3nydsxsgd" path="res://models/ramps/small_ramp.glb" id="3_7l8nw"]
+[ext_resource type="PackedScene" uid="uid://bgjp007et83fn" path="res://models/ramps/small_flat.glb" id="4_k7x6c"]
+[ext_resource type="PackedScene" uid="uid://dlhglsxlopglb" path="res://models/props/panneau_interdit.glb" id="5_ddfis"]
+
+[sub_resource type="Curve3D" id="Curve3D_vqc4j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
+size = Vector3(51, 1, 18.49)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_da84n"]
+size = Vector3(10, 4.09, 17.19574)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
+size = Vector3(10, 5, 15)
+
+[node name="StraightBase" type="Node3D" unique_id=665315059 node_paths=PackedStringArray("snap_back", "snap_front")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
+script = ExtResource("1_kea1h")
+snap_back = NodePath("SnapBack")
+snap_front = NodePath("SnapFront")
+
+[node name="SnapBack" type="Node3D" parent="." unique_id=1930366446]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25.5, 0.96846294, 0)
+
+[node name="SnapFront" type="Node3D" parent="." unique_id=819480016]
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 76.5, 0.968, 0)
+
+[node name="Path3D" type="Path3D" parent="." unique_id=161870261]
+curve = SubResource("Curve3D_vqc4j")
+
+[node name="street" parent="." unique_id=955985399 instance=ExtResource("2_sseam")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="street" unique_id=1828548897]
+transform = Transform3D(-5.1425165e-08, 0, -1.1764706, 0, 1.1764706, 0, 1.1764706, 0, -5.1425165e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="street/StaticBody3D" unique_id=747005081]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+shape = SubResource("BoxShape3D_q1d6x")
+
+[node name="street2" parent="." unique_id=1621780246 instance=ExtResource("2_sseam")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 51, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="street2" unique_id=1370876650]
+transform = Transform3D(-5.1425165e-08, 0, -1.1764706, 0, 1.1764706, 0, 1.1764706, 0, -5.1425165e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="street2/StaticBody3D" unique_id=1649385077]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+shape = SubResource("BoxShape3D_q1d6x")
+
+[node name="small_ramp" parent="." unique_id=268589527 instance=ExtResource("3_7l8nw")]
+transform = Transform3D(-3.715468e-08, 0, 1, 0, 1, 0, -0.85, 0, -4.371139e-08, -5.088402, 3.1787817, -4.329)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="small_ramp" unique_id=1756458353]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="small_ramp/StaticBody3D" unique_id=627813946]
+transform = Transform3D(0.99999976, 1.6181996e-08, 2.6122962e-09, -1.618189e-08, 0.9491971, 0.3146691, 2.612584e-09, -0.3146691, 0.9491971, 5.2452087e-06, -2.9244099, -2.176474)
+shape = SubResource("BoxShape3D_da84n")
+
+[node name="small_ramp2" parent="." unique_id=187731574 instance=ExtResource("3_7l8nw")]
+transform = Transform3D(-3.7154678e-08, 0, -0.99999994, 0, 0.99999994, 0, 0.84999996, 0, -4.3711392e-08, 22.826363, 2.9183064, -4.329)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="small_ramp2" unique_id=767847947]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="small_ramp2/StaticBody3D" unique_id=1417612806]
+transform = Transform3D(0.99999976, 1.6181996e-08, 2.6122962e-09, -1.618189e-08, 0.9491971, 0.3146691, 2.612584e-09, -0.3146691, 0.9491971, 5.2452087e-06, -2.9244099, -2.176474)
+shape = SubResource("BoxShape3D_da84n")
+
+[node name="small_ramp3" parent="." unique_id=1402265562 instance=ExtResource("3_7l8nw")]
+transform = Transform3D(1.1146403e-07, 0, 0.9999999, 0, 0.9999999, 0, -0.84999996, 0, 1.3113416e-07, 30.306496, 3.179, 4.329)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="small_ramp3" unique_id=1942362436]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="small_ramp3/StaticBody3D" unique_id=1854539135]
+transform = Transform3D(0.99999976, 1.6181996e-08, 2.6122962e-09, -1.618189e-08, 0.9491971, 0.3146691, 2.612584e-09, -0.3146691, 0.9491971, 5.2452087e-06, -2.9244099, -2.176474)
+shape = SubResource("BoxShape3D_da84n")
+
+[node name="small_flat" parent="." unique_id=1528900591 instance=ExtResource("4_k7x6c")]
+transform = Transform3D(-3.7154678e-08, 0, 1.1764705, 0, 0.99999994, 0, -0.84999996, 0, -5.142516e-08, 44.083202, 2.255, 4.329)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="small_flat" unique_id=1057017484]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="small_flat/StaticBody3D" unique_id=1883934298]
+shape = SubResource("BoxShape3D_tnd71")
+
+[node name="small_flat3" parent="." unique_id=173438990 instance=ExtResource("4_k7x6c")]
+transform = Transform3D(-3.7154678e-08, 0, -1.1764705, 0, 0.99999994, 0, 0.84999996, 0, -5.142516e-08, 8.962, 2.255, -4.329)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="small_flat3" unique_id=1278237277]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="small_flat3/StaticBody3D" unique_id=2061836843]
+shape = SubResource("BoxShape3D_tnd71")
+
+[node name="panneau_interdit" parent="." unique_id=2120001653 instance=ExtResource("5_ddfis")]
+transform = Transform3D(-4.4703484e-08, 0, 1, 0, 1, 0, -1, 0, -4.4703484e-08, 53.60002, 9.124847, -13.915855)
