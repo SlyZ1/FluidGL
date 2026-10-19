@@ -177,6 +177,7 @@ func _rail_logic(delta: float):
 		var zyt := get_zy_from_x(current_rail, parent.global_position.x)
 		if zyt.z > 1 or zyt.z < 0: 
 			# When Fall from rail
+			$"../../SFX/Rail".stop()
 			if zyt.z > 1 and prev_rail: parent.reset_velocities()
 			current_rail = null
 			prev_rail = current_rail
@@ -185,12 +186,14 @@ func _rail_logic(delta: float):
 		if not TrickManager.catch_pressed():
 			# When arrive on rail without catch
 			if not prev_rail: 
+				$"../../SFX/Rail".stop()
 				if parent.just_impulsed(): 
 					current_rail = null
 					return
 				MapLoader.instance.stop()
 			# When jump from rail
 			else: 
+				$"../../SFX/Rail".stop()
 				parent.reset_velocities()
 				var impulse := _rail_vitesse_verticale(current_rail, parent.global_position.x) * 2
 				impulse = min(impulse, 40)
@@ -200,6 +203,7 @@ func _rail_logic(delta: float):
 				return
 				
 		if not prev_rail:
+			$"../../SFX/Rail".play(0.)
 			TrickManager._nb_tricks_since_grounded += 1
 			TrickManager._possible_tricks = ["instable_saut"]
 			_rail_offset = Vector2(parent.global_position.z - zyt.x, parent.global_position.y - zyt.y)
@@ -346,11 +350,13 @@ func _catch_trick(_dt: float) -> void:
 		parent.velocity_back = min(parent.velocity_back, catch_start_speed)
 		parent.velocity_front = min(parent.velocity_front, catch_start_speed)
 		#_confirm_trick()
+		$"../../SFX/Catch".play(0.05)
 		if parent.impulsed_timer <= 0: 
 			TrickManager.validate_xp()
 		
 	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
 	trick_catched = true
+	print("CATCH!")
 	catch_pressed = true
 
 func can_catch() -> bool:

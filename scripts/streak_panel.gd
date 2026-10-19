@@ -70,6 +70,9 @@ func spawn_wow(index: int) -> void:
 
 	var label: Label = wow_template
 	label.text = wow_texts[index]
+	if not wow_texts[index] in ["", "..."]:
+		var asp : AudioStreamPlayer = get_node("../../SFX/" + wow_texts[index]) as AudioStreamPlayer
+		asp.play(0.05)
 	label.add_theme_color_override("font_color", wow_colors[index])
 
 	if (_wow_tween and _wow_tween.is_valid()):

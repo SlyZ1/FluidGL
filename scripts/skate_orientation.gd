@@ -212,6 +212,8 @@ func step(dt: float) -> void:
 			on_grounded.emit()
 	elif _is_grounded:
 		if impulsed_timer >= 0:
+			
+			$"../SFX/Jump".play(0.1)
 			print("Jump")
 			on_jump.emit()
 		else:

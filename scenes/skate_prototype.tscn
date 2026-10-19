@@ -35,6 +35,7 @@
 [ext_resource type="AudioStream" uid="uid://01xk2iuk0yyf" path="res://audio/godlike.mp3" id="33_irawf"]
 [ext_resource type="AudioStream" uid="uid://dawyj0alt0gya" path="res://audio/epic.mp3" id="34_8ecev"]
 [ext_resource type="AudioStream" uid="uid://cg84onv3ff72v" path="res://audio/great.mp3" id="35_lty3c"]
+[ext_resource type="AudioStream" uid="uid://y0f5r337yt2t" path="res://audio/crazy.mp3" id="36_llao1"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -453,52 +454,64 @@ mouse_filter = 2
 [node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
 one_shot = true
 
-[node name="Fingertrick" type="AudioStreamPlayer" parent="." unique_id=1838622770]
+[node name="Fingertrick" type="AudioStreamPlayer" parent="." unique_id=2027468421]
 stream = ExtResource("23_gt7vr")
-volume_db = -10.667
+volume_db = -10.0
 autoplay = true
 
 [node name="SFX" type="Node" parent="." unique_id=291289615]
 
-[node name="Stop" type="AudioStreamPlayer" parent="SFX" unique_id=1913514310]
+[node name="STOP PLEASE" type="AudioStreamPlayer" parent="SFX" unique_id=1913514310]
 stream = ExtResource("24_d607h")
+volume_db = -1.0
 
 [node name="Ok" type="AudioStreamPlayer" parent="SFX" unique_id=1393909303]
 stream = ExtResource("25_llao1")
+volume_db = 5.0
 
 [node name="Rail" type="AudioStreamPlayer" parent="SFX" unique_id=1653412726]
 stream = ExtResource("26_5jkam")
+volume_db = 24.0
 
-[node name="Nice" type="AudioStreamPlayer" parent="SFX" unique_id=2053019184]
+[node name="Nice!" type="AudioStreamPlayer" parent="SFX" unique_id=2053019184]
 stream = ExtResource("27_qm51x")
+volume_db = 5.0
 
 [node name="Mort" type="AudioStreamPlayer" parent="SFX" unique_id=100031872]
 stream = ExtResource("28_mod57")
 volume_db = 10.0
 
-[node name="Legendary" type="AudioStreamPlayer" parent="SFX" unique_id=1623831714]
+[node name="Legendary!!!" type="AudioStreamPlayer" parent="SFX" unique_id=1623831714]
 stream = ExtResource("29_oxw7f")
+volume_db = 4.0
 
 [node name="Jump" type="AudioStreamPlayer" parent="SFX" unique_id=2016010652]
 stream = ExtResource("30_ahj2r")
+volume_db = 10.0
 
 [node name="Catch" type="AudioStreamPlayer" parent="SFX" unique_id=2076263500]
 stream = ExtResource("31_q2wpr")
+volume_db = -5.0
 
-[node name="Amazing" type="AudioStreamPlayer" parent="SFX" unique_id=771814367]
+[node name="Amazing!" type="AudioStreamPlayer" parent="SFX" unique_id=771814367]
 stream = ExtResource("32_8o721")
+volume_db = 4.0
 
-[node name="Crazy" type="AudioStreamPlayer" parent="SFX" unique_id=707435217]
-stream = ExtResource("33_irawf")
-
-[node name="Epic" type="AudioStreamPlayer" parent="SFX" unique_id=1630445451]
+[node name="Epic!!!" type="AudioStreamPlayer" parent="SFX" unique_id=1630445451]
 stream = ExtResource("34_8ecev")
+volume_db = 2.0
 
-[node name="Godlike" type="AudioStreamPlayer" parent="SFX" unique_id=1210249202]
+[node name="GODLIKE" type="AudioStreamPlayer" parent="SFX" unique_id=1210249202]
 stream = ExtResource("33_irawf")
+volume_db = 3.0
 
-[node name="Great" type="AudioStreamPlayer" parent="SFX" unique_id=2013314048]
+[node name="Great!" type="AudioStreamPlayer" parent="SFX" unique_id=2013314048]
 stream = ExtResource("35_lty3c")
+volume_db = 5.0
+
+[node name="Crazy!" type="AudioStreamPlayer" parent="SFX" unique_id=2132270058]
+stream = ExtResource("36_llao1")
+volume_db = 2.0
 
 [connection signal="timeout" from="NewQuest" to="." method="_on_new_quest_timeout"]
 [connection signal="timeout" from="QuestEnd" to="." method="_on_quest_end_timeout"]
