@@ -34,7 +34,7 @@ var _step_accumulateur: float = 0
 static var s_speed: Vector3 = Vector3.ZERO
 static var s_angle: float = 0
 
-var _speed_xp_accel: float = 0
+var _speed_xp_accel: float = 1
 
 var _spawned_sections: Array[Section] = []
 # Section "fantome" pour le prochain spawn

@@ -186,5 +186,7 @@ func on_ground() -> void:
 func on_successful_catch() -> void: 
 	#trick_validated.emit()
 	$TrickTiming.stop()
+	
+func validate_xp() -> void:
 	_update_xp(_xp_buffer, 0)
 	_xp_buffer = 0

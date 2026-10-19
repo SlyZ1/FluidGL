@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://dwbuxbmx8v83e" path="res://scripts/title.gd" id="1_4ignj"]
 [ext_resource type="PackedScene" uid="uid://bwvau03vnk7bb" path="res://scenes/skate_prototype.tscn" id="2_wosw1"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="3_p6dhs"]
-[ext_resource type="FontFile" uid="uid://b04tg4kppbq28" path="res://fonts/Next Ups.ttf" id="4_pyl7j"]
+[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="4_b3w7a"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lgns8"]
 shader = ExtResource("3_p6dhs")
-shader_parameter/blur_amount = 2.0
+shader_parameter/blur_amount = 1.10000005225
 
 [node name="TitleScreen" type="Node3D" unique_id=1694675722]
 script = ExtResource("1_4ignj")
@@ -35,11 +35,10 @@ offset_bottom = 100.62208
 [node name="Label" type="Label" parent="Control" unique_id=451288771]
 layout_mode = 0
 offset_left = 2.0
-offset_top = 2.0
+offset_top = 124.0
 offset_right = 1151.0
-offset_bottom = 286.0
-theme_override_constants/outline_size = 22
-theme_override_fonts/font = ExtResource("4_pyl7j")
+offset_bottom = 408.0
+theme_override_fonts/font = ExtResource("4_b3w7a")
 theme_override_font_sizes/font_size = 82
 text = "FINGERTRICK"
 horizontal_alignment = 1
@@ -48,11 +47,10 @@ vertical_alignment = 1
 [node name="Label2" type="Label" parent="Control" unique_id=1382014618]
 layout_mode = 0
 offset_left = -4.0
-offset_top = 327.0
+offset_top = 220.0
 offset_right = 1145.0
-offset_bottom = 611.0
-theme_override_constants/outline_size = 7
-theme_override_fonts/font = ExtResource("4_pyl7j")
+offset_bottom = 504.0
+theme_override_fonts/font = ExtResource("4_b3w7a")
 theme_override_font_sizes/font_size = 31
 text = "HOLD F AND H"
 horizontal_alignment = 1

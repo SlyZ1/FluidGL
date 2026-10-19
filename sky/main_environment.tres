@@ -1,0 +1,29 @@
+[gd_resource type="Environment" format=3 uid="uid://cmks0nm0sqiqg"]
+
+[ext_resource type="Sky" uid="uid://bmr43fymmwavb" path="res://sky/main_sky.tres" id="1_8gmpv"]
+
+[resource]
+background_mode = 2
+background_energy_multiplier = 0.41
+sky = ExtResource("1_8gmpv")
+tonemap_mode = 4
+tonemap_exposure = 2.48
+tonemap_white = 3.1
+tonemap_agx_white = 11.64
+ssao_enabled = true
+ssao_radius = 16.0
+ssao_intensity = 2.66
+ssil_enabled = true
+ssil_radius = 9.01
+ssil_intensity = 3.16
+sdfgi_bounce_feedback = 0.54
+glow_enabled = true
+glow_intensity = 0.58
+glow_strength = 0.41
+glow_bloom = 0.2
+glow_hdr_threshold = 0.83
+fog_mode = 1
+fog_light_color = Color(0.42745098, 0.6392157, 0.7882353, 1)
+fog_density = 1.0
+fog_depth_begin = 200.0
+fog_depth_end = 369.9

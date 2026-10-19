@@ -1,5 +1,7 @@
 extends Node
 
+class_name AnimController
+
 @export_group("Tricks")
 @export_range(0, 1) var trick_cancel_end: float = 0.1
 @export_range(0, 1) var trick_catchable_start: float = 0.7
@@ -12,6 +14,7 @@ extends Node
 @export var catch_start_speed: float = -1.5
 
 @export_group("Rail")
+@export var rail_xp_rate: float = 1
 @export var rail_z_thresh: float = 0.4
 @export var rail_y_thresh: float = 1
 @export var rail_y_offset: float = 0.3
@@ -40,6 +43,8 @@ class BasicTrick:
 	func _init(_trick_name: String) -> void:
 		trick_name = _trick_name
 		q = Quaternion.IDENTITY
+		
+static var is_on_rail: bool = false
 
 var active_tricks: Array[BasicTrick]
 var current_trick_duration: float = 0
@@ -157,8 +162,17 @@ func _tween_rail_weight(cible: float) -> void:
 	_rail_weight_tween = create_tween()
 	_rail_weight_tween.tween_property(self, "_rail_pose_weight", cible, rail_pose_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-func _rail_logic():
+func _rail_vitesse_verticale(rail: Path3D, x: float) -> float:
+	var h: float = 0.3
+	var a: float = get_zy_from_x(rail, x - h).y
+	var b: float = get_zy_from_x(rail, x + h).y
+	var pente: float = (b - a) / (2.0 * h)   # dy/dx
+	var v: Vector3 = MapLoader.s_speed
+	return pente * v.x - v.y
+
+func _rail_logic(delta: float):
 	_find_rail()
+	is_on_rail = false
 	if current_rail:
 		var zyt := get_zy_from_x(current_rail, parent.global_position.x)
 		if zyt.z > 1 or zyt.z < 0: 
@@ -177,8 +191,10 @@ func _rail_logic():
 				MapLoader.instance.stop()
 			# When jump from rail
 			else: 
-				current_rail = null
 				parent.reset_velocities()
+				var impulse := _rail_vitesse_verticale(current_rail, parent.global_position.x) * 2
+				parent.apply_impulse(impulse, impulse)
+				current_rail = null
 				prev_rail = current_rail
 				return
 				
@@ -196,6 +212,11 @@ func _rail_logic():
 			if lane_tween and lane_tween.is_valid():
 				lane_tween.kill()
 				
+		TrickManager._xp_buffer += rail_xp_rate * delta
+				
+				
+		is_on_rail = true
+				
 		parent.reset_orientation()
 		parent.global_position.z = zyt.x + _rail_offset.x * _rail_offset_weight
 		parent.global_position.y = zyt.y + _rail_offset.y * _rail_offset_weight
@@ -211,7 +232,7 @@ func _process(delta: float) -> void:
 		MapLoader.instance.stop()
 		
 	var etait_sur_rail: bool = prev_rail != null
-	_rail_logic()
+	_rail_logic(delta)
 	var est_sur_rail: bool = current_rail != null
 	var inversion: float = -1.0 if false else 1.0
 
@@ -325,11 +346,13 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		_cancel_tricks()
 		return
 		
+	if (_progression > trick_catchable_start and parent.is_grounded() and parent.impulsed_timer <= 0):
+		TrickManager.validate_xp()
+		
 	# Successful Catch
 	if _progression > trick_catchable_start and not parent.is_grounded():
 		_cancel_tricks()
 		_catch_trick(_dt)
-		TrickManager.on_successful_catch()
 		return
 		
 	# if already catched and grounded, nothing happens

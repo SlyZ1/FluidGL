@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
 [ext_resource type="PackedScene" uid="uid://bfds1rxiaxwa7" path="res://models/2_doigts.tscn" id="4_y7iwp"]
 [ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
+[ext_resource type="Script" uid="uid://ddk58r6f7rp7l" path="res://scripts/doigts_manager_miammmmm.gd" id="6_55io4"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
 radius = 1.0
@@ -72,5 +73,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.10497e-08, 0.20034337, 0.9
 [node name="2doigts_up" parent="." unique_id=1336449554 instance=ExtResource("5_uad4r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9491116e-08, 4.4904175, 0.90345144)
 visible = false
+
+[node name="DoigtsManagerMiammmmm" type="Node" parent="." unique_id=193582744 node_paths=PackedStringArray("deux_doigts", "deux_doigts_up")]
+script = ExtResource("6_55io4")
+deux_doigts = NodePath("../2doigts")
+deux_doigts_up = NodePath("../2doigts_up")
 
 [connection signal="timeout" from="RailCooldown" to="." method="_on_rail_cooldown_timeout"]

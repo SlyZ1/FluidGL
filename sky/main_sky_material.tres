@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://d34r84cfcwtw3"]
+
+[ext_resource type="Shader" uid="uid://cjq22nl7da7xn" path="res://shaders/sky.gdshader" id="1_fr2wp"]
+[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="2_pj7be"]
+[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="3_g1ik7"]
+
+[resource]
+shader = ExtResource("1_fr2wp")
+shader_parameter/backgroundColor = Color(0.34, 0.5439999, 0.85, 1)
+shader_parameter/imageColor = Color(0.41000003, 0.6459999, 1, 1)
+shader_parameter/image2Color = Color(0.71000004, 0.826, 1, 1)
+shader_parameter/image = ExtResource("2_pj7be")
+shader_parameter/image2 = ExtResource("3_g1ik7")
+shader_parameter/scale = 0.075
+shader_parameter/padding = Vector2(1.225, 1.235)
+shader_parameter/vitesse = Vector2(0.777, -0.514)
+shader_parameter/opacite = 1.0
+shader_parameter/ratio_ecran = 2.033
+shader_parameter/decalage_colonne = 1.745

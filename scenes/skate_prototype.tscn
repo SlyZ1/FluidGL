@@ -15,10 +15,10 @@
 [ext_resource type="PackedScene" uid="uid://wh5nmjkf5hu1" path="res://sections/section_ramp_4.tscn" id="8_fo1cg"]
 [ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="9_cb56l"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="10_a10lx"]
-[ext_resource type="FontFile" uid="uid://b04tg4kppbq28" path="res://fonts/Next Ups.ttf" id="11_3o3sw"]
-[ext_resource type="Shader" uid="uid://cjq22nl7da7xn" path="res://shaders/sky.gdshader" id="14_y43hh"]
-[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="15_xffk5"]
-[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="16_hc6xd"]
+[ext_resource type="Environment" uid="uid://cmks0nm0sqiqg" path="res://sky/main_environment.tres" id="13_xffk5"]
+[ext_resource type="Script" uid="uid://v3s70tvc6v62" path="res://scripts/skybox_ratio.gd" id="14_hc6xd"]
+[ext_resource type="Material" uid="uid://d34r84cfcwtw3" path="res://sky/main_sky_material.tres" id="15_g3l2w"]
+[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="19_hc6xd"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -39,49 +39,6 @@ dof_blur_amount = 0.04
 [sub_resource type="Curve" id="Curve_p1m0m"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.096573204, 0.6209677), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_uaj5v"]
-shader = ExtResource("14_y43hh")
-shader_parameter/backgroundColor = Color(0.34, 0.5439999, 0.85, 1)
-shader_parameter/imageColor = Color(0.41000003, 0.6459999, 1, 1)
-shader_parameter/image2Color = Color(0.71000004, 0.826, 1, 1)
-shader_parameter/image = ExtResource("15_xffk5")
-shader_parameter/image2 = ExtResource("16_hc6xd")
-shader_parameter/scale = 0.075
-shader_parameter/padding = Vector2(1.225, 1.235)
-shader_parameter/vitesse = Vector2(0.777, -0.514)
-shader_parameter/opacite = 1.0
-shader_parameter/ratio_ecran = 2.033
-shader_parameter/decalage_colonne = 1.745
-
-[sub_resource type="Sky" id="Sky_q1d6x"]
-sky_material = SubResource("ShaderMaterial_uaj5v")
-
-[sub_resource type="Environment" id="Environment_tnd71"]
-background_mode = 2
-background_energy_multiplier = 0.41
-sky = SubResource("Sky_q1d6x")
-tonemap_mode = 4
-tonemap_exposure = 2.48
-tonemap_white = 3.1
-tonemap_agx_white = 11.64
-ssao_enabled = true
-ssao_radius = 16.0
-ssao_intensity = 2.66
-ssil_enabled = true
-ssil_radius = 9.01
-ssil_intensity = 3.16
-sdfgi_bounce_feedback = 0.54
-glow_enabled = true
-glow_intensity = 0.58
-glow_strength = 0.41
-glow_bloom = 0.2
-glow_hdr_threshold = 0.83
-fog_mode = 1
-fog_light_color = Color(0.42745098, 0.6392157, 0.7882353, 1)
-fog_density = 1.0
-fog_depth_begin = 200.0
-fog_depth_end = 369.9
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3o3sw"]
 shader = ExtResource("10_a10lx")
@@ -137,7 +94,9 @@ impact_max_combo = 7
 [node name="CameraTarget" type="Node3D" parent="." unique_id=529490608]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=691525223]
-environment = SubResource("Environment_tnd71")
+environment = ExtResource("13_xffk5")
+script = ExtResource("14_hc6xd")
+sky_mat = ExtResource("15_g3l2w")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2012255489]
 transform = Transform3D(-0.5055673, 0.63080204, 0.58863425, -0.11391028, -0.7250761, 0.6791826, 0.8552345, 0.27632093, 0.4384297, -1.1963387, 3.8094516, 0)
@@ -227,8 +186,7 @@ offset_left = 324.0
 offset_top = 90.0
 offset_right = 836.0
 offset_bottom = 203.0
-theme_override_constants/outline_size = 16
-theme_override_fonts/font = ExtResource("11_3o3sw")
+theme_override_fonts/font = ExtResource("19_hc6xd")
 theme_override_font_sizes/font_size = 74
 text = "PAUSE"
 horizontal_alignment = 1
@@ -241,8 +199,7 @@ offset_left = -4.0
 offset_top = 327.0
 offset_right = 1145.0
 offset_bottom = 611.0
-theme_override_constants/outline_size = 7
-theme_override_fonts/font = ExtResource("11_3o3sw")
+theme_override_fonts/font = ExtResource("19_hc6xd")
 theme_override_font_sizes/font_size = 31
 text = "HOLD F AND H"
 horizontal_alignment = 1

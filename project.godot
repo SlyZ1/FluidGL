@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ludum60"
-run/main_scene="uid://bwvau03vnk7bb"
+run/main_scene="uid://cpgeb8hbo10c6"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
