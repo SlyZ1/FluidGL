@@ -200,6 +200,9 @@ func _rail_logic():
 		parent.global_position.z = zyt.x + _rail_offset.x * _rail_offset_weight
 		parent.global_position.y = zyt.y + _rail_offset.y * _rail_offset_weight
 			
+	if current_rail == null and prev_rail != null:
+		parent.reset_velocities()
+			
 	prev_rail = current_rail
 
 

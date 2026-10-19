@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cssio1dad3ndv"]
 
 [ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="2_8l0xq"]
-[ext_resource type="PackedScene" uid="uid://hnfxr788kwrt" path="res://models/street.glb" id="2_lwk0x"]
 [ext_resource type="PackedScene" uid="uid://cati7j2xpa4x8" path="res://models/rails/rail_normal.glb" id="3_8l0xq"]
+[ext_resource type="PackedScene" uid="uid://b2wk4ruxx4ed4" path="res://models/street_cut.glb" id="3_n6swy"]
 
 [sub_resource type="Curve3D" id="Curve3D_vqc4j"]
 
@@ -15,6 +15,9 @@ _data = {
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
+size = Vector3(4.819031, 1.9489746, 1)
 
 [node name="StraightBase" type="Node3D" unique_id=665315059 node_paths=PackedStringArray("snap_back", "snap_front", "rails")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
@@ -38,11 +41,17 @@ curve = SubResource("Curve3D_vqc4j")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
 shape = SubResource("BoxShape3D_q1d6x")
 
-[node name="street" parent="." unique_id=955985399 instance=ExtResource("2_lwk0x")]
-transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
-
 [node name="rail_normal" parent="." unique_id=1608833026 instance=ExtResource("3_8l0xq")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.583, 2.0176892, 4.5)
 
 [node name="Path3D" type="Path3D" parent="rail_normal" unique_id=675886817]
 curve = SubResource("Curve3D_8l0xq")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="rail_normal" unique_id=1546326965]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="rail_normal/StaticBody3D" unique_id=639194435]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04837084, -1.3629069, -7.041315)
+shape = SubResource("BoxShape3D_tnd71")
+
+[node name="street_cut" parent="." unique_id=252554815 instance=ExtResource("3_n6swy")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)

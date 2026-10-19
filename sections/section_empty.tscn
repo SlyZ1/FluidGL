@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="1_d87wr"]
 [ext_resource type="PackedScene" uid="uid://hnfxr788kwrt" path="res://models/street.glb" id="2_4c2ua"]
+[ext_resource type="PackedScene" uid="uid://b2wk4ruxx4ed4" path="res://models/street_cut.glb" id="3_1o4wi"]
 
 [sub_resource type="Curve3D" id="Curve3D_vqc4j"]
 
@@ -30,4 +31,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
 shape = SubResource("BoxShape3D_q1d6x")
 
 [node name="street" parent="." unique_id=955985399 instance=ExtResource("2_4c2ua")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
+visible = false
+
+[node name="street_cut" parent="." unique_id=80216506 instance=ExtResource("3_1o4wi")]
 transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)

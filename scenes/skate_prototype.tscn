@@ -2,11 +2,10 @@
 
 [ext_resource type="Script" uid="uid://c054pv2r252hh" path="res://scripts/map_loader.gd" id="1_2j8q1"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="1_rudyk"]
-[ext_resource type="PackedScene" uid="uid://8085c456c7g8" path="res://sections/section_flat_2.tscn" id="3_3om3a"]
-[ext_resource type="PackedScene" uid="uid://cwwjjwqrl3o8r" path="res://sections/section_flat_1.tscn" id="3_p1m0m"]
 [ext_resource type="PackedScene" uid="uid://briofgnybt16n" path="res://sections/section_ramp_1.tscn" id="4_a10lx"]
 [ext_resource type="Script" uid="uid://jkpmkae3y0n0" path="res://scripts/quest.gd" id="4_vfgxo"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate.tscn" id="4_wc5y2"]
+[ext_resource type="PackedScene" uid="uid://i8wl7n8qas82" path="res://sections/section_rail_2.tscn" id="4_xffk5"]
 [ext_resource type="PackedScene" uid="uid://55ciu1ybrl1o" path="res://sections/section_empty.tscn" id="5_3o3sw"]
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="5_uorgy"]
 [ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="5_vfgxo"]
@@ -17,19 +16,15 @@
 [ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="9_cb56l"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="10_a10lx"]
 [ext_resource type="FontFile" uid="uid://b04tg4kppbq28" path="res://fonts/Next Ups.ttf" id="11_3o3sw"]
+[ext_resource type="Shader" uid="uid://cjq22nl7da7xn" path="res://shaders/sky.gdshader" id="14_y43hh"]
+[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="15_xffk5"]
+[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="16_hc6xd"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "kickflip_gauche"])
 reward = 150
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
-
-[sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
-size = Vector3(2.0212402, 1, 5.1572266)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xi3o1"]
-albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
-metallic_specular = 0.51
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_wc5y2"]
 data = PackedVector3Array(-1.0106, 0.5, 2.5786, 1.0106, 0.5, 2.5786, -1.0106, -0.5, 2.5786, 1.0106, 0.5, 2.5786, 1.0106, -0.5, 2.5786, -1.0106, -0.5, 2.5786, 1.0106, 0.5, -2.5786, -1.0106, 0.5, -2.5786, 1.0106, -0.5, -2.5786, -1.0106, 0.5, -2.5786, -1.0106, -0.5, -2.5786, 1.0106, -0.5, -2.5786, 1.0106, 0.5, 2.5786, 1.0106, 0.5, -2.5786, 1.0106, -0.5, 2.5786, 1.0106, 0.5, -2.5786, 1.0106, -0.5, -2.5786, 1.0106, -0.5, 2.5786, -1.0106, 0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, -0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, -0.5, 2.5786, -1.0106, -0.5, -2.5786, 1.0106, 0.5, 2.5786, -1.0106, 0.5, 2.5786, 1.0106, 0.5, -2.5786, -1.0106, 0.5, 2.5786, -1.0106, 0.5, -2.5786, 1.0106, 0.5, -2.5786, -1.0106, -0.5, 2.5786, 1.0106, -0.5, 2.5786, -1.0106, -0.5, -2.5786, 1.0106, -0.5, 2.5786, 1.0106, -0.5, -2.5786, -1.0106, -0.5, -2.5786)
@@ -45,14 +40,22 @@ dof_blur_amount = 0.04
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.096573204, 0.6209677), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lwk0x"]
-sky_top_color = Color(0.34117648, 0.6, 0.83137256, 1)
-sky_horizon_color = Color(0.5176471, 0.7254902, 0.9098039, 1)
-ground_bottom_color = Color(0.54600006, 0.74013335, 0.91, 1)
-ground_horizon_color = Color(0.5176471, 0.7254902, 0.9098039, 1)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uaj5v"]
+shader = ExtResource("14_y43hh")
+shader_parameter/backgroundColor = Color(0.34, 0.5439999, 0.85, 1)
+shader_parameter/imageColor = Color(0.41000003, 0.6459999, 1, 1)
+shader_parameter/image2Color = Color(0.71000004, 0.826, 1, 1)
+shader_parameter/image = ExtResource("15_xffk5")
+shader_parameter/image2 = ExtResource("16_hc6xd")
+shader_parameter/scale = 0.075
+shader_parameter/padding = Vector2(1.225, 1.235)
+shader_parameter/vitesse = Vector2(0.777, -0.514)
+shader_parameter/opacite = 1.0
+shader_parameter/ratio_ecran = 2.033
+shader_parameter/decalage_colonne = 1.745
 
 [sub_resource type="Sky" id="Sky_q1d6x"]
-sky_material = SubResource("ProceduralSkyMaterial_lwk0x")
+sky_material = SubResource("ShaderMaterial_uaj5v")
 
 [sub_resource type="Environment" id="Environment_tnd71"]
 background_mode = 2
@@ -91,7 +94,7 @@ kill_distance = 60
 angle = -1.655
 speed = 41.595
 container = NodePath("GroundContainer")
-sections = Array[PackedScene]([ExtResource("3_p1m0m"), ExtResource("3_3om3a"), ExtResource("4_a10lx"), ExtResource("5_3o3sw"), ExtResource("6_3om3a"), ExtResource("7_7k1aa"), ExtResource("8_fo1cg"), ExtResource("9_cb56l")])
+sections = Array[PackedScene]([ExtResource("9_cb56l"), ExtResource("4_xffk5"), ExtResource("4_a10lx"), ExtResource("6_3om3a"), ExtResource("7_7k1aa"), ExtResource("8_fo1cg")])
 empty_section = ExtResource("5_3o3sw")
 skate = NodePath("Skate")
 ragdoll = NodePath("Ragdoll")
@@ -106,11 +109,6 @@ gravity = 30.0
 transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.160342, 0)
 continuous_cd = true
 
-[node name="Skate" type="MeshInstance3D" parent="Ragdoll" unique_id=515265970]
-transform = Transform3D(1, 0, -3.991814e-15, 0, 1, 0, 3.991814e-15, 0, 1, 0, 0, 0)
-mesh = SubResource("BoxMesh_qn4bn")
-surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ragdoll" unique_id=1513380359]
 transform = Transform3D(1, 0, -3.991814e-15, 0, 1, 0, 3.991814e-15, 0, 1, 0, 0, 0)
 shape = SubResource("ConcavePolygonShape3D_wc5y2")
@@ -121,20 +119,20 @@ transform = Transform3D(0.9999997, 0, -7.1054274e-15, 0, 1, 0, 3.5527137e-15, 0,
 [node name="Camera3D" type="Camera3D" parent="." unique_id=483684695 node_paths=PackedStringArray("target", "skate")]
 transform = Transform3D(0.59655654, 0.5615719, -0.5733737, 0, 0.7144211, 0.6997161, 0.80257106, -0.4174202, 0.42619258, -6.7924123, 14.084747, 6.004562)
 attributes = SubResource("CameraAttributesPractical_5o71f")
-fov = 60.0
+fov = 66.2
 near = 0.2
 script = ExtResource("1_rudyk")
 target = NodePath("../CameraTarget")
 skate = NodePath("../Skate")
-distance = 27.49
-angles = Vector2(-2.37, -0.55)
+distance = 25.51
+angles = Vector2(-2.535, -0.485)
 offset = Vector3(3.815, 1.14, -1.88)
 skate_min_height = 7.0
 lerp_speed_multiplier = 5.0
-impact_strength = 0.305
+impact_strength = 0.545
 impact_curve = SubResource("Curve_p1m0m")
 impact_duration = 1.0
-impact_max_combo = 5
+impact_max_combo = 7
 
 [node name="CameraTarget" type="Node3D" parent="." unique_id=529490608]
 
@@ -165,6 +163,7 @@ wait_time = 11.0
 one_shot = true
 
 [node name="UI" type="Control" parent="." unique_id=1938638467]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1149.0

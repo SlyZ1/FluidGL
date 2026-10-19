@@ -9,13 +9,6 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
 radius = 1.0
 
-[sub_resource type="BoxMesh" id="BoxMesh_qn4bn"]
-size = Vector3(2.0212402, 1, 5.1572266)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xi3o1"]
-albedo_color = Color(0.54, 0.33102003, 0.0756, 1)
-metallic_specular = 0.51
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
 size = Vector3(1.575, 0.865, 5.835)
 
@@ -45,12 +38,6 @@ visible = false
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
-[node name="Skate2" type="MeshInstance3D" parent="." unique_id=1399617927]
-transform = Transform3D(0.44499996, 0, -1.7763568e-15, 0, 0.445, 0, 1.7763568e-15, 0, 0.60499996, 0, 0, 0)
-visible = false
-mesh = SubResource("BoxMesh_qn4bn")
-surface_material_override/0 = SubResource("StandardMaterial3D_xi3o1")
-
 [node name="Skate" type="Node3D" parent="." unique_id=54906917]
 
 [node name="ShapeCast3D" type="ShapeCast3D" parent="Skate" unique_id=640768866]
@@ -63,7 +50,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0, -0.26332742, 0)
 [node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
 script = ExtResource("2_2wimw")
 trick_cancel_end = 0.08
-trick_catchable_start = 0.3
+trick_catchable_start = 0.2
+trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
 lane_position = 5.0
 rail_z_thresh = 2.5

@@ -8,4 +8,4 @@ class_name Section
 
 func snap(snap_to: Vector3) -> void:
 	var offset: Vector3 = global_position - snap_back.global_position
-	global_position = snap_to + offset
+	global_position = snap_to + offset - Vector3.UP * 1e-3 - Vector3.RIGHT * 0.1

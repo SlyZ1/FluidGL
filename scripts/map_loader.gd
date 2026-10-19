@@ -13,6 +13,7 @@ class_name MapLoader
 @export var ragdoll: RigidBody3D
 @export var substep: float = 1.0 / 300.0
 @export var max_steps_par_frame: int = 30
+@export_range(0,1) var empty_ratio: float = 0.3
 
 @onready var freezed_skate : Node3D
 @onready var initial_skate_pos :Vector3 = $Skate.global_position
@@ -89,8 +90,6 @@ static func up() -> Vector3:
 	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.UP
 
 func _new_section(snap_to: Vector3, empty := false) -> Section:
-	if empty:
-		print("empty!!")
 	var index: int = randi() % sections.size()
 	for i in range(10):
 		if index == previous_spawn_index:
@@ -98,6 +97,9 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 		else: break
 	previous_spawn_index = index
 	var scene: PackedScene = sections[index]
+	
+	empty = empty || randf() < empty_ratio
+	
 	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
 	container.add_child(new_section)
 	new_section.snap(snap_to)
