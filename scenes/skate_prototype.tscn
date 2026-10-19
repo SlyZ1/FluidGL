@@ -22,6 +22,7 @@
 [ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="20_hc6xd"]
 [ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="21_w7e2e"]
 [ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="22_gt7vr"]
+[ext_resource type="AudioStream" uid="uid://b7yvn1nwfygf5" path="res://audio/fingertrick.mp3" id="23_gt7vr"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -439,6 +440,11 @@ mouse_filter = 2
 
 [node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
 one_shot = true
+
+[node name="Fingertrick" type="AudioStreamPlayer2D" parent="." unique_id=1363387467]
+position = Vector2(496, 1651)
+stream = ExtResource("23_gt7vr")
+autoplay = true
 
 [connection signal="timeout" from="NewQuest" to="." method="_on_new_quest_timeout"]
 [connection signal="timeout" from="QuestEnd" to="." method="_on_quest_end_timeout"]
