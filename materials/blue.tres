@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bp4rpkr7r6xo2"]
+
+[ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="1_wxdud"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_wxdud")
+shader_parameter/color_id = 3
+shader_parameter/sig = 0.25
