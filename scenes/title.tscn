@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://cpgeb8hbo10c6"]
+
+[ext_resource type="Script" uid="uid://dwbuxbmx8v83e" path="res://scripts/title.gd" id="1_4ignj"]
+[ext_resource type="PackedScene" uid="uid://bwvau03vnk7bb" path="res://scenes/skate_prototype.tscn" id="2_wosw1"]
+[ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="3_p6dhs"]
+[ext_resource type="FontFile" uid="uid://b04tg4kppbq28" path="res://fonts/Next Ups.ttf" id="4_pyl7j"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lgns8"]
+shader = ExtResource("3_p6dhs")
+shader_parameter/blur_amount = 2.0
+
+[node name="TitleScreen" type="Node3D" unique_id=1694675722]
+script = ExtResource("1_4ignj")
+
+[node name="Background" parent="." unique_id=611096490 instance=ExtResource("2_wosw1")]
+
+[node name="Control" type="Control" parent="." unique_id=1733424851]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1150.0
+offset_bottom = 646.0
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Control" unique_id=152467745]
+position = Vector2(576, 324.5)
+scale = Vector2(5.76, 3.215)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control/BackBufferCopy" unique_id=1859502306]
+material = SubResource("ShaderMaterial_lgns8")
+offset_left = -99.826385
+offset_top = -100.93313
+offset_right = 100.1736
+offset_bottom = 100.62208
+
+[node name="Label" type="Label" parent="Control" unique_id=451288771]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 1151.0
+offset_bottom = 286.0
+theme_override_constants/outline_size = 22
+theme_override_fonts/font = ExtResource("4_pyl7j")
+theme_override_font_sizes/font_size = 82
+text = "FINGERTRICK"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="Control" unique_id=1382014618]
+layout_mode = 0
+offset_left = -4.0
+offset_top = 327.0
+offset_right = 1145.0
+offset_bottom = 611.0
+theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("4_pyl7j")
+theme_override_font_sizes/font_size = 31
+text = "HOLD F AND H"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="Control/Label2" unique_id=1449521898]
+wait_time = 0.5
+autostart = true
+
+[connection signal="timeout" from="Control/Label2/Timer" to="." method="_on_blink_timeout"]

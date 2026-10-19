@@ -179,6 +179,13 @@ func _on_new_quest_timeout() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("pause"):
+		if not $UI/PauseLayer.visible:
+			Engine.time_scale = 0
+			$UI/PauseLayer.visible = true
+		else:
+			Engine.time_scale = 1
+			$UI/PauseLayer.visible = false
 	s_angle = angle
 	container.rotation_degrees.z = angle
 	_control_spawn()
@@ -233,6 +240,9 @@ func _on_quest_end_timeout() -> void:
 	_quest_progression = 0
 	$NewQuest.start()
 
+func _on_holdfh_timeout() -> void:
+	$UI/Label2.visible = not $UI/Label2.visible
 
 func _on_restart_lag_timeout() -> void:
 	waiting_for_restart = true
+	$UI/Label2/Timer.start()

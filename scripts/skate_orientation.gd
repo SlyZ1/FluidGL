@@ -221,3 +221,15 @@ func step(dt: float) -> void:
 	previous_grounded_front = grounded_front
 	impulsed_timer -= dt
 	fall_timer -= dt
+
+
+@onready var initial_rot_finger = $"2doigts".global_rotation
+@onready var initial_rot_finger_up = $"2doigts_up".global_rotation
+func _process(delta: float) -> void:
+	var fh := TrickManager.catch_pressed()
+	$"2doigts".visible = fh
+	$"2doigts_up".visible = not fh
+	$"2doigts".visible = fh
+	$"2doigts_up".visible = not fh
+	$"2doigts".global_rotation = initial_rot_finger
+	$"2doigts_up".global_rotation = initial_rot_finger_up
