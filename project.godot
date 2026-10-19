@@ -84,11 +84,11 @@ light_noise={
 "type": "sampler2D",
 "value": "res://textures/light_noise.tres"
 }
-light_levels={
-"type": "sampler2D",
-"value": "res://textures/light_levels.tres"
-}
 NB_COLORS_IN_PALETTE={
 "type": "int",
 "value": 9
+}
+light_levels={
+"type": "sampler2D",
+"value": "res://textures/light_levels.tres"
 }

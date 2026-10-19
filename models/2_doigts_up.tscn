@@ -3,7 +3,26 @@
 [ext_resource type="PackedScene" uid="uid://cpwbbde2fmvo3" path="res://models/2doigts_up.glb" id="1_0cjdv"]
 [ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="2_0cjdv"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4crdy"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0cjdv"]
+render_priority = 1
+transparency = 1
+shading_mode = 0
+grow = true
+stencil_mode = 3
+stencil_flags = 1
+stencil_compare = 5
+metadata/_stencil_owned = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wfreb"]
+next_pass = SubResource("StandardMaterial3D_0cjdv")
+transparency = 1
+albedo_color = Color(1, 1, 1, 0)
+stencil_mode = 1
+stencil_flags = 2
+stencil_color = Color(1, 1, 1, 1)
+stencil_outline_thickness = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0cjdv"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_0cjdv")
@@ -13,4 +32,5 @@ shader_parameter/sig = 0.5
 [node name="2doigts_up" unique_id=1336449554 instance=ExtResource("1_0cjdv")]
 
 [node name="Mball_012" parent="." index="0" unique_id=1766777615]
-surface_material_override/0 = SubResource("ShaderMaterial_4crdy")
+material_overlay = SubResource("StandardMaterial3D_wfreb")
+surface_material_override/0 = SubResource("ShaderMaterial_0cjdv")

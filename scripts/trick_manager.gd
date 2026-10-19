@@ -55,10 +55,13 @@ func _compute_input() -> String:
 		if fhybrv[i]:
 			input_string[i] = input_string[i].to_upper()
 	return input_string
-	
+
 func catch_pressed() -> bool:
 	var input_string := _compute_input()
 	return input_string == "FHybrv"
+
+func get_progression() -> float:
+	return ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 
 func _process(delta: float) -> void:
 	_update_xp(0, lerp(20, 200, tanh(float(_tier) * _xp / 1000.0)) * delta)
