@@ -39,7 +39,75 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"materials": {
+"Material.002": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/orange.tres",
+"use_external/path": "uid://dlnom5eppukyq"
+},
+"Material.003": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Material.004": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/orange.tres",
+"use_external/path": "uid://dlnom5eppukyq"
+},
+"Material.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Material.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/orange.tres",
+"use_external/path": "uid://dlnom5eppukyq"
+},
+"Material.007": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Material.008": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/orange.tres",
+"use_external/path": "uid://dlnom5eppukyq"
+},
+"Material.009": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Metal": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Plastic White": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/white.tres",
+"use_external/path": "uid://blgfwrhs6uh65"
+},
+"Plastic.001": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/white.tres",
+"use_external/path": "uid://blgfwrhs6uh65"
+},
+"Rough": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Skrews": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1
 gltf/texture_map_mode=1
