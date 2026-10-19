@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dwbuxbmx8v83e" path="res://scripts/title.gd" id="1_4ignj"]
 [ext_resource type="PackedScene" uid="uid://bwvau03vnk7bb" path="res://scenes/skate_prototype.tscn" id="2_wosw1"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="3_p6dhs"]
-[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="4_b3w7a"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="4_pyl7j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lgns8"]
 shader = ExtResource("3_p6dhs")
@@ -38,7 +38,7 @@ offset_left = 2.0
 offset_top = 124.0
 offset_right = 1151.0
 offset_bottom = 408.0
-theme_override_fonts/font = ExtResource("4_b3w7a")
+theme_override_fonts/font = ExtResource("4_pyl7j")
 theme_override_font_sizes/font_size = 82
 text = "FINGERTRICK"
 horizontal_alignment = 1
@@ -50,9 +50,9 @@ offset_left = -4.0
 offset_top = 220.0
 offset_right = 1145.0
 offset_bottom = 504.0
-theme_override_fonts/font = ExtResource("4_b3w7a")
+theme_override_fonts/font = ExtResource("4_pyl7j")
 theme_override_font_sizes/font_size = 31
-text = "HOLD F AND H"
+text = "Hold F And H"
 horizontal_alignment = 1
 vertical_alignment = 1
 

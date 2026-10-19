@@ -65,7 +65,7 @@ func _ready() -> void:
 	freezed_skate = $Skate.duplicate()
 	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
 	
-func _on_xp_changed(_new_val: int, _tier: int, _out_of: int, _total_points: int, _with_popup: bool):
+func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
 
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
@@ -152,7 +152,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 	if _name == _current_quest.steps[_quest_progression]:
 		get_node("UI/Input" + str(_quest_progression + 1)).correct()
 		_quest_progression += 1
-		TrickManager._update_xp(_current_quest.reward, 0)
+		TrickManager._xp_buffer += _current_quest.reward
 		if _quest_progression >= len(_current_quest.steps):
 			_move_quests(680)
 			_current_quest = null
@@ -255,3 +255,4 @@ func _on_holdfh_timeout() -> void:
 func _on_restart_lag_timeout() -> void:
 	waiting_for_restart = true
 	$UI/Label2/Timer.start()
+	$UI/Label3.text = "POINTS EARNED: %d" % TrickManager._points

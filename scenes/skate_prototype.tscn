@@ -18,7 +18,7 @@
 [ext_resource type="Environment" uid="uid://cmks0nm0sqiqg" path="res://sky/main_environment.tres" id="13_xffk5"]
 [ext_resource type="Script" uid="uid://v3s70tvc6v62" path="res://scripts/skybox_ratio.gd" id="14_hc6xd"]
 [ext_resource type="Material" uid="uid://d34r84cfcwtw3" path="res://sky/main_sky_material.tres" id="15_g3l2w"]
-[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="19_hc6xd"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="20_hc6xd"]
 
 [sub_resource type="Resource" id="Resource_s3shx"]
 script = ExtResource("4_vfgxo")
@@ -61,6 +61,8 @@ quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx")])
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-3.059797e-08, 0, 0.7, 0, 0.7, 0, -0.7, 0, -3.059797e-08, 0, 3.16, 0)
 gravity = 30.0
+outline_appear_curve = null
+outline_disappear_curve = null
 
 [node name="Ragdoll" type="RigidBody3D" parent="." unique_id=1062707097]
 transform = Transform3D(-1.9233012e-08, 0, 0.44, 0, 0.44, 0, -0.44, 0, -1.9233012e-08, 0, 3.160342, 0)
@@ -129,6 +131,7 @@ offset_bottom = 644.0
 
 [node name="StreakPanel" parent="UI" unique_id=199057457 instance=ExtResource("5_uorgy")]
 layout_mode = 1
+popup_color = Color(0.9607843, 0.654902, 0.2901961, 1)
 
 [node name="Input1" parent="UI" unique_id=7957100 instance=ExtResource("7_p1m0m")]
 layout_mode = 1
@@ -182,9 +185,9 @@ offset_left = 324.0
 offset_top = 90.0
 offset_right = 836.0
 offset_bottom = 203.0
-theme_override_fonts/font = ExtResource("19_hc6xd")
+theme_override_fonts/font = ExtResource("20_hc6xd")
 theme_override_font_sizes/font_size = 74
-text = "PAUSE"
+text = "Pause"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -195,14 +198,25 @@ offset_left = -4.0
 offset_top = 327.0
 offset_right = 1145.0
 offset_bottom = 611.0
-theme_override_fonts/font = ExtResource("19_hc6xd")
+theme_override_fonts/font = ExtResource("20_hc6xd")
 theme_override_font_sizes/font_size = 31
-text = "HOLD F AND H"
+text = "Hold F And H"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Timer" type="Timer" parent="UI/Label2" unique_id=58528195]
 wait_time = 0.5
+
+[node name="Label3" type="Label" parent="UI" unique_id=893113799]
+layout_mode = 0
+offset_left = -4.0
+offset_top = 174.0
+offset_right = 1145.0
+offset_bottom = 458.0
+theme_override_fonts/font = ExtResource("20_hc6xd")
+theme_override_font_sizes/font_size = 60
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="RestartLag" type="Timer" parent="." unique_id=1344687735]
 one_shot = true

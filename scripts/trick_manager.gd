@@ -8,7 +8,7 @@ signal trick_validated(_num_combo: int)
 signal go_left
 signal go_right
 
-signal xp_changed(_new_val: float, _tier: int, _out_of: int, _total_points: int, _with_popup: bool)
+signal xp_changed(_new_val: float, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool)
 signal tier_changed(_new_tier: int)
 
 var _current_trick : String = ""
@@ -64,7 +64,8 @@ func get_progression() -> float:
 	return ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 
 func _process(delta: float) -> void:
-	_update_xp(0, (_tier * _tier * _tier * 0.3 + 1) * 100 * delta)
+	var decrease := (_tier * _tier * _tier * 0.3 + 1) * 100 * delta
+	_update_xp(0, max(0, decrease))
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
 	#if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
@@ -146,7 +147,7 @@ func _update_xp(increased_by: float, decreased_by: float):
 		_tier += 1
 		tier_changed.emit(_tier)
 
-	xp_changed.emit(_xp / _xp_per_tier[_tier], _tier, sum, _points, sum > 0)
+	xp_changed.emit(_xp / _xp_per_tier[_tier], _tier, _nb_tricks_since_grounded, sum, _points, sum > 0)
 
 
 func _trick_performed(_name: String, _accuracy: float) -> void:

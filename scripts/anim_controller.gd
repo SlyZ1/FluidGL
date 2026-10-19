@@ -288,7 +288,6 @@ func _confirm_trick():
 	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
 func set_trick_vfx(t : float) -> void:
-	print("imp = ", t)
 	$"../TrickVFX".material_override.set_shader_parameter("imp", t)
 
 func _on_trick(_name: String, _accuracy: float) -> void:
@@ -347,6 +346,8 @@ func _catch_trick(_dt: float) -> void:
 		parent.velocity_back = min(parent.velocity_back, catch_start_speed)
 		parent.velocity_front = min(parent.velocity_front, catch_start_speed)
 		#_confirm_trick()
+		if parent.impulsed_timer <= 0: 
+			TrickManager.validate_xp()
 		
 	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
 	trick_catched = true
@@ -362,8 +363,8 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		_cancel_tricks()
 		return
 		
-	if (_progression > trick_catchable_start and parent.is_grounded() and parent.impulsed_timer <= 0):
-		TrickManager.validate_xp()
+	#if (_progression > trick_catchable_start and parent.is_grounded() and parent.impulsed_timer <= 0):
+		#TrickManager.validate_xp()
 		
 	# Successful Catch
 	if _progression > trick_catchable_start and not parent.is_grounded():

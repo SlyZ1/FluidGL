@@ -4,11 +4,16 @@
 [ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="2_1fx2o"]
 [ext_resource type="Shader" uid="uid://dymfd8cg5kxm7" path="res://shaders/streak_panel.gdshader" id="2_4hqtd"]
 [ext_resource type="Script" uid="uid://bld81h7uoodvt" path="res://scripts/tier_fill.gd" id="4_y865s"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="5_dsygr"]
+
+[sub_resource type="Curve" id="Curve_dsygr"]
+_data = [Vector2(0, 0.49514556), 0.0, 0.0, 0, 0, Vector2(0.35999995, 1), 0.0, 0.0, 0, 0, Vector2(0.65090907, 0.36893195), 0.0, 0.0, 0, 0, Vector2(1, 0.49514556), 0.0, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1fx2o"]
 shader = ExtResource("2_4hqtd")
 shader_parameter/remplissage = 0.5410000256975
-shader_parameter/couleur_pleine = Color(0.9019608, 0.4862745, 0.5058824, 1)
+shader_parameter/couleur_pleine = Color(1, 0.82, 0.6, 1)
 shader_parameter/couleur_vide = Color(1, 1, 1, 1)
 shader_parameter/taille = Vector2(200, 200)
 shader_parameter/vertical = true
@@ -17,7 +22,7 @@ shader_parameter/sin_spatial_freq = 18.695
 shader_parameter/sin_temp_freq = 10.0
 shader_parameter/sin_ampl = 0.02
 
-[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("tier_fill", "popup_template")]
+[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("tier_fill", "points", "popup_template", "wow_template")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,16 +31,25 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ymcwo")
 tier_fill = NodePath("Tier")
-popup_template = NodePath("Label")
+points = NodePath("Points")
+popup_template = NodePath("Points")
+popup_color = Color(1, 0.7176471, 0.36862746, 0.53333336)
+wow_curve = SubResource("Curve_dsygr")
+wow_strengh = 1.0
+wow_duration = 0.2
+wow_texts = Array[String](["", "", "Ok", "Nice!", "Great!", "Amazing!", "Crazy!", "Epic!!!", "Legendary!!!", "GODLIKE", "STOP PLEASE", "..."])
+wow_colors = Array[Color]([Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0.60784316), Color(1, 1, 1, 0.60784316), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(0.96862745, 0.96862745, 0.96862745, 1), Color(0.96862745, 0.4862745, 0.4862745, 1), Color(0.96862745, 0.4862745, 0.4862745, 1), Color(0.96862745, 0.4862745, 0.4862745, 1), Color(0, 0, 0, 1), Color(0, 0, 0, 1)])
+wow_template = NodePath("Wow")
 
 [node name="Tier" type="Label" parent="." unique_id=40381478]
 material = SubResource("ShaderMaterial_1fx2o")
 layout_mode = 1
-offset_top = 69.0
+offset_top = 34.999996
 offset_right = 180.0
-offset_bottom = 186.0
+offset_bottom = 170.0
+scale = Vector2(0.7170198, 0.7170198)
 pivot_offset_ratio = Vector2(0.5, 0.5)
-theme_override_fonts/font = ExtResource("2_1fx2o")
+theme_override_fonts/font = ExtResource("5_dsygr")
 theme_override_font_sizes/font_size = 100
 text = "D"
 horizontal_alignment = 1
@@ -58,18 +72,39 @@ theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label" type="Label" parent="." unique_id=880287802]
+[node name="Points" type="Label" parent="." unique_id=880287802]
 layout_mode = 1
-offset_left = -229.0
-offset_top = 29.0
+offset_left = -228.99998
+offset_top = 17.0
 offset_right = 403.0
-offset_bottom = 76.0
+offset_bottom = 72.0
+scale = Vector2(0.7170198, 0.7170198)
 pivot_offset_ratio = Vector2(0.5, 0.5)
 offset_transform_enabled = true
 theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
 theme_override_constants/outline_size = -46
-theme_override_fonts/font = ExtResource("2_1fx2o")
+theme_override_fonts/font = ExtResource("5_dsygr")
 theme_override_font_sizes/font_size = 40
 text = "1500"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Wow" type="Label" parent="." unique_id=685480470]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -316.0
+offset_top = 101.0
+offset_right = 316.0
+offset_bottom = 148.0
+grow_horizontal = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+offset_transform_enabled = true
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
+theme_override_constants/outline_size = -46
+theme_override_fonts/font = ExtResource("5_dsygr")
+theme_override_font_sizes/font_size = 40
+text = "Wow"
 horizontal_alignment = 1
 vertical_alignment = 1
