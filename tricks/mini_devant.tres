@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Anim" format=3 uid="uid://onatum32w1uo"]
+
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_jx1hi"]
+
+[sub_resource type="Curve" id="Curve_spjti"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 6.688963, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[resource]
+script = ExtResource("1_jx1hi")
+rot_axis = Vector3(1, 0, 0)
+rot_angle = 45.0
+reset_velocities = false
+curve = SubResource("Curve_spjti")
+animation_duration = 0.3
+metadata/_custom_type_script = "uid://u4ge0gstrtnt"

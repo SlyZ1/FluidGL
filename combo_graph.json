@@ -5,43 +5,109 @@
 			"name" : "catch",
 			"input" : "FHybrv",
 			"duration" : 0.9,
-			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche"]
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "helicopter"]
 		},
 		{
 			"name" : "instable_saut",
 			"input" : "fhybrv",
 			"duration" : 0.9,
-			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche", "wave"]
-		},
-		{
-			"name" : "wave",
-			"input" : "fHybrv",
-			"duration" : 0.9,
-			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "tourne_gauche"]
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "helicopter"]
 		},
 		{
 			"name" : "tourne_gauche",
 			"input" : "FhYbrv",
 			"duration" : 0.9,
-			"next" : ["kickflip_gauche", "kickflip_droite", "backflip"]
+			"next" : ["mini_droite"]
 		},
 		{
 			"name" : "kickflip_gauche",
 			"input" : "fhYbrv",
 			"duration" : 0.8,
-			"next" : ["backflip"]
+			"next" : ["wave", "lenvers", "mini_devant"]
 		},
 		{
 			"name" : "kickflip_droite",
 			"input" : "fhyBrv",
 			"duration" : 0.8,
-			"next" : ["backflip"]
+			"next" : ["helicopter"]
 		},
 		{
 			"name" : "backflip",
 			"input" : "Fhybrv",
 			"duration" : 1.2,
-			"next" : ["kickflip_droite", "kickflip_gauche"]
+			"next" : ["kickflip_droite", "kickflip_gauche", "grab", "diago_droite"]
+		},
+		{
+			"name" : "wave",
+			"input" : "fHybrv",
+			"duration" : 0.9,
+			"next" : ["tourne_gauche"]
+		},
+		{
+			"name" : "grab",
+			"input" : "fHybrV",
+			"duration" : 0.9,
+			"next" : ["wave", "lenvers"]
+		},
+		{
+			"name" : "helicopter",
+			"input" : "fhYbrV",
+			"duration" : 0.9,
+			"next" : ["mini_gauche", "mini_droite"]
+		},
+		{
+			"name" : "mini_gauche",
+			"input" : "fhybRv",
+			"duration" : 0.5,
+			"next" : ["mini_droite"]
+		},
+		{
+			"name" : "mini_droite",
+			"input" : "fhYbrv",
+			"duration" : 0.5,
+			"next" : ["mini_gauche"]
+		},
+		{
+			"name" : "lenvers",
+			"input" : "fhyBrv",
+			"duration" : 0.8,
+			"next" : ["helicopter"]
+		},
+		{
+			"name" : "mini_derriere",
+			"input" : "fhybrV",
+			"duration" : 0.8,
+			"next" : ["fake_kickflip_2"]
+		},
+		{
+			"name" : "mini_devant",
+			"input" : "fhybRv",
+			"duration" : 0.8,
+			"next" : ["fake_kickflip_1"]
+		},
+		{
+			"name" : "fake_kickflip_1",
+			"input" : "fhYbrv",
+			"duration" : 0.8,
+			"next" : ["mini_derriere"]
+		},
+		{
+			"name" : "fake_kickflip_2",
+			"input" : "fhYbrv",
+			"duration" : 0.8,
+			"next" : ["mini_devant"]
+		},
+		{
+			"name" : "diago_droite",
+			"input" : "fhYBrv",
+			"duration" : 0.8,
+			"next" : ["diago_gauche"]
+		},
+		{
+			"name" : "diago_gauche",
+			"input" : "fhybRV",
+			"duration" : 0.8,
+			"next" : ["tourne_gauche"]
 		}
 	]
 }

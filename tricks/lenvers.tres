@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Anim" format=3 uid="uid://ccuvkwp05b5gs"]
+
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_okwyx"]
+
+[sub_resource type="Curve" id="Curve_okwyx"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 9.12997, 0, 0, Vector2(0.36399996, 1), 0.0, 0.0, 0, 0, Vector2(0.75999993, 1), 0.0, 0.0, 0, 0, Vector2(1, -0.01098907), -9.958771, 0.0, 0, 0]
+point_count = 4
+
+[resource]
+script = ExtResource("1_okwyx")
+rot_axis = Vector3(1, 0, 0)
+rot_angle = 180.0
+reset_velocities = false
+curve = SubResource("Curve_okwyx")
+animation_duration = 0.3
+metadata/_custom_type_script = "uid://u4ge0gstrtnt"

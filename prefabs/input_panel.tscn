@@ -5,11 +5,11 @@
 [ext_resource type="StyleBox" uid="uid://cc4h0v0eb5prm" path="res://prefabs/rounded_box.tres" id="2_v4aj5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ushs"]
-bg_color = Color(0.8496211, 0.8496212, 0.84962094, 0.6431373)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.9607843, 0.654902, 0.2901961, 1)
+corner_radius_top_left = 42
+corner_radius_top_right = 42
+corner_radius_bottom_right = 42
+corner_radius_bottom_left = 42
 
 [node name="Control" type="Control" unique_id=7957100]
 layout_mode = 3
@@ -25,10 +25,12 @@ grow_vertical = 2
 script = ExtResource("1_v4aj5")
 
 [node name="Background" type="Panel" parent="." unique_id=274622215]
+visible = false
 layout_mode = 0
-offset_left = -2.0
-offset_right = 93.0
-offset_bottom = 85.0
+offset_left = -3.999999
+offset_top = -4.000001
+offset_right = 91.50501
+offset_bottom = 89.217575
 scale = Vector2(1.24, 1.24)
 pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_styles/panel = SubResource("StyleBoxFlat_2ushs")
@@ -41,15 +43,6 @@ offset_right = 29.0
 offset_bottom = 54.0
 theme_override_styles/panel = ExtResource("1_ql8b6")
 
-[node name="Label" type="Label" parent="F" unique_id=550590284]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.81538904, 0.81538916, 0.81538886, 1)
-text = "F"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="T" type="Panel" parent="." unique_id=1428773361]
 layout_mode = 0
 offset_left = 28.0
@@ -57,15 +50,6 @@ offset_top = 3.0
 offset_right = 52.0
 offset_bottom = 27.0
 theme_override_styles/panel = ExtResource("2_v4aj5")
-
-[node name="Label" type="Label" parent="T" unique_id=1069528826]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.7372549, 0.7372549, 0.7372549, 1)
-text = "T"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Y" type="Panel" parent="." unique_id=1667487977]
 layout_mode = 0
@@ -75,15 +59,6 @@ offset_right = 79.0
 offset_bottom = 27.0
 theme_override_styles/panel = ExtResource("1_ql8b6")
 
-[node name="Label" type="Label" parent="Y" unique_id=793263030]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.81538904, 0.81538916, 0.81538886, 1)
-text = "Y"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="V" type="Panel" parent="." unique_id=1938994934]
 layout_mode = 0
 offset_left = 10.0
@@ -92,31 +67,13 @@ offset_right = 34.0
 offset_bottom = 81.0
 theme_override_styles/panel = ExtResource("1_ql8b6")
 
-[node name="Label" type="Label" parent="V" unique_id=138886342]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.81538904, 0.81538916, 0.81538886, 1)
-text = "V"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="B" type="Panel" parent="." unique_id=806668994]
+[node name="N" type="Panel" parent="." unique_id=806668994]
 layout_mode = 0
 offset_left = 37.0
 offset_top = 57.0
 offset_right = 61.0
 offset_bottom = 81.0
 theme_override_styles/panel = ExtResource("2_v4aj5")
-
-[node name="Label" type="Label" parent="B" unique_id=690894829]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.7372549, 0.7372549, 0.7372549, 1)
-text = "B"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="H" type="Panel" parent="." unique_id=717603969]
 layout_mode = 0
@@ -126,15 +83,6 @@ offset_right = 83.0
 offset_bottom = 54.0
 theme_override_styles/panel = ExtResource("1_ql8b6")
 
-[node name="Label" type="Label" parent="H" unique_id=1675466948]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.81538904, 0.81538916, 0.81538886, 1)
-text = "H"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="G" type="Panel" parent="." unique_id=866557938]
 layout_mode = 0
 offset_left = 32.0
@@ -143,32 +91,13 @@ offset_right = 56.0
 offset_bottom = 54.0
 theme_override_styles/panel = ExtResource("2_v4aj5")
 
-[node name="Label" type="Label" parent="G" unique_id=2050849178]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.73719263, 0.7371931, 0.7371927, 1)
-text = "G"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="N" type="Panel" parent="." unique_id=1411472143]
+[node name="B" type="Panel" parent="." unique_id=1411472143]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 57.0
 offset_right = 88.0
 offset_bottom = 81.0
 theme_override_styles/panel = ExtResource("1_ql8b6")
-
-[node name="Label" type="Label" parent="N" unique_id=1470332108]
-layout_mode = 0
-offset_left = 2.0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.81538904, 0.81538916, 0.81538886, 1)
-text = "N"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="R" type="Panel" parent="." unique_id=696145051]
 layout_mode = 0
@@ -177,12 +106,3 @@ offset_top = 3.0
 offset_right = 25.0
 offset_bottom = 27.0
 theme_override_styles/panel = ExtResource("1_ql8b6")
-
-[node name="Label" type="Label" parent="R" unique_id=1422407598]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.81538904, 0.81538916, 0.81538886, 1)
-text = "R"
-horizontal_alignment = 1
-vertical_alignment = 1
