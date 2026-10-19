@@ -65,7 +65,7 @@ func _ready() -> void:
 	freezed_skate = $Skate.duplicate()
 	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
 	
-func _on_xp_changed(_new_val: int, _out_of: int, _total_points: int, _with_popup: bool):
+func _on_xp_changed(_new_val: int, _tier: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
 
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:

@@ -8,7 +8,7 @@ signal trick_validated(_num_combo: int)
 signal go_left
 signal go_right
 
-signal xp_changed(_new_val: int, _out_of: int, _total_points: int, _with_popup: bool)
+signal xp_changed(_new_val: float, _tier: int, _out_of: int, _total_points: int, _with_popup: bool)
 signal tier_changed(_new_tier: int)
 
 var _current_trick : String = ""
@@ -61,7 +61,7 @@ func catch_pressed() -> bool:
 	return input_string == "FHybrv"
 
 func _process(delta: float) -> void:
-	_update_xp(0, lerp(20, 600, max(float(_tier) * 0.7, 1) * tanh(_xp / 1000.0)) * delta)
+	_update_xp(0, (_tier * _tier * _tier * 0.3 + 1) * 100 * delta)
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
 	#if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
@@ -134,15 +134,16 @@ func _update_xp(increased_by: float, decreased_by: float):
 		_tier -= 1
 		_xp += _xp_per_tier[_tier]
 		tier_changed.emit(_tier)
+		
 	
-	_xp = max(0.0, _xp)
+	_xp = clamp(_xp, 0.0, _xp_per_tier.back())
 	
 	if _xp >= _xp_per_tier[_tier] and _tier < _xp_per_tier.size() - 1:
 		_xp -= _xp_per_tier[_tier]
 		_tier += 1
 		tier_changed.emit(_tier)
 
-	xp_changed.emit(_xp / _xp_per_tier[_tier], sum, _points, sum > 0)
+	xp_changed.emit(_xp / _xp_per_tier[_tier], _tier, sum, _points, sum > 0)
 
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
@@ -151,7 +152,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	bullet_timer.start(bullet_time_duration)
 	_nb_tricks_since_grounded += 1
 
-	var increased_by: int = 50 * _nb_tricks_since_grounded
+	var increased_by: int = 50 * _nb_tricks_since_grounded * float(_tier + 1)
 	_xp_buffer += increased_by
 
 	_current_trick = _name

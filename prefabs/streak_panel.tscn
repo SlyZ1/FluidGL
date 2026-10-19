@@ -1,65 +1,75 @@
 [gd_scene format=3 uid="uid://bykj6c41eouqh"]
 
 [ext_resource type="Script" uid="uid://bsk5i0bpxbhd4" path="res://scripts/streak_panel.gd" id="1_ymcwo"]
+[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="2_1fx2o"]
+[ext_resource type="Shader" uid="uid://dymfd8cg5kxm7" path="res://shaders/streak_panel.gdshader" id="2_4hqtd"]
+[ext_resource type="Script" uid="uid://bld81h7uoodvt" path="res://scripts/tier_fill.gd" id="4_y865s"]
 
-[node name="StreakPanel" type="Control" unique_id=199057457]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1fx2o"]
+shader = ExtResource("2_4hqtd")
+shader_parameter/remplissage = 0.5410000256975
+shader_parameter/couleur_pleine = Color(0.9019608, 0.4862745, 0.5058824, 1)
+shader_parameter/couleur_vide = Color(1, 1, 1, 1)
+shader_parameter/taille = Vector2(200, 200)
+shader_parameter/vertical = true
+shader_parameter/douceur = 0.0
+shader_parameter/sin_spatial_freq = 18.695
+shader_parameter/sin_temp_freq = 10.0
+shader_parameter/sin_ampl = 0.02
+
+[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("tier_fill", "popup_template")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 1.0
-offset_right = -956.0
-offset_bottom = -469.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ymcwo")
+tier_fill = NodePath("Tier")
+popup_template = NodePath("Label")
 
-[node name="Background" type="ColorRect" parent="." unique_id=2078055570]
-layout_mode = 0
-offset_right = 196.0
-offset_bottom = 176.0
+[node name="Tier" type="Label" parent="." unique_id=40381478]
+material = SubResource("ShaderMaterial_1fx2o")
+layout_mode = 1
+offset_top = 69.0
+offset_right = 180.0
+offset_bottom = 186.0
 pivot_offset_ratio = Vector2(0.5, 0.5)
-color = Color(0.4955091, 0.4955091, 0.4955091, 0.5647059)
-
-[node name="Tier" type="Label" parent="Background" unique_id=40381478]
-layout_mode = 0
-offset_left = 7.0
-offset_top = 20.0
-offset_right = 187.0
-offset_bottom = 107.0
-theme_override_constants/outline_size = 16
-theme_override_font_sizes/font_size = 63
+theme_override_fonts/font = ExtResource("2_1fx2o")
+theme_override_font_sizes/font_size = 100
 text = "D"
 horizontal_alignment = 1
 vertical_alignment = 1
+script = ExtResource("4_y865s")
 
-[node name="XPSlot" type="ColorRect" parent="Background" unique_id=1041218188]
-layout_mode = 0
-offset_left = 14.0
-offset_top = 118.0
-offset_right = 183.0
-offset_bottom = 140.0
-color = Color(0.60933006, 0.6093301, 0.60933006, 1)
-
-[node name="XPBar" type="ColorRect" parent="Background/XPSlot" unique_id=474760305]
-layout_mode = 0
-offset_right = 169.0
-offset_bottom = 22.0
-scale = Vector2(1e-05, 1)
-color = Color(0.5371229, 0.8142185, 1, 1)
-
-[node name="Label" type="Label" parent="Background" unique_id=880287802]
+[node name="Label2" type="Label" parent="." unique_id=431712243]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -35.0
-offset_top = -29.0
-offset_right = 31.000366
-offset_bottom = -6.0
-grow_horizontal = 2
-grow_vertical = 0
+offset_left = -101.0
+offset_top = 204.99998
+offset_right = 531.0
+offset_bottom = 251.99998
+rotation = -0.6060464
+pivot_offset_ratio = Vector2(0.5, 0.5)
+offset_transform_enabled = true
+theme_override_colors/font_color = Color(0.9607843, 0.654902, 0.2901961, 1)
+theme_override_constants/outline_size = -46
+theme_override_fonts/font = ExtResource("2_1fx2o")
+theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="." unique_id=880287802]
+layout_mode = 1
+offset_left = -229.0
+offset_top = 29.0
+offset_right = 403.0
+offset_bottom = 76.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+offset_transform_enabled = true
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
+theme_override_constants/outline_size = -46
+theme_override_fonts/font = ExtResource("2_1fx2o")
+theme_override_font_sizes/font_size = 40
+text = "1500"
+horizontal_alignment = 1
+vertical_alignment = 1

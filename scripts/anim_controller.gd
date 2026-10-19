@@ -193,6 +193,7 @@ func _rail_logic(delta: float):
 			else: 
 				parent.reset_velocities()
 				var impulse := _rail_vitesse_verticale(current_rail, parent.global_position.x) * 2
+				impulse = min(impulse, 40)
 				parent.apply_impulse(impulse, impulse)
 				current_rail = null
 				prev_rail = current_rail
