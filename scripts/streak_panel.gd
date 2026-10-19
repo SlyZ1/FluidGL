@@ -29,6 +29,7 @@ func _on_trick_ended():
 	pass
 
 func _on_xp_changed(_new_val: float, _increased_by: int, _total_points: int, _with_popup: bool):
+	_new_val = clamp(_new_val, 0, 1)
 	$Background/Label.text = "%.d" % _total_points
 	if _with_popup:
 		points_popup(_increased_by)

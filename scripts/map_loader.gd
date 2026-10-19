@@ -6,6 +6,7 @@ class_name MapLoader
 @export var kill_distance = 20
 @export var angle: float = -15
 @export var speed: float = 1
+@export_range(0,1) var speed_increase_rate: float = 1
 @export var container: Node3D
 @export var sections: Array[PackedScene]
 @export var empty_section: PackedScene
@@ -33,6 +34,8 @@ var _step_accumulateur: float = 0
 static var s_speed: Vector3 = Vector3.ZERO
 static var s_angle: float = 0
 
+var _speed_xp_accel: float = 0
+
 var _spawned_sections: Array[Section] = []
 # Section "fantome" pour le prochain spawn
 var _next_spawn: Section
@@ -56,10 +59,14 @@ func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
 	TrickManager.trick_ended.connect(_reset_quest)
 	TrickManager.trick_catched.connect(_on_catch)
+	TrickManager.xp_changed.connect(_on_xp_changed)
 	set_active(ragdoll, false)
 	set_active(skate, true)
 	freezed_skate = $Skate.duplicate()
 	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
+	
+func _on_xp_changed(_new_val: int, _out_of: int, _total_points: int, _with_popup: bool):
+	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
 
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
 	on_stop.emit()
@@ -131,9 +138,9 @@ func _control_spawn(should_spawn_empty := false):
 
 func _control_speed(delta: float):
 	for section: Section in _spawned_sections:
-		section.position -= speed * Vector3.RIGHT * delta
-	if _next_spawn: _next_spawn.position -= speed * Vector3.RIGHT * delta
-	if _spawned_sections.size() > 0: s_speed = speed * _spawned_sections[0].global_basis.x
+		section.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
+	if _next_spawn: _next_spawn.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
+	if _spawned_sections.size() > 0: s_speed = speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
 
 @export var quests: Array[Quest]
 var _current_quest: Quest = null

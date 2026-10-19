@@ -61,7 +61,7 @@ func catch_pressed() -> bool:
 	return input_string == "FHybrv"
 
 func _process(delta: float) -> void:
-	_update_xp(0, lerp(20, 200, tanh(float(_tier) * _xp / 1000.0)) * delta)
+	_update_xp(0, lerp(20, 600, max(float(_tier) * 0.7, 1) * tanh(_xp / 1000.0)) * delta)
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
 	#if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:

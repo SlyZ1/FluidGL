@@ -1,8 +1,7 @@
 shader_type spatial;
 
-global uniform int NB_COLORS_IN_PALETTE;
+global uniform int NB_COLORS_IN_PALETTE; 
 global uniform sampler2D palette : source_color;
-global uniform sampler2D light_levels : source_color;
 global uniform sampler2D light_noise;
 
 uniform int color_id;

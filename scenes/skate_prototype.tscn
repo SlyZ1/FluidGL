@@ -92,7 +92,8 @@ script = ExtResource("1_2j8q1")
 spawn_distance = 299
 kill_distance = 60
 angle = -1.655
-speed = 41.595
+speed = 35.0
+speed_increase_rate = 0.05
 container = NodePath("GroundContainer")
 sections = Array[PackedScene]([ExtResource("9_cb56l"), ExtResource("4_xffk5"), ExtResource("4_a10lx"), ExtResource("6_3om3a"), ExtResource("7_7k1aa"), ExtResource("8_fo1cg")])
 empty_section = ExtResource("5_3o3sw")
@@ -162,7 +163,6 @@ wait_time = 11.0
 one_shot = true
 
 [node name="UI" type="Control" parent="." unique_id=1938638467]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1149.0
