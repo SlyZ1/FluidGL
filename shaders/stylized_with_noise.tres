@@ -1,31 +1,9 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://dmdj1nys1sy2a"]
 
-[ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="1_w1p2s"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_5wigu"]
-noise_type = 2
-frequency = 0.0046
-fractal_lacunarity = 1.69
-fractal_gain = 0.84
-cellular_distance_function = 3
-cellular_jitter = 1.01
-cellular_return_type = 0
-domain_warp_amplitude = 9.09
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cadsy"]
-noise = SubResource("FastNoiseLite_5wigu")
-
-[sub_resource type="Gradient" id="Gradient_cadsy"]
-interpolation_mode = 1
-offsets = PackedFloat32Array(0, 0.26119402, 0.52238804, 0.75373137, 1)
-colors = PackedColorArray(0.23753911, 0.23753914, 0.23753911, 1, 0.28594518, 0.28594518, 0.28594518, 1, 0.46229082, 0.46229053, 0.46229059, 1, 0.5689725, 0.5689728, 0.5689727, 1, 0.5569533, 0.55695295, 0.5569529, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ugc1s"]
-gradient = SubResource("Gradient_cadsy")
+[ext_resource type="Shader" uid="uid://btife1wfpgyu5" path="res://materials/white.tres" id="1_w1p2s"]
 
 [resource]
 render_priority = 0
 shader = ExtResource("1_w1p2s")
-shader_parameter/noise = SubResource("NoiseTexture2D_cadsy")
-shader_parameter/palette = SubResource("GradientTexture1D_ugc1s")
-shader_parameter/sig = 0.505
+shader_parameter/color_id = 0
+shader_parameter/sig = 0.25

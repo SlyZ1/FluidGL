@@ -39,7 +39,55 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"materials": {
+"BROWN.008": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"BROWN.009": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"BROWNNNN.008": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"BROWNNNN.009": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Black.007": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Black.008": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/black.tres",
+"use_external/path": "uid://cgo7dy5kj65b4"
+},
+"Brown.009": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/brown.tres",
+"use_external/path": "uid://ck4uj7kwera1w"
+},
+"Brown.010": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/brown.tres",
+"use_external/path": "uid://ck4uj7kwera1w"
+},
+"Brown.011": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/brown.tres",
+"use_external/path": "uid://ck4uj7kwera1w"
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1
 gltf/texture_map_mode=1

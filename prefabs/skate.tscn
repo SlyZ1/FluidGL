@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_sgunh"]
 [ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/anim_controller.gd" id="2_2wimw"]
-[ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="2_ke4g0"]
-[ext_resource type="PackedScene" uid="uid://24mdef8cocin" path="res://models/2doigts.glb" id="4_y7iwp"]
-[ext_resource type="PackedScene" uid="uid://cpwbbde2fmvo3" path="res://models/2doigts_up.glb" id="5_uad4r"]
+[ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
+[ext_resource type="PackedScene" uid="uid://bfds1rxiaxwa7" path="res://models/2_doigts.tscn" id="4_y7iwp"]
+[ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
 radius = 1.0
@@ -17,13 +17,12 @@ size = Vector3(1.55, 1.145, 3.45)
 
 [node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-visible = false
 script = ExtResource("1_sgunh")
 capteur_back = NodePath("CapteurBack")
 capteur_front = NodePath("CapteurFront")
 capteur_mesh = NodePath("Skate/ShapeCast3D")
 capteur_ground = NodePath("Ground")
-mesh_instance = NodePath("Skate")
+mesh_instance = NodePath("Skate/skate")
 gravity = 90.0
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
@@ -44,8 +43,8 @@ target_position = Vector3(0, 0, 0)
 shape = SubResource("BoxShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
-[node name="skate" parent="Skate" unique_id=70394129 instance=ExtResource("2_ke4g0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0, -0.26332742, 0)
+[node name="skate" parent="Skate" unique_id=1683496385 instance=ExtResource("2_uad4r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0.046299934, -0.29049778, 0.020355226)
 
 [node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
 script = ExtResource("2_2wimw")
@@ -68,10 +67,10 @@ wait_time = 0.5
 one_shot = true
 
 [node name="2doigts" parent="." unique_id=50656219 instance=ExtResource("4_y7iwp")]
-transform = Transform3D(-0.99989665, 0, -0.014375461, 0, 1, 0, 0.014375461, 0, -0.99989665, 0.07142835, 0.1837039, -1.1229382)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.10497e-08, 0.20034337, 0.93910766)
 
 [node name="2doigts_up" parent="." unique_id=1336449554 instance=ExtResource("5_uad4r")]
-transform = Transform3D(-0.9735946, 0, 0.22828381, 0, 1, 0, -0.22828381, 0, -0.9735946, 0.20473056, 4.2311506, -0.94309807)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9491116e-08, 4.4904175, 0.90345144)
 visible = false
 
 [connection signal="timeout" from="RailCooldown" to="." method="_on_rail_cooldown_timeout"]

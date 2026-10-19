@@ -39,7 +39,60 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"materials": {
+"Metal PAnneau.014": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Metal PAnneau.015": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Plot Clair.004": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/white.tres",
+"use_external/path": "uid://blgfwrhs6uh65"
+},
+"Plot Clair.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/white.tres",
+"use_external/path": "uid://blgfwrhs6uh65"
+},
+"Plot Clair.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/white.tres",
+"use_external/path": "uid://blgfwrhs6uh65"
+},
+"Plot.004": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/red.tres",
+"use_external/path": "uid://dvlxarpj4fjcu"
+},
+"Plot.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/red.tres",
+"use_external/path": "uid://dvlxarpj4fjcu"
+},
+"Plot.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/red.tres",
+"use_external/path": "uid://dvlxarpj4fjcu"
+},
+"White.009": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/white.tres",
+"use_external/path": "uid://blgfwrhs6uh65"
+},
+"Yellow.002": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/orange.tres",
+"use_external/path": "uid://dlnom5eppukyq"
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1
 gltf/texture_map_mode=1

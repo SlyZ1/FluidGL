@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://dqf1ivmopijt"]
+
+[ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="1_ugsku"]
+[ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="2_n1kpf"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rlsmw"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_n1kpf")
+shader_parameter/color_id = 0
+shader_parameter/sig = 0.6
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6tuy"]
+render_priority = 0
+shader = ExtResource("2_n1kpf")
+shader_parameter/color_id = 6
+shader_parameter/sig = 0.25
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y66qv"]
+render_priority = 0
+shader = ExtResource("2_n1kpf")
+shader_parameter/color_id = 0
+shader_parameter/sig = 0.25
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0nrij"]
+render_priority = 0
+shader = ExtResource("2_n1kpf")
+shader_parameter/color_id = 6
+shader_parameter/sig = 0.25
+
+[node name="skate" unique_id=1683496385 instance=ExtResource("1_ugsku")]
+
+[node name="Plastic White" parent="." index="0" unique_id=1318912468]
+surface_material_override/0 = SubResource("ShaderMaterial_rlsmw")
+surface_material_override/2 = SubResource("ShaderMaterial_a6tuy")
+
+[node name="Cylinder_001" parent="." index="1" unique_id=942249718]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_002" parent="." index="2" unique_id=1543826720]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_003" parent="." index="3" unique_id=2064724598]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_004" parent="." index="4" unique_id=1107759446]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_005" parent="." index="5" unique_id=27370513]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_006" parent="." index="6" unique_id=362470091]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_007" parent="." index="7" unique_id=1193309437]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_008" parent="." index="8" unique_id=396498564]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_009" parent="." index="9" unique_id=377970076]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_010" parent="." index="10" unique_id=1288787473]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cylinder_011" parent="." index="11" unique_id=1563569220]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cube" parent="." index="12" unique_id=365620035]
+surface_material_override/0 = SubResource("ShaderMaterial_0nrij")
+
+[node name="Cylinder" parent="." index="14" unique_id=1291750229]
+surface_material_override/0 = SubResource("ShaderMaterial_y66qv")
+
+[node name="Cube_002" parent="." index="15" unique_id=659857466]
+surface_material_override/0 = SubResource("ShaderMaterial_0nrij")

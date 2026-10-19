@@ -39,7 +39,70 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"materials": {
+"Brick1.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/red.tres",
+"use_external/path": "uid://dvlxarpj4fjcu"
+},
+"Brick1.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/red.tres",
+"use_external/path": "uid://dvlxarpj4fjcu"
+},
+"Brick1.007": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/red.tres",
+"use_external/path": "uid://dvlxarpj4fjcu"
+},
+"Brick2.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Brick2.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Brick2.007": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Brick3.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/brown.tres",
+"use_external/path": "uid://ck4uj7kwera1w"
+},
+"Brick3.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/brown.tres",
+"use_external/path": "uid://ck4uj7kwera1w"
+},
+"Brick3.007": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/brown.tres",
+"use_external/path": "uid://ck4uj7kwera1w"
+},
+"Brick4.005": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Brick4.006": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+},
+"Brick4.007": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://materials/gray.tres",
+"use_external/path": "uid://ng4840ug6iol"
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1
 gltf/texture_map_mode=1
