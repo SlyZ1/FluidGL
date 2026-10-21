@@ -46,19 +46,19 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_xffk5"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["kickflip_gauche", "mini_devant", "fake_kickflip_1", "mini_derriere", "fake_kickflip_2"])
-reward = 400
+reward = 595
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_gt7vr"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite", "diago_gauche"])
-reward = 500
+reward = 700
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_hc6xd"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite", "diago_gauche", "tourne_gauche"])
-reward = 600
+reward = 800
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_g3l2w"]
@@ -118,13 +118,13 @@ metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 [sub_resource type="Resource" id="Resource_b0vpq"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "grab", "wave", "tourne_gauche"])
-reward = 590
+reward = 520
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_3bmp5"]
 script = ExtResource("4_vfgxo")
 steps = Array[String](["backflip", "diago_droite"])
-reward = 360
+reward = 560
 metadata/_custom_type_script = "uid://jkpmkae3y0n0"
 
 [sub_resource type="Resource" id="Resource_6fw6x"]

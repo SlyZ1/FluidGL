@@ -63,6 +63,8 @@ func catch_pressed() -> bool:
 func get_progression() -> float:
 	return ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 
+var time_since_different_input : float
+
 func _process(delta: float) -> void:
 	var decrease := (_tier * _tier * _tier * 0.3 + 1) * 100 * delta
 	_update_xp(0, max(0, decrease))
@@ -80,14 +82,18 @@ func _process(delta: float) -> void:
 		_started = true
 		$InputLag.start()
 		print("GO !")
+		
+	time_since_different_input += delta;
 
 	# Set input lag when changing inputs
 	if _last_input != input_string:
 		$InputLag.start()
+		time_since_different_input = 0.0
 	_last_input = input_string
 	
+
 	# Applying input lag
-	if not (_started and $InputLag.is_stopped()):
+	if not (_started and time_since_different_input >= 0.032):
 		return
 		
 	# If catching the skate
