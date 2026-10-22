@@ -186,6 +186,8 @@ func _on_catch(_progression: float, _dt: float) -> void:
 var la_jaajiniere := 0
 func _on_new_quest_timeout() -> void:
 	_current_quest = quests.pick_random()
+	while _current_quest.reward > 100 and la_jaajiniere <= 1:
+		_current_quest = quests.pick_random()
 	print(_current_quest.reward)
 	for i in range(len(_current_quest.steps)):
 		var input : String = TrickManager._tricks.get_node(_current_quest.steps[i]).input
