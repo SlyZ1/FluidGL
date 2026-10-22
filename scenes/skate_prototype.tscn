@@ -180,7 +180,7 @@ quests = Array[ExtResource("4_vfgxo")]([SubResource("Resource_s3shx"), SubResour
 
 [node name="Skate" parent="." unique_id=1567484574 instance=ExtResource("4_wc5y2")]
 transform = Transform3D(-3.059797e-08, 0, 0.7, 0, 0.7, 0, -0.7, 0, -3.059797e-08, 0, 3.16, 0)
-gravity = 30.0
+gravity = 10.0
 outline_appear_curve = null
 outline_disappear_curve = null
 
