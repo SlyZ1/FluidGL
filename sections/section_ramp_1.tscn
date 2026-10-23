@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://briofgnybt16n"]
 
-[ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/section.gd" id="1_1700k"]
+[ext_resource type="Script" uid="uid://bwwehoyg7xj0o" path="res://scripts/sections/section.gd" id="1_1700k"]
+[ext_resource type="Resource" uid="uid://br4f6a4i76nvg" path="res://sections/street_default_settings.tres" id="2_pdx2i"]
 [ext_resource type="PackedScene" uid="uid://c3tv3nydsxsgd" path="res://models/ramps/small_ramp.glb" id="3_1o4wi"]
 [ext_resource type="PackedScene" uid="uid://bgjp007et83fn" path="res://models/ramps/small_flat.glb" id="4_y3ubq"]
-[ext_resource type="PackedScene" uid="uid://b2wk4ruxx4ed4" path="res://models/street_cut.glb" id="6_4hyas"]
 [ext_resource type="PackedScene" uid="uid://dlhglsxlopglb" path="res://models/props/panneau_interdit.glb" id="6_ibdwa"]
 [ext_resource type="PackedScene" uid="uid://b401pj113dbvv" path="res://models/props/dechets1.glb" id="6_kjf1l"]
 [ext_resource type="PackedScene" uid="uid://crmngy84ry7tf" path="res://models/props/plot.glb" id="7_pkeuw"]
+[ext_resource type="PackedScene" uid="uid://bgghtk7ci6qw0" path="res://sections/section_street_template.tscn" id="8_td8ol"]
 
 [sub_resource type="Curve3D" id="Curve3D_vqc4j"]
 
@@ -19,20 +20,19 @@ size = Vector3(10, 5, 15)
 [sub_resource type="BoxShape3D" id="BoxShape3D_5qige"]
 size = Vector3(6.495, 3.055, 4.565)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
-size = Vector3(51, 1, 18.49)
-
 [node name="StraightBase" type="Node3D" unique_id=665315059 node_paths=PackedStringArray("snap_back", "snap_front")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
 script = ExtResource("1_1700k")
+street_settings = ExtResource("2_pdx2i")
+num_street = 2
 snap_back = NodePath("SnapBack")
 snap_front = NodePath("SnapFront")
 
 [node name="SnapBack" type="Node3D" parent="." unique_id=1930366446]
-transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25.5, 0.96846294, 0)
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25.49, 0, 0)
 
 [node name="SnapFront" type="Node3D" parent="." unique_id=819480016]
-transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 76.5, 0.968, 0)
+transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 76.49, 0, 0)
 
 [node name="Path3D" type="Path3D" parent="." unique_id=161870261]
 curve = SubResource("Curve3D_vqc4j")
@@ -82,25 +82,12 @@ transform = Transform3D(0.046081625, 0, 0.99893767, 0, 1, 0, -0.99893767, 0, 0.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.029776573, 0.4905591, -0.6454878)
 shape = SubResource("BoxShape3D_5qige")
 
-[node name="street_cut" parent="." unique_id=252554815 instance=ExtResource("6_4hyas")]
-transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
-
-[node name="StaticBody3D" type="StaticBody3D" parent="street_cut" unique_id=1828548897]
-transform = Transform3D(-5.142517e-08, 0, -1.1764708, 0, 1.1764708, 0, 1.1764708, 0, -5.142517e-08, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="street_cut/StaticBody3D" unique_id=747005081]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
-shape = SubResource("BoxShape3D_q1d6x")
-
-[node name="street_cut2" parent="." unique_id=582929767 instance=ExtResource("6_4hyas")]
-transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 50.975, 0, 0)
-
-[node name="StaticBody3D" type="StaticBody3D" parent="street_cut2" unique_id=187035148]
-transform = Transform3D(-5.142517e-08, 0, -1.1764708, 0, 1.1764708, 0, 1.1764708, 0, -5.142517e-08, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="street_cut2/StaticBody3D" unique_id=1503965432]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
-shape = SubResource("BoxShape3D_q1d6x")
-
 [node name="plot" parent="." unique_id=91112014 instance=ExtResource("7_pkeuw")]
 transform = Transform3D(0.86072814, 0, -0.5090649, 0, 1, 0, 0.5090649, 0, 0.86072814, 17.14159, 4.854663, 1.0355549)
+
+[node name="Street Container" type="Node3D" parent="." unique_id=1352215242]
+
+[node name="Street 0" type="Node3D" parent="Street Container" unique_id=1600972785 instance=ExtResource("8_td8ol")]
+
+[node name="Street 1" type="Node3D" parent="Street Container" unique_id=1553494595 instance=ExtResource("8_td8ol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 0)

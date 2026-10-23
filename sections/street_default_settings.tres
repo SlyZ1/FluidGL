@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="StreetSettings" format=3 uid="uid://br4f6a4i76nvg"]
+
+[ext_resource type="Script" uid="uid://cnd8o3cgtox3q" path="res://scripts/sections/street_settings.gd" id="1_bb02w"]
+[ext_resource type="PackedScene" uid="uid://bgghtk7ci6qw0" path="res://sections/section_street_template.tscn" id="2_f0hcu"]
+
+[resource]
+script = ExtResource("1_bb02w")
+street = ExtResource("2_f0hcu")
+street_half_size = 25.5
+snappers_inset = 0.01
+metadata/_custom_type_script = "uid://cnd8o3cgtox3q"
