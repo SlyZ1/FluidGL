@@ -112,8 +112,8 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 	empty = empty || randf() < empty_ratio
 	
 	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
+	new_section.snap(snap_to, container)
 	container.add_child(new_section)
-	new_section.snap(snap_to)
 	new_section.visible = false
 	return new_section
 
