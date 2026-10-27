@@ -195,7 +195,7 @@ func _rail_logic(delta: float):
 			else: 
 				$"../../SFX/Rail".stop()
 				parent.reset_velocities()
-				var impulse := _rail_vitesse_verticale(current_rail, parent.global_position.x) * 2
+				var impulse := _rail_vitesse_verticale(current_rail, parent.global_position.x)
 				impulse = min(impulse, 40)
 				parent.apply_impulse(impulse, impulse)
 				current_rail = null
@@ -356,7 +356,6 @@ func _catch_trick(_dt: float) -> void:
 		
 	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
 	trick_catched = true
-	print("CATCH!")
 	catch_pressed = true
 
 func can_catch() -> bool:

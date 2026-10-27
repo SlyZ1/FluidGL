@@ -7,6 +7,7 @@ extends Node3D
 @export var mesh_instance: Node3D
 @export var gravity: float = 20
 @export_range(0, 1) var slope_thresh: float = 0.3
+@export_range(0, 1) var weak_slope_thresh: float = 0.8
 @export var outline_appear_curve: Curve
 @export var outline_disappear_curve: Curve
 
@@ -54,7 +55,7 @@ func _limit_rotation(direction: Vector3) -> Vector3:
 func apply_impulse(impulse_back: float, impulse_front: float) -> void:
 	velocity_back += impulse_back
 	velocity_front += impulse_front
-	impulsed_timer = 0.1
+	if impulse_back > 0 or impulse_front > 0: impulsed_timer = 0.1
 	
 func just_impulsed() -> bool:
 	return impulsed_timer > 0
@@ -148,11 +149,13 @@ func set_pos(back: Vector3, front: Vector3, normal: Vector3 = Vector3.UP) -> voi
 	var milieu_local: Vector3 = (capteur_front.position + capteur_back.position) / 2.0
 	global_position = (back + front) / 2.0 - global_basis * milieu_local
 	
-func _get_most_up_normal(capteur: ShapeCast3D) -> Vector3:
-	var result: Vector3 = capteur.get_collision_normal(0)
-	for i in range(1, capteur.get_collision_count()):
-		if result.y > capteur.get_collision_normal(i).y:
-			result = capteur.get_collision_normal(i)
+func _get_most_up_normal(capteur: ShapeCast3D, inverse: bool = false) -> int:
+	var result: int = 0
+	var normal: Vector3 = capteur.get_collision_normal(0)
+	for i in range(capteur.get_collision_count()):
+		if (normal.y < capteur.get_collision_normal(i).y) == !inverse:
+			normal = capteur.get_collision_normal(i)
+			result = i
 	return result
 			
 func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
@@ -160,9 +163,11 @@ func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
 	if not capteur.is_colliding():
 		return -INF
 	var rayon: float = (capteur.shape as SphereShape3D).radius * capteur.global_basis.get_scale().x
-	var g: Vector3 = capteur.get_collision_point(0)
-	var n: Vector3 = _get_most_up_normal(capteur)
+	var i: int = _get_most_up_normal(capteur, true)
+	var g: Vector3 = capteur.get_collision_point(i)
+	var n: Vector3 = capteur.get_collision_normal(i)
 	if n.y < slope_thresh:
+		print(n.y)
 		MapLoader.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
 		return 0
 	return g.y + (rayon - n.x * (p.x - g.x) - n.z * (p.z - g.z)) / n.y
@@ -170,7 +175,8 @@ func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
 func _ground_snap(dt: float) -> void:
 	var p_back: Vector3 = capteur_back.global_position
 	var p_front: Vector3 = capteur_front.global_position
-	var corrige: bool = false
+	var corrige_back: bool = false
+	var corrige_front: bool = false
 	
 	capteur_back.force_shapecast_update()
 	capteur_front.force_shapecast_update()
@@ -181,8 +187,8 @@ func _ground_snap(dt: float) -> void:
 	grounded_back = p_back.y <= y_back + 0.01
 	if grounded_back:
 		p_back.y = y_back
-		corrige = true
-		var n_back: Vector3 = capteur_back.get_collision_normal(0)
+		var n_back: Vector3 = capteur_back.get_collision_normal(_get_most_up_normal(capteur_back))
+		corrige_back = true
 		normal += n_back
 		var theta_back: float = acos(n_back.dot(-MapLoader.s_speed.normalized()))
 		velocity_back = MapLoader.s_speed.length() / tan(theta_back)
@@ -192,14 +198,14 @@ func _ground_snap(dt: float) -> void:
 	grounded_front = p_front.y <= y_front + 0.01
 	if grounded_front:
 		p_front.y = y_front
-		corrige = true
-		var n_front: Vector3 = capteur_front.get_collision_normal(0)
-		normal += n_front
+		var n_front: Vector3 = capteur_front.get_collision_normal(_get_most_up_normal(capteur_front))
+		corrige_front = true
+		normal += n_front 
 		var theta_front: float = acos(n_front.dot(-MapLoader.s_speed.normalized()))
 		velocity_front = MapLoader.s_speed.length() / tan(theta_front)
 		velocity_front = max(velocity_front, -10.0)
 
-	if corrige:
+	if corrige_back or corrige_front:
 		set_pos(p_back, p_front, normal.normalized())
 
 func step(dt: float) -> void:

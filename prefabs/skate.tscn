@@ -18,7 +18,7 @@ _data = [Vector2(0, 1), 0.0, 2.7990868, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
-radius = 1.0
+radius = 0.45
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
 size = Vector3(1.575, 0.865, 5.835)
@@ -56,14 +56,12 @@ outline_appear_curve = SubResource("Curve_oh2xr")
 outline_disappear_curve = SubResource("Curve_wfreb")
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
-transform = Transform3D(0.44470334, 0, -0.01623308, 0, 0.4449999, 0, 0.01623308, 0, 0.44470334, 0.015574941, 0, 2.1507378)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015574941, 0, 2.1507378)
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
 [node name="CapteurBack" type="ShapeCast3D" parent="." unique_id=491530469]
-transform = Transform3D(0.44492567, 0, -0.008117892, 0, 0.44499993, 0, 0.008117892, 0, 0.44492567, 5.1708295e-08, 0, -2.0729475)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1708295e-08, 0, -2.0729475)
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 

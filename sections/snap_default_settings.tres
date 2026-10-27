@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SnapSettings" format=3 uid="uid://cpgbu2mnm1ksb"]
+
+[ext_resource type="Script" uid="uid://cjbapvmdbuxv0" path="res://scripts/sections/snap_settings.gd" id="1_di3b1"]
+
+[resource]
+script = ExtResource("1_di3b1")
+lane_size = 4.25
+num_lanes = 2
+size_x = 19.125
+size_y = 2.5
+metadata/_custom_type_script = "uid://cjbapvmdbuxv0"

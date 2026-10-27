@@ -5,13 +5,13 @@
 			"name" : "catch",
 			"input" : "FHybrv",
 			"duration" : 0.9,
-			"next" : ["kickflip_gauche", "kickflip_droite", "backflip"]
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "helicopter"]
 		},
 		{
 			"name" : "instable_saut",
 			"input" : "fhybrv",
 			"duration" : 0.9,
-			"next" : ["kickflip_gauche", "kickflip_droite", "backflip"]
+			"next" : ["kickflip_gauche", "kickflip_droite", "backflip", "helicopter"]
 		},
 		{
 			"name" : "tourne_gauche",
