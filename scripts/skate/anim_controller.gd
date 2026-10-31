@@ -1,0 +1,156 @@
+extends Node
+
+class_name AnimController
+
+@export_group("Tricks")
+@export_range(0, 1) var trick_cancel_end: float = 0.1
+@export_range(0, 1) var trick_catchable_start: float = 0.7
+@export_range(0, 1) var trick_ground_collision: float = 0.75
+@export var mesh_instance: Node3D
+@export_group("Catch")
+@export var catch_fall_speed: float = 20
+@export var catch_start_speed: float = -1.5
+
+class BasicTrick:
+	var trick_name: String
+	var q: Quaternion
+	var tween: Tween
+
+	func _init(_trick_name: String) -> void:
+		trick_name = _trick_name
+		q = Quaternion.IDENTITY
+
+var active_tricks: Array[BasicTrick]
+var current_trick_duration: float = 0
+var current_anim_duration: float = 0
+var default_trick_rotation: Quaternion = Quaternion.IDENTITY
+
+var trick_catched: bool = true
+var catch_pressed: bool = false
+
+var parent: Node3D
+
+var _mesh_instance_scale: Vector3
+
+func _ready() -> void:
+	_mesh_instance_scale = mesh_instance.scale
+	TrickManager.trick_performed.connect(_on_trick_performed)
+	TrickManager.trick_ended.connect(_on_trick_end)
+	TrickManager.trick_catched.connect(_on_trick_catched)
+	parent = get_parent()
+	parent.on_fall.connect(TrickManager.on_airborne)
+	parent.on_grounded.connect(TrickManager.on_ground)
+
+
+func _process(delta: float) -> void:
+	if ((parent.is_grounded() or parent.is_mesh_colliding()) and not trick_catched):
+		MapLoader.instance.stop()
+	
+	var current_rotation: Quaternion = default_trick_rotation
+	for trick in active_tricks:
+		current_rotation *= trick.q
+		current_rotation = current_rotation.normalized()
+	parent.set_rot(Basis(current_rotation))
+	
+func set_default_trick_rotation(rot: Quaternion) -> void:
+	default_trick_rotation = rot
+
+func tween_axis_angle(object: Object, property: String, axis: Vector3, target_angle: float, duration: float, curve: Curve = null) -> Tween:
+	var normalized_axis = axis.normalized()
+	var tween = create_tween()
+	
+	tween.tween_method(
+		func(progress: float):
+			var curve_val = curve.sample(progress) if curve else progress
+			var current_angle = target_angle * curve_val
+			var q = Quaternion(normalized_axis, current_angle)
+			object.set(property, q), 
+			0.0, 1.0, duration)
+	return tween
+
+func _confirm_trick():
+	mesh_instance.scale = _mesh_instance_scale * 1.3
+	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
+
+func _on_trick_performed(_name: String, _accuracy: float) -> void:
+	catch_pressed = false
+	var _anim :Anim = TrickManager.get_resource(_name)
+	var _duration :float = TrickManager.get_trick_duration(_name)
+	current_trick_duration = _duration
+	current_anim_duration = _anim.animation_duration
+	
+	if _anim.reset_velocities: parent.reset_velocities()
+	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
+
+	_confirm_trick()
+
+	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
+	if abs(_anim.rot_angle) > 0.001:
+		trick_catched = false
+		var trick := BasicTrick.new(_name)
+		print(_name)
+		active_tricks.push_back(trick)
+		trick.tween = tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
+
+func _on_trick_end() -> void:
+	active_tricks.clear()
+	
+func _cancel_tricks() -> void:
+	if active_tricks.is_empty():
+		return
+
+	var tween := create_tween().set_parallel(true)
+	for trick in active_tricks:
+		if trick.tween and trick.tween.is_valid():
+			trick.tween.kill()
+
+		var depart: Quaternion = trick.q
+		tween.tween_method(
+			func(t: float) -> void: trick.q = depart.slerp(Quaternion.IDENTITY, t),
+			0.0, 1.0, 0.05
+		)
+
+	var a_retirer: Array[BasicTrick] = active_tricks.duplicate()
+	tween.chain().tween_callback(func() -> void:
+		for trick in a_retirer:
+			active_tricks.erase(trick)
+	)
+	
+func _successfully_catched(_dt: float) -> void:
+	if not catch_pressed:
+		parent.velocity_back = min(parent.velocity_back, catch_start_speed)
+		parent.velocity_front = min(parent.velocity_front, catch_start_speed)
+		parent.reset_orientation()
+		#_confirm_trick()
+		$"../../SFX/Catch".play(0.05)
+		if parent.impulsed_timer <= 0: 
+			TrickManager.validate_xp()
+		
+	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
+	trick_catched = true
+	catch_pressed = true
+
+func can_catch() -> bool:
+	var prog := TrickManager.get_progression()
+	return prog >= trick_cancel_end and prog > trick_catchable_start and not parent.is_grounded()
+	
+func _on_trick_catched(_progression: float, _dt: float) -> void:
+	# On Cancel
+	if _progression < trick_cancel_end:
+		_cancel_tricks()
+		return
+		
+	#if (_progression > trick_catchable_start and parent.is_grounded() and parent.impulsed_timer <= 0):
+		#TrickManager.validate_xp()
+		
+	# Successful Catch
+	if _progression > trick_catchable_start and not parent.is_grounded():
+		_cancel_tricks()
+		_successfully_catched(_dt)
+		return
+		
+	# if already catched and grounded, nothing happens
+	if trick_catched: return
+		
+	print(_progression)
+	MapLoader.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)

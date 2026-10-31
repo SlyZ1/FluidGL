@@ -216,7 +216,7 @@ func _process(delta: float) -> void:
 			skate.step(substep)
 		_step_accumulateur -= substep
 		steps += 1
-	if ready_to_restart and TrickManager.catch_pressed():
+	if ready_to_restart and TrickManager.get_catch_pressed():
 		waiting_for_restart = false
 		ready_to_restart = false
 		
@@ -249,7 +249,7 @@ func _process(delta: float) -> void:
 		#set_active(skate, true)
 		#is_running = true
 		
-	if waiting_for_restart and not TrickManager.catch_pressed():
+	if waiting_for_restart and not TrickManager.get_catch_pressed():
 		ready_to_restart = true
 
 func _on_quest_end_timeout() -> void:

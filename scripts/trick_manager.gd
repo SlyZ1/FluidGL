@@ -59,10 +59,8 @@ func _compute_input() -> String:
 	return input_string
 
 func get_catch_pressed() -> bool:
-	return _is_catched_pressed
-	
-func _set_catch_pressed(input: String) -> void:
-	_is_catched_pressed = input == "FHybrv"
+	var input := _compute_input()
+	return input == "FHybrv"
 
 func get_progression() -> float:
 	return ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
@@ -80,7 +78,6 @@ func _process(delta: float) -> void:
 		#Engine.time_scale = 1
 		
 	var input_string := _compute_input()
-	_set_catch_pressed(input_string)
 	
 	# Start tricks
 	if get_catch_pressed() and not _started:

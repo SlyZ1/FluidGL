@@ -2,15 +2,18 @@
 
 [ext_resource type="PackedScene" uid="uid://24mdef8cocin" path="res://models/2doigts.glb" id="1_jnvvv"]
 [ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="2_jnvvv"]
+[ext_resource type="Script" uid="uid://kxj8n5xd5ypn" path="res://scripts/doigts/doigt.gd" id="2_lojur"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_lojur"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jnvvv"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_jnvvv")
 shader_parameter/color_id = 4
 shader_parameter/sig = 0.5
 
-[node name="2doigts" unique_id=50656219 instance=ExtResource("1_jnvvv")]
+[node name="2doigts" unique_id=50656219 node_paths=PackedStringArray("visual") instance=ExtResource("1_jnvvv")]
+script = ExtResource("2_lojur")
+visual = NodePath("Mball_011")
 
-[node name="Mball_011" parent="." index="0" unique_id=1927392842]
-surface_material_override/0 = SubResource("ShaderMaterial_lojur")
+[node name="Mball_011" parent="." index="0" unique_id=1996723052]
+surface_material_override/0 = SubResource("ShaderMaterial_jnvvv")

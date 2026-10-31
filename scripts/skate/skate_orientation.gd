@@ -34,7 +34,6 @@ var _mesh_scale: Vector3
 func _ready() -> void:
 	_scale = global_basis.get_scale()
 	_mesh_scale = mesh_instance.basis.get_scale()
-	TrickManager.trick_catched.connect(_on_trick_catched)
 
 func _limit_rotation(direction: Vector3) -> Vector3:
 	var up: Vector3 = MapLoader.up()
@@ -232,17 +231,3 @@ func step(dt: float) -> void:
 	previous_grounded_front = grounded_front
 	impulsed_timer -= dt
 	fall_timer -= dt
-	
-func _on_trick_catched(_progression: float, _dt: float):
-	$OutlineDisappearTimer.start()
-
-func _process(delta: float) -> void:
-
-	if $AnimController.can_catch() and $OutlineAppearTimer.is_stopped():
-		$OutlineAppearTimer.start()
-
-	if $AnimController.can_catch():
-		$"2doigts_up/Mball_012".material_overlay.stencil_color = Color.WHITE
-		$"2doigts_up/Mball_012".material_overlay.stencil_outline_thickness = 0.3 * (0.6 + 0.5 * sin(TrickManager.get_progression()))
-	else:
-		$"2doigts_up/Mball_012".material_overlay.stencil_outline_thickness = 0.0

@@ -1,0 +1,112 @@
+[gd_scene format=3 uid="uid://dqi8e4nn6yni4"]
+
+[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate/skate_orientation.gd" id="1_sgunh"]
+[ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/skate/anim_controller.gd" id="2_2wimw"]
+[ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
+[ext_resource type="Script" uid="uid://c0lmnpo3d6tr6" path="res://scripts/skate/rail_controller.gd" id="4_v6g56"]
+[ext_resource type="PackedScene" uid="uid://bfds1rxiaxwa7" path="res://models/2_doigts.tscn" id="4_y7iwp"]
+[ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
+[ext_resource type="Script" uid="uid://ddk58r6f7rp7l" path="res://scripts/doigts/doigts_manager.gd" id="5_wfreb"]
+[ext_resource type="Shader" uid="uid://bhkg2pr070gd6" path="res://shaders/impact.gdshader" id="6_55io4"]
+[ext_resource type="Texture2D" uid="uid://dwjkmygjx26cl" path="res://icon.svg" id="7_oh2xr"]
+
+[sub_resource type="Curve" id="Curve_oh2xr"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_wfreb"]
+_data = [Vector2(0, 1), 0.0, 2.7990868, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
+radius = 0.45
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnd71"]
+size = Vector3(1.575, 0.865, 5.835)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
+size = Vector3(1.55, 1.145, 3.45)
+
+[sub_resource type="Gradient" id="Gradient_55io4"]
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0, 0.54347825, 1)
+colors = PackedColorArray(1, 0.34509805, 0.56078434, 1, 1, 1, 0, 1, 1, 0.34509805, 0.56078434, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_55io4"]
+gradient = SubResource("Gradient_55io4")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_55io4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5hio4"]
+render_priority = 0
+shader = ExtResource("6_55io4")
+shader_parameter/clr = SubResource("GradientTexture1D_55io4")
+shader_parameter/imp = 0.0
+shader_parameter/noise = SubResource("NoiseTexture2D_55io4")
+
+[node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("1_sgunh")
+capteur_back = NodePath("CapteurBack")
+capteur_front = NodePath("CapteurFront")
+capteur_mesh = NodePath("Skate/ShapeCast3D")
+capteur_ground = NodePath("Ground")
+mesh_instance = NodePath("Skate/skate")
+gravity = 90.0
+outline_appear_curve = SubResource("Curve_oh2xr")
+outline_disappear_curve = SubResource("Curve_wfreb")
+
+[node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015574941, 0, 2.1507378)
+shape = SubResource("SphereShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
+
+[node name="CapteurBack" type="ShapeCast3D" parent="." unique_id=491530469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1708295e-08, 0, -2.0729475)
+shape = SubResource("SphereShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
+
+[node name="Skate" type="Node3D" parent="." unique_id=54906917]
+
+[node name="ShapeCast3D" type="ShapeCast3D" parent="Skate" unique_id=640768866]
+shape = SubResource("BoxShape3D_tnd71")
+target_position = Vector3(0, 0, 0)
+
+[node name="skate" parent="Skate" unique_id=1683496385 instance=ExtResource("2_uad4r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0.046299934, -0.29049778, 0.020355226)
+
+[node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5916979e-08, 0, -0.59291136)
+shape = SubResource("BoxShape3D_q1d6x")
+target_position = Vector3(0, 0, 0.365)
+
+[node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
+script = ExtResource("2_2wimw")
+trick_cancel_end = 0.08
+trick_catchable_start = 0.2
+trick_ground_collision = 0.6
+mesh_instance = NodePath("../Skate/skate")
+
+[node name="RailController" type="Node" parent="." unique_id=1946039828]
+script = ExtResource("4_v6g56")
+
+[node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller")]
+script = ExtResource("5_wfreb")
+doigts_idle = NodePath("DoigtsIdle")
+doigts_up = NodePath("DoigtsUp")
+anim_controller = NodePath("../AnimController")
+
+[node name="DoigtsIdle" parent="DoigtsManager" unique_id=50656219 instance=ExtResource("4_y7iwp")]
+process_priority = -2
+transform = Transform3D(-0.9803902, 0, 0.1970663, 0, 1, 0, -0.1970663, 0, -0.9803902, 0.3870764, 0.15622449, -1.0534024)
+visible = false
+
+[node name="DoigtsUp" parent="DoigtsManager" unique_id=959735283 instance=ExtResource("5_uad4r")]
+transform = Transform3D(-0.9803902, 0, 0.1970663, 0, 1, 0, -0.1970663, 0, -0.9803902, 0.38004977, 4.4462986, -1.0184453)
+
+[node name="TrickVFX" type="Sprite3D" parent="." unique_id=548909057]
+transform = Transform3D(-14.201192, 0, -21.60572, 0, 25.855, 0, 21.60572, 0, -14.201192, 0, 0.95995045, 0)
+visible = false
+material_override = SubResource("ShaderMaterial_5hio4")
+billboard = 1
+texture = ExtResource("7_oh2xr")

@@ -1,13 +1,16 @@
 [gd_scene format=3 uid="uid://dqi8e4nn6yni4"]
 
-[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate_orientation.gd" id="1_sgunh"]
-[ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/anim_controller.gd" id="2_2wimw"]
+[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate/skate_orientation.gd" id="1_sgunh"]
+[ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/skate/anim_controller.gd" id="2_2wimw"]
 [ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
+[ext_resource type="Script" uid="uid://c0lmnpo3d6tr6" path="res://scripts/skate/rail_controller.gd" id="4_v6g56"]
 [ext_resource type="PackedScene" uid="uid://bfds1rxiaxwa7" path="res://models/2_doigts.tscn" id="4_y7iwp"]
 [ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
-[ext_resource type="Script" uid="uid://ddk58r6f7rp7l" path="res://scripts/doigts_manager_miammmmm.gd" id="5_wfreb"]
+[ext_resource type="Script" uid="uid://ddk58r6f7rp7l" path="res://scripts/doigts/doigts_manager.gd" id="5_wfreb"]
+[ext_resource type="Script" uid="uid://yrq8e5mmwhcy" path="res://scripts/skate/lane_snapper.gd" id="5_xumek"]
 [ext_resource type="Shader" uid="uid://bhkg2pr070gd6" path="res://shaders/impact.gdshader" id="6_55io4"]
 [ext_resource type="Texture2D" uid="uid://dwjkmygjx26cl" path="res://icon.svg" id="7_oh2xr"]
+[ext_resource type="Script" uid="uid://3tok0mw57sx1" path="res://scripts/skate/skate_vfx.gd" id="11_5e2xk"]
 
 [sub_resource type="Curve" id="Curve_oh2xr"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -74,37 +77,39 @@ target_position = Vector3(0, 0, 0)
 [node name="skate" parent="Skate" unique_id=1683496385 instance=ExtResource("2_uad4r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0.046299934, -0.29049778, 0.020355226)
 
+[node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5538435e-08, 0, -0.35547793)
+shape = SubResource("BoxShape3D_q1d6x")
+target_position = Vector3(0, 0, 0.365)
+
 [node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
 script = ExtResource("2_2wimw")
 trick_cancel_end = 0.08
 trick_catchable_start = 0.2
 trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
-lane_position = 5.0
-rail_z_thresh = 2.5
-rail_y_thresh = 0.75
-rail_y_offset = -0.3
 
-[node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5916979e-08, 0, -0.59291136)
-shape = SubResource("BoxShape3D_q1d6x")
-target_position = Vector3(0, 0, 0.365)
+[node name="RailController" type="Node" parent="." unique_id=1946039828 node_paths=PackedStringArray("lane_snapper", "anim_controller")]
+script = ExtResource("4_v6g56")
+lane_snapper = NodePath("../LaneSnapper")
+anim_controller = NodePath("../AnimController")
 
-[node name="RailCooldown" type="Timer" parent="." unique_id=1380579839]
-wait_time = 0.5
-one_shot = true
+[node name="LaneSnapper" type="Node" parent="." unique_id=1734990674]
+script = ExtResource("5_xumek")
 
-[node name="2doigts" parent="." unique_id=50656219 instance=ExtResource("4_y7iwp")]
+[node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller")]
+script = ExtResource("5_wfreb")
+doigts_idle = NodePath("DoigtsIdle")
+doigts_up = NodePath("DoigtsUp")
+anim_controller = NodePath("../AnimController")
+rail_controller = NodePath("../RailController")
+
+[node name="DoigtsIdle" parent="DoigtsManager" unique_id=50656219 instance=ExtResource("4_y7iwp")]
 process_priority = -2
 transform = Transform3D(-0.9803902, 0, 0.1970663, 0, 1, 0, -0.1970663, 0, -0.9803902, 0.3870764, 0.15622449, -1.0534024)
 visible = false
 
-[node name="DoigtsManagerMiammmmm" type="Node" parent="." unique_id=193582744 node_paths=PackedStringArray("deux_doigts", "deux_doigts_up")]
-script = ExtResource("5_wfreb")
-deux_doigts = NodePath("../2doigts")
-deux_doigts_up = NodePath("../2doigts_up")
-
-[node name="2doigts_up" parent="." unique_id=959735283 instance=ExtResource("5_uad4r")]
+[node name="DoigtsUp" parent="DoigtsManager" unique_id=959735283 instance=ExtResource("5_uad4r")]
 transform = Transform3D(-0.9803902, 0, 0.1970663, 0, 1, 0, -0.1970663, 0, -0.9803902, 0.38004977, 4.4462986, -1.0184453)
 
 [node name="TrickVFX" type="Sprite3D" parent="." unique_id=548909057]
@@ -113,13 +118,4 @@ visible = false
 material_override = SubResource("ShaderMaterial_5hio4")
 billboard = 1
 texture = ExtResource("7_oh2xr")
-
-[node name="OutlineAppearTimer" type="Timer" parent="." unique_id=1247963496]
-wait_time = 0.3
-one_shot = true
-
-[node name="OutlineDisappearTimer" type="Timer" parent="." unique_id=783872938]
-wait_time = 0.3
-one_shot = true
-
-[connection signal="timeout" from="RailCooldown" to="." method="_on_rail_cooldown_timeout"]
+script = ExtResource("11_5e2xk")

@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cpwbbde2fmvo3" path="res://models/2doigts_up.glb" id="1_0cjdv"]
 [ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="2_0cjdv"]
+[ext_resource type="Script" uid="uid://kxj8n5xd5ypn" path="res://scripts/doigts/doigt.gd" id="2_4crdy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0cjdv"]
 render_priority = 1
@@ -22,15 +23,17 @@ stencil_flags = 2
 stencil_color = Color(1, 1, 1, 1)
 stencil_outline_thickness = 0.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0cjdv"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jraub"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_0cjdv")
 shader_parameter/color_id = 4
 shader_parameter/sig = 0.5
 
-[node name="2doigts_up" unique_id=1336449554 instance=ExtResource("1_0cjdv")]
+[node name="2doigts_up" unique_id=1336449554 node_paths=PackedStringArray("visual") instance=ExtResource("1_0cjdv")]
+script = ExtResource("2_4crdy")
+visual = NodePath("Mball_012")
 
-[node name="Mball_012" parent="." index="0" unique_id=1766777615]
+[node name="Mball_012" parent="." index="0" unique_id=338469580]
 material_overlay = SubResource("StandardMaterial3D_wfreb")
-surface_material_override/0 = SubResource("ShaderMaterial_0cjdv")
+surface_material_override/0 = SubResource("ShaderMaterial_jraub")
