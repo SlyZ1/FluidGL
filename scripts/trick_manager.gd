@@ -16,6 +16,8 @@ var _possible_tricks : Array[String] = []
 var _tricks : TrickGraph
 var _started := false
 var _nb_tricks_since_grounded := 0
+var _is_catched_pressed := false
+var _time_since_different_input: float
 
 var _last_input := ""
 var _last_input_executed := ""
@@ -56,17 +58,19 @@ func _compute_input() -> String:
 			input_string[i] = input_string[i].to_upper()
 	return input_string
 
-func catch_pressed() -> bool:
-	var input_string := _compute_input()
-	return input_string == "FHybrv"
+func get_catch_pressed() -> bool:
+	return _is_catched_pressed
+	
+func _set_catch_pressed(input: String) -> void:
+	_is_catched_pressed = input == "FHybrv"
 
 func get_progression() -> float:
 	return ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 
-var time_since_different_input : float
-
 func _process(delta: float) -> void:
 	var decrease := (_tier * _tier * _tier * 0.3 + 1) * 100 * delta
+	_time_since_different_input += delta
+	
 	_update_xp(0, max(0, decrease))
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	
@@ -76,28 +80,26 @@ func _process(delta: float) -> void:
 		#Engine.time_scale = 1
 		
 	var input_string := _compute_input()
-
+	_set_catch_pressed(input_string)
+	
 	# Start tricks
-	if catch_pressed() and not _started:
+	if get_catch_pressed() and not _started:
 		_started = true
 		$InputLag.start()
 		print("GO !")
-		
-	time_since_different_input += delta;
-
+	
 	# Set input lag when changing inputs
 	if _last_input != input_string:
 		$InputLag.start()
-		time_since_different_input = 0.0
+		_time_since_different_input = 0.0
 	_last_input = input_string
-	
 
 	# Applying input lag
-	if not (_started and time_since_different_input >= 0.032):
+	if not (_started and _time_since_different_input >= 0.032):
 		return
 		
 	# If catching the skate
-	if catch_pressed():
+	if get_catch_pressed():
 		var t: float = ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
 		trick_catched.emit(t, delta)
 		_last_input_executed = ""
@@ -173,13 +175,18 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	trick_performed.emit(_name, _accuracy)
 	trick_validated.emit(_nb_tricks_since_grounded)
 
-
-
 func _trick_ended() -> void:
 	if not _started: return
 	print("trick ended")
 	trick_ended.emit()
 	_possible_tricks = []
+	
+func set_possible_tricks(possible_tricks: Array[String]) -> void:
+	_possible_tricks = possible_tricks
+	$"TrickTiming".stop()
+	
+func add_trick_count() -> void:
+	_nb_tricks_since_grounded += 1
 
 func get_trick_duration(_name: String) -> float:
 	return _tricks.get_node(_name).duration

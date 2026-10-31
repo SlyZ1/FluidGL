@@ -13,7 +13,7 @@ func _ready() -> void:
 	initial_rot_finger_up = deux_doigts_up.global_basis
 
 func _process(delta: float) -> void:
-	var fh := TrickManager.catch_pressed()
+	var fh := TrickManager.get_catch_pressed()
 	deux_doigts.visible = fh
 	deux_doigts_up.visible = not fh
 	deux_doigts.visible = fh

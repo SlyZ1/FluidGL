@@ -13,7 +13,14 @@ var _street_container: Node3D
 @export_group("Game")
 @export var snap_back: Node3D
 @export var snap_front: Node3D
-@export var rails: Array[Path3D]
+@export var rail_containers: Array[Node]
+
+var rails: Array[Path3D]
+
+func _ready() -> void:
+	for container in rail_containers:
+		for path in container.find_children("*", "Path3D", true, false):
+			rails.append(path)
 
 func snap(snap_to: Vector3, parent: Node3D) -> void:
 	position = parent.to_local(snap_to) - basis * snap_back.position

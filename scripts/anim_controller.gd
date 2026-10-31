@@ -62,6 +62,8 @@ var prev_rail: Path3D = null
 
 var _mesh_instance_scale: Vector3
 
+var _exit_rail_timer: float = 0
+
 func _ready() -> void:
 	_mesh_instance_scale = mesh_instance.scale
 	TrickManager.trick_performed.connect(_on_trick)
@@ -77,9 +79,6 @@ func touches_path(rail: Path3D) -> float:
 	var zyt: Vector3 = get_zy_from_x(rail, parent.global_position.x)
 	if zyt.z == -1:
 		return -INF
-	#var voie: float = lane_position * signf(parent.global_position.z)
-	#if absf(zyt.x - voie) > lane_position:
-		#return false
 	var dy: float = parent.global_position.y - zyt.y
 	var dz: float = abs(parent.global_position.z - zyt.x) 
 	if dz <= rail_z_thresh and dy <= rail_y_thresh and dy >= -2:
@@ -183,11 +182,11 @@ func _rail_logic(delta: float):
 			prev_rail = current_rail
 			return
 			
-		if not TrickManager.catch_pressed():
+		if not TrickManager.get_catch_pressed():
 			# When arrive on rail without catch
 			if not prev_rail: 
 				$"../../SFX/Rail".stop()
-				if parent.just_impulsed(): 
+				if _exit_rail_timer > 0: 
 					current_rail = null
 					return
 				MapLoader.instance.stop()
@@ -200,12 +199,13 @@ func _rail_logic(delta: float):
 				parent.apply_impulse(impulse, impulse)
 				current_rail = null
 				prev_rail = current_rail
+				_exit_rail_timer = 0.1
 				return
 				
 		if not prev_rail:
 			$"../../SFX/Rail".play(0.)
-			TrickManager._nb_tricks_since_grounded += 1
-			TrickManager._possible_tricks = ["instable_saut"]
+			TrickManager.add_trick_count()
+			TrickManager.set_possible_tricks(["instable_saut"])
 			_rail_offset = Vector2(parent.global_position.z - zyt.x, parent.global_position.y - zyt.y)
 			_rail_offset_weight = 1.0
 			if _rail_tween and _rail_tween.is_valid():
@@ -218,7 +218,6 @@ func _rail_logic(delta: float):
 				lane_tween.kill()
 				
 		TrickManager._xp_buffer += rail_xp_rate * delta
-				
 				
 		is_on_rail = true
 				
@@ -235,6 +234,8 @@ func _rail_logic(delta: float):
 func _process(delta: float) -> void:	
 	if ((parent.is_grounded() or parent.is_mesh_colliding()) and not trick_catched):
 		MapLoader.instance.stop()
+		
+	_exit_rail_timer -= delta
 		
 	var etait_sur_rail: bool = prev_rail != null
 	_rail_logic(delta)
