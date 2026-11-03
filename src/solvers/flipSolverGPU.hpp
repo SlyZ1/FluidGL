@@ -39,6 +39,7 @@ private:
     GLuint m_rYBuffer = 0;
     GLuint m_rZBuffer = 0;
     GLuint m_isAirBuffer = 0;
+    std::vector<GLuint> m_coarseIsAirBuffers = {};
 
     // Density
     GLuint m_rhoBuffer = 0;
@@ -47,6 +48,8 @@ private:
     GLuint m_curvatureBuffer = 0;
 
     // Pressure - Incompression
+    std::vector<GLuint> m_zBuffers = {};
+    std::vector<GLuint> m_rBuffers = {};
     GLuint m_minusDivBuffer = 0;
     GLuint m_pressureBuffer = 0;
 
@@ -88,6 +91,10 @@ private:
     ShaderProgram m_computeCurvatureShader = {};
     
     // Pressure - Incompression
+    ShaderProgram m_mgCoarseIsAir = {};
+    ShaderProgram m_mgSmooth = {};
+    ShaderProgram m_mgRestrict = {};
+    ShaderProgram m_mgProlongate = {};
     ShaderProgram m_solveIncompressibilityShader = {};
     ShaderProgram m_sparseMatVecShader = {};
     ShaderProgram m_computeMinusDivShader = {};
@@ -129,11 +136,18 @@ private:
  
     void deleteBuffers();
     void createBuffers();
+    void initCGS();
 
     void resetFloatBuffer(GLuint buffer, int n);
     void resetUintBuffer(GLuint buffer, int n);
     void prefixSum(GLuint data, int n, int recursionIndex = 0);
     void countingSort();
+
+    void precomputeCoarseIsAir();
+    void smooth(int l, int color, glm::ivec3 dim);
+    void restrict(int l, glm::ivec3 dim);
+    void prolongate(int l, glm::ivec3 dim);
+    void MGPrecond(GLuint zBuffer, GLuint rBuffer, bool dispatch = true);
 
     void integrateParticles();
     void pushAppartParticles(int iterations);

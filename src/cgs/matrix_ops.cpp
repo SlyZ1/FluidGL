@@ -36,6 +36,10 @@ MatOps::MatOps(){
     m_resetScalarProg.load(GL_COMPUTE_SHADER, "src/shaders/mat/reset_scalar.glsl");
     m_resetScalarProg.link();
 
+    m_clearProg.create();
+    m_clearProg.load(GL_COMPUTE_SHADER, "src/shaders/mat/clear.glsl");
+    m_clearProg.link();
+
     glDeleteBuffers(1, &m_partialDotBuffer);
     glGenBuffers(1, &m_partialDotBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_partialDotBuffer);
@@ -66,7 +70,7 @@ void MatOps::multiply(GLuint bufferA, GLuint bufferB, GLuint bufferResult, int N
     glUniform1i(ShaderProgram::getVarLoc("N"), N);
     
     if (!dispatch) return;
-    glDispatchCompute((N + 15) / 16, (N + 15) / 16, 1);
+    m_mulProg.dispatch((N + 15) / 16, (N + 15) / 16);
     ShaderProgram::SSBOBarrier();
 }
 
@@ -131,7 +135,7 @@ void MatOps::saxpy(GLuint bufferX, GLuint bufferY, GLuint bufferZ,
     glUniform1iv(ShaderProgram::getVarLoc("alpha_operations"), 16, alphaOperations.data());
     
     if (!dispatch) return;
-    glDispatchCompute((N + 127) / 128, 1, 1);
+    m_saxpyProg.dispatch((N + 127) / 128);
     ShaderProgram::SSBOBarrier();
 }
 
@@ -154,7 +158,7 @@ void MatOps::saxpy(GLuint bufferX, GLuint bufferY, GLuint bufferZ, float alpha, 
     glUniform1iv(ShaderProgram::getVarLoc("alpha_operations"), 16, alphaOperations.data());
     
     if (!dispatch) return;
-    glDispatchCompute((N + 127) / 128, 1, 1);
+    m_saxpyProg.dispatch((N + 127) / 128);
     ShaderProgram::SSBOBarrier();
 }
 
@@ -166,7 +170,7 @@ void MatOps::copy(GLuint bufferX, GLuint bufferY, int N, bool dispatch){
     glUniform1i(ShaderProgram::getVarLoc("N"), N);
 
     if (!dispatch) return;
-    glDispatchCompute((N + 255) / 256, 1, 1);
+    m_copyProg.dispatch((N + 255) / 256);
     ShaderProgram::SSBOBarrier();
 }
 
@@ -179,7 +183,7 @@ void MatOps::matVec(GLuint bufferA, GLuint bufferV, GLuint bufferResult, int N, 
     glUniform1i(ShaderProgram::getVarLoc("N"), N);
     
     if (!dispatch) return;
-    glDispatchCompute((N + 63) / 64, 1, 1);
+    m_matVecProg.dispatch((N + 63) / 64);
     ShaderProgram::SSBOBarrier();
 }
 
@@ -191,6 +195,18 @@ void MatOps::transpose(GLuint bufferA, GLuint bufferResult, int N, bool dispatch
     glUniform1i(ShaderProgram::getVarLoc("N"), N);
     
     if (!dispatch) return;
-    glDispatchCompute((N + 15) / 16, (N + 15) / 16, 1);
+    m_transposeProg.dispatch((N + 15) / 16, (N + 15) / 16);
+    ShaderProgram::SSBOBarrier();
+}
+
+void MatOps::clear(GLuint buffer, int N, float value, bool dispatch){
+    m_clearProg.use();
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+    glUniform1f(ShaderProgram::getVarLoc("value"), value);
+    glUniform1f(ShaderProgram::getVarLoc("N"), N);
+
+    if (!dispatch) return;
+    m_clearProg.dispatch((N + 255) / 256);
     ShaderProgram::SSBOBarrier();
 }

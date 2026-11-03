@@ -20,15 +20,18 @@ private:
     static constexpr int NUM_SCALARS = 10;
 
     int m_n = 0;
+    // Main system Ax = b
     GLuint m_ABuffer = 0;
     GLuint m_bBuffer = 0;
     GLuint m_ATBuffer = 0;
     GLuint m_ATbBuffer = 0;
     GLuint m_ATABuffer = 0;
+
+    // Preconditionning system Az = c
+    GLuint m_zBuffer = 0;
     
     GLuint m_zeroBuffer = 0;
     GLuint m_xBuffer = 0;
-    GLuint m_zBuffer = 0;
     GLuint m_dBuffer = 0;
     GLuint m_AdBuffer = 0;
     GLuint m_rBuffer = 0;
@@ -42,7 +45,9 @@ private:
     void initBuffers();
     void deleteBuffers();
     void swap_rtr_indices();
-    void computeZ();
+
+    std::function<void(GLuint, GLuint, GLuint, int, bool)> m_matVec = nullptr;
+    std::function<void(GLuint, GLuint, bool)> m_precond = nullptr; 
 
 public:
     CGS();
@@ -50,6 +55,35 @@ public:
 
     CGS(const CGS&) = delete;
     CGS& operator=(const CGS&) = delete;
+
+    MatOps* getMatOps() const { return &*m_matOps; }
+
+    /**
+     * @brief Set a custom matrix-vector function
+     * @param matVec        Custom matrix-vector multiplication function. Its arguments are:
+     * 
+     *                      - ABuffer : The matrix A of the system
+     * 
+     *                      - dBuffer : The matrix d, which is the step of the solver
+     * 
+     *                      - AdBuffer : The buffer in which to store the result of A * d
+     * 
+     *                      - n : The size of the vectors
+     * 
+     *                      - dispatch : whether or not \p matVec should dispatch the compute shaders. This is used when the solver does some indirect dispatching.
+     */
+    void setCustomMatVec(std::function<void(GLuint, GLuint, GLuint, int, bool)> matVec) { m_matVec = matVec; }
+    /**
+     * @brief Set the preconditionner
+     * @param precond      Custom function for setting the vector Z as the result of the preconditionner. Its arguments are:
+     * 
+     *                      - zBuffer
+     * 
+     *                      - rBuffer : The rest r = b - Ax
+     * 
+     *                      - dispatch : Whether or not \p precond should dispatch the compute shaders. This is used when the solver does some indirect dispatching.
+     */
+    void setPrecond(std::function<void(GLuint, GLuint, bool)> precond) { m_precond = precond; }
 
     void compute_ATA_ATb(GLuint AMatrixbuffer, GLuint bMatrixBuffer);
     /**
@@ -69,30 +103,13 @@ public:
     void reloadArgs(GLuint ABuffer, GLuint bBuffer, GLuint xBuffer);
     /**
      * @brief Solve Ax = b. A x and b must be passed through \ref init(n, Abuffer, bBuffer, xBuffer)
-     * @param maxIter   Maximum number of iteration to solve the system
-     * @param tol       Tolerance of the system. The solver stops when the error has decreased by a multiplication of \p tol
-     */
-    GLuint solve(int maxIter, float tol);
-    /**
-     * @brief Solve Ax = b. A x and b must be passed through \ref init(n, Abuffer, bBuffer, xBuffer)
      * @note \p matVec can be used to implement a matrix free operation for sparse matrices in some cases
      * @param maxIter       Maximum number of iteration to solve the system
      * @param tol           Tolerance of the system. The solver stops when the error has decreased by a multiplication of \p tol
-     * @param matVec        Custom matrix-vector multiplication function. Its arguments are:
-     * 
-     *                      - ABuffer : The matrix A of the system
-     * 
-     *                      - dBuffer : The matrix d, which is the step of the solver
-     * 
-     *                      - AdBuffer : The buffer in which to store the result of A * d
-     * 
-     *                      - n : The size of the vectors
-     * 
-     *                      - dispatch : whether or not \p matVec should dispatch the compute shaders. This is used when the solver does some indirect dispatching.
      * @param matVecParams  The dispatch parameters of the compute shader used in matVec, used for some indirect dispatching.
      * @param reuse         Default is true. Describes whether or not the value of \p xBuffer is used as the initialization for the solver.
      */
-    GLuint solve(int maxIter, float tol, std::function<void(GLuint, GLuint, GLuint, int, bool)> matVec, DispatchParams matVecParams, bool reuse=true);
+    GLuint solve(int maxIter, float tol, DispatchParams matVecParams, bool reuse=true);
 };
 
 #endif

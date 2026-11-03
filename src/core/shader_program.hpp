@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <glad/glad.h>
 #include <unordered_map>
+#include <glm/glm.hpp>
 
 class ShaderProgram {
     private:
@@ -33,11 +34,25 @@ class ShaderProgram {
         void link();
         void use() const;
         static void dispatch(GLuint x = 1, GLuint y = 1, GLuint z = 1);
+        static void dispatch(glm::ivec3 xyz);
         static void indirectBarrier();
         static void indirectDispatch(GLuint buffer, int offset = 0);
         void destroy();
+        static void loadCompute(ShaderProgram& prog, const std::string& relativePath);
         static GLuint getVarLoc(const std::string& name);
         static void SSBOBarrier();
+
+        template<typename T>
+        static void genSSBO(GLuint& buffer, int size, T value, GLenum usage = GL_DYNAMIC_DRAW){
+            genDataSSBO(buffer, size, std::vector<T>(size, value).data(), usage);
+        }
+
+        template<typename T>
+        static void genDataSSBO(GLuint& buffer, int size, const T* data, GLenum usage = GL_DYNAMIC_DRAW){
+            glGenBuffers(1, &buffer);
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, size * sizeof(T), data, usage);
+        }
 
         template<typename T>
         static std::tuple<GLuint, GLuint, GLuint> 

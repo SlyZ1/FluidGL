@@ -157,6 +157,10 @@ void ShaderProgram::dispatch(GLuint x, GLuint y, GLuint z){
     glDispatchCompute(x, y, z);
 }
 
+void ShaderProgram::dispatch(glm::ivec3 xyz){
+    glDispatchCompute(xyz.x, xyz.y, xyz.z);
+}
+
 void ShaderProgram::SSBOBarrier(){
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
@@ -168,6 +172,12 @@ void ShaderProgram::indirectBarrier(){
 void ShaderProgram::indirectDispatch(GLuint buffer, int offset){
     glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer);
     glDispatchComputeIndirect(offset);
+}
+
+void ShaderProgram::loadCompute(ShaderProgram& prog, const std::string& relativePath){
+    prog.create();
+    prog.load(GL_COMPUTE_SHADER, relativePath);
+    prog.link();
 }
 
 GLuint ShaderProgram::getVarLoc(const string& name){

@@ -26,6 +26,7 @@ private:
     ShaderProgram m_dotFinalSumProg = {};
     ShaderProgram m_resetScalarProg = {};
     ShaderProgram m_copyProg = {};
+    ShaderProgram m_clearProg = {};
 
     void ensurePartialCapacity(int N);
 public:
@@ -128,6 +129,16 @@ public:
      * @param dispatch      When set to false, the dispatch command and the barrier command are not executed
      */
     void transpose(GLuint bufferA, GLuint bufferResult, int N, bool dispatch = true);
+
+    /**
+     * @brief Clears the vector with \p value 
+     * @note Dispatch is often used in cases where you would want to do some indirect dispatching
+     * @param buffer        The vector to clear
+     * @param N             The size of the vector
+     * @param value         The value each component of the vector will have
+     * @param dispatch      When set to false, the dispatch command and the barrier command are not executed
+     */
+    void clear(GLuint buffer, int N, float value, bool dispatch = true);
 };
 
 #endif

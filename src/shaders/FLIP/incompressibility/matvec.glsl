@@ -29,35 +29,10 @@ void main(){
     float s3 = float(i+1 < gridX);
     float s4 = float(k-1 >= 0);
     float s5 = float(k+1 < gridZ);
-    // float s0 = 0.0, s1 = 0.0, s2 = 0.0, s3 = 0.0, s4 = 0.0, s5 = 0.0;
-    // if (j-1 >= 0) {
-    //     int c = coordToCell(ivec3(i,j-1,k), gridX, gridY, gridZ);
-    //     s0 = float(isAir[c] == 0u);
-    // }
-    // if (j+1 < gridY) {
-    //     int c = coordToCell(ivec3(i,j+1,k), gridX, gridY, gridZ);
-    //     s1 = float(isAir[c] == 0u);
-    // }
-    // if (i-1 >= 0) {
-    //     int c = coordToCell(ivec3(i-1,j,k), gridX, gridY, gridZ);
-    //     s2 = float(isAir[c] == 0u);
-    // }
-    // if (i+1 < gridX) {
-    //     int c = coordToCell(ivec3(i+1,j,k), gridX, gridY, gridZ);
-    //     s3 = float(isAir[c] == 0u);
-    // }
-    // if (k-1 >= 0) {
-    //     int c = coordToCell(ivec3(i,j,k-1), gridX, gridY, gridZ);
-    //     s4 = float(isAir[c] == 0u);
-    // }
-    // if (k+1 < gridZ) {
-    //     int c = coordToCell(ivec3(i,j,k+1), gridX, gridY, gridZ);
-    //     s5 = float(isAir[c] == 0u);
-    // }
     float s = s0 + s1 + s2 + s3 + s4 + s5;
-    const float eps = 1e-10;
+    
     float xCell = x[cell];
-    if (s <= 0.0) { Ax[cell] = eps * xCell; return; }
+    if (s <= 0.0) { Ax[cell] = 0.0; return; }
 
     float xBottom = (s0 > 0.0) ? x[coordToCell(ivec3(i,j-1,k), gridX, gridY, gridZ)] : 0.0;
     float xTop    = (s1 > 0.0) ? x[coordToCell(ivec3(i,j+1,k), gridX, gridY, gridZ)] : 0.0;
@@ -66,5 +41,5 @@ void main(){
     float xBack   = (s4 > 0.0) ? x[coordToCell(ivec3(i,j,k-1), gridX, gridY, gridZ)] : 0.0;
     float xFront  = (s5 > 0.0) ? x[coordToCell(ivec3(i,j,k+1), gridX, gridY, gridZ)] : 0.0;
 
-    Ax[cell] = (s + eps) * xCell - (s0*xBottom + s1*xTop + s2*xLeft + s3*xRight + s4*xBack + s5*xFront);
+    Ax[cell] = s * xCell - (s0*xBottom + s1*xTop + s2*xLeft + s3*xRight + s4*xBack + s5*xFront);
 }

@@ -2,7 +2,12 @@
 
 using namespace std;
 
-CGS::CGS() {}
+CGS::CGS() {
+    m_matVec =
+    [this](GLuint Abuf, GLuint dBuf, GLuint AdBuf, int n, bool dispatch) {
+        m_matOps->matVec(Abuf, dBuf, AdBuf, n, dispatch);
+    };
+}
 CGS::~CGS() {
     deleteBuffers();
 }
@@ -12,12 +17,12 @@ void CGS::deleteBuffers(){
     glDeleteBuffers(1, &m_ATBuffer);
     glDeleteBuffers(1, &m_ATbBuffer);
     glDeleteBuffers(1, &m_zeroBuffer);
-    glDeleteBuffers(1, &m_zBuffer);
     glDeleteBuffers(1, &m_dBuffer);
     glDeleteBuffers(1, &m_AdBuffer);
     glDeleteBuffers(1, &m_rBuffer);
     glDeleteBuffers(1, &m_scalarBuffer);
     glDeleteBuffers(1, &m_indirectBuffer);
+    glDeleteBuffers(1, &m_zBuffer);
 }
 
 void CGS::initBuffers(){
@@ -110,19 +115,7 @@ void CGS::swap_rtr_indices(){
     RTR_SCALAR_INDEX = temp;
 }
 
-void CGS::computeZ() {
-
-}
-
-GLuint CGS::solve(int maxIter, float tol){
-    std::function<void(GLuint, GLuint, GLuint, int, bool)> matVec =
-    [this](GLuint Abuf, GLuint dBuf, GLuint AdBuf, int n, bool dispatch) {
-        m_matOps->matVec(Abuf, dBuf, AdBuf, n, dispatch);
-    };
-    return solve(maxIter, tol, matVec, m_dispatchParams[0], false);
-}
-
-GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, int, bool)> matVec, DispatchParams matVecParams, bool reuse){
+GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reuse){
     m_dispatchParams[0] = matVecParams;
     glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_indirectBuffer);
     glBufferData(GL_DISPATCH_INDIRECT_BUFFER, m_dispatchParams.size() * sizeof(DispatchParams), 
@@ -149,26 +142,31 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
     glBufferData(GL_SHADER_STORAGE_BUFFER, initScalars.size() * sizeof(float), initScalars.data(), GL_DYNAMIC_DRAW);
     
     ShaderProgram::SSBOBarrier();
+
     
     // clear x
-    if (!reuse) m_matOps->copy(m_zeroBuffer, m_xBuffer, m_n);
-    // Ad = A * x
-    matVec(m_ABuffer, m_xBuffer, m_AdBuffer, m_n, true);
-    // r = b - Ad
-    m_matOps->saxpy(m_bBuffer, m_AdBuffer, m_rBuffer, m_scalarBuffer, m_n, minusOperations, true);
-
-    computeZ();        
+    if (!reuse) m_matOps->copy(m_zeroBuffer, m_xBuffer, m_n, true);
     
-    // d = r
-    m_matOps->copy(m_rBuffer, m_dBuffer, m_n);
+    // Ad = A * x
+    // r = b - Ad
+    m_matVec(m_ABuffer, m_xBuffer, m_AdBuffer, m_n, true);
+    m_matOps->saxpy(m_bBuffer, m_AdBuffer, m_rBuffer, m_scalarBuffer, m_n, minusOperations, true);
+    
+    // z = V(r)
+    if (m_precond) m_precond(m_zBuffer, m_rBuffer, true);
+    const GLuint R_BUFFER = m_precond ? m_zBuffer : m_rBuffer;
+    
+    // d = z
+    m_matOps->copy(R_BUFFER, m_dBuffer, m_n, true);
+
     // compute rTrnew
-    m_matOps->dot(m_rBuffer, m_rBuffer, m_scalarBuffer, m_n, glm::ivec3(RTR_NEW_SCALAR_INDEX, RTR0_SCALAR_INDEX, RTR_SCALAR_INDEX));
+    m_matOps->dot(m_rBuffer, R_BUFFER, m_scalarBuffer, m_n, glm::ivec3(RTR_NEW_SCALAR_INDEX, RTR0_SCALAR_INDEX, RTR_SCALAR_INDEX));
     m_matOps->dot(m_bBuffer, m_bBuffer, m_scalarBuffer, m_n, BTB_SCALAR_INDEX);
     for (int i = 0; i < maxIter; i++)
     {
         // Compute Ad
         ShaderProgram::indirectBarrier();
-        matVec(m_ABuffer, m_dBuffer, m_AdBuffer, m_n, false);
+        m_matVec(m_ABuffer, m_dBuffer, m_AdBuffer, m_n, false);
         ShaderProgram::indirectDispatch(m_indirectBuffer, 0 * sizeof(DispatchParams));
 
         // Compute dTAd
@@ -195,12 +193,16 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
         m_matOps->saxpy(m_rBuffer, m_AdBuffer, m_rBuffer, m_scalarBuffer, m_n, rAlphaScalarOperations, false);
         ShaderProgram::indirectDispatch(m_indirectBuffer, 2 * sizeof(DispatchParams));
 
+        // z = V(r)
+        ShaderProgram::indirectBarrier();
+        if (m_precond) m_precond(m_zBuffer, m_rBuffer, true);
+
         // rTr<->rTrnew, Compute rTrnew 
         swap_rtr_indices();
         ShaderProgram::indirectBarrier();
         m_matOps->dotIndirect(
             m_rBuffer, 
-            m_rBuffer, 
+            R_BUFFER, 
             m_scalarBuffer, 
             m_indirectBuffer,
             1 * sizeof(DispatchParams),
@@ -223,7 +225,7 @@ GLuint CGS::solve(int maxIter, float tol, function<void(GLuint, GLuint, GLuint, 
         
         // Compute d = r + rTrnew / rTr * d
         ShaderProgram::indirectBarrier();
-        m_matOps->saxpy(m_rBuffer, m_dBuffer, m_dBuffer, m_scalarBuffer, m_n, betaScalarOperations, false);
+        m_matOps->saxpy(R_BUFFER, m_dBuffer, m_dBuffer, m_scalarBuffer, m_n, betaScalarOperations, false);
         ShaderProgram::indirectDispatch(m_indirectBuffer, 2 * sizeof(DispatchParams));
         
 
