@@ -56,17 +56,11 @@ func _exit_tree() -> void:
 
 func _ready() -> void:
 	_next_spawn = _new_section(Vector3.ZERO, true)
-	TrickManager.trick_performed.connect(_on_trick)
-	TrickManager.trick_ended.connect(_reset_quest)
-	TrickManager.trick_catched.connect(_on_catch)
 	TrickManager.xp_changed.connect(_on_xp_changed)
 	set_active(ragdoll, false)
 	set_active(skate, true)
 	freezed_skate = $Skate.duplicate()
 	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
-	quests.sort_custom(func(q, l): return q.reward < l.reward)
-	for i in quests:
-		print(i.reward, " ", len(i.steps))
 
 func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
@@ -85,7 +79,7 @@ func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -
 		var axe := Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
 		ragdoll.apply_torque_impulse(axe * 10)
 		set_active(skate, false)
-		
+
 		$RestartLag.start()
 
 	else:
@@ -146,55 +140,6 @@ func _control_speed(delta: float):
 	if _next_spawn: _next_spawn.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
 	if _spawned_sections.size() > 0: s_speed = speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
 
-@export var quests: Array[Quest]
-var _current_quest: Quest = null
-var _quest_progression := 0
-
-func _on_trick(_name: String, _accuracy: float) -> void:
-	if not _current_quest: return
-
-	if _name == _current_quest.steps[_quest_progression]:
-		get_node("UI/Input" + str(_quest_progression + 1)).correct()
-		_quest_progression += 1
-		TrickManager._xp_buffer += _current_quest.reward
-		if _quest_progression >= len(_current_quest.steps):
-			_move_quests(680)
-			_current_quest = null
-			_quest_progression = 0
-		$NewQuest.start()
-		$QuestEnd.stop()
-		# TODO : féliciter le joueur
-		la_jaajiniere = (1 + la_jaajiniere) % len(quests)
-	else:
-		_reset_quest()
-
-var appear_tw : Tween
-
-func _move_quests(target_y: float) -> void:
-	for i in range(len(_current_quest.steps)):
-		var whom = get_node("UI/Input" + str(i + 1))
-		get_tree().create_tween().tween_property(whom, "position:y", target_y, 1.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT).set_delay(0.3 * i)
-
-func _reset_quest() -> void:
-	for i in range(_quest_progression):
-		get_node("UI/Input" + str(i + 1)).incorrect()
-	_quest_progression = 0
-
-func _on_catch(_progression: float, _dt: float) -> void:
-	_reset_quest()
-
-var la_jaajiniere := 0
-func _on_new_quest_timeout() -> void:
-	_current_quest = quests.pick_random()
-	while _current_quest.reward > 100 and la_jaajiniere <= 1:
-		_current_quest = quests.pick_random()
-	print(_current_quest.reward)
-	for i in range(len(_current_quest.steps)):
-		var input : String = TrickManager._tricks.get_node(_current_quest.steps[i]).input
-		get_node("UI/Input" + str(i + 1)).set_input_ref(input)
-	_move_quests(550)
-	$QuestEnd.start()
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
@@ -216,47 +161,19 @@ func _process(delta: float) -> void:
 			skate.step(substep)
 		_step_accumulateur -= substep
 		steps += 1
+
 	if ready_to_restart and TrickManager.get_catch_pressed():
 		waiting_for_restart = false
 		ready_to_restart = false
 		
-		print("RESTART")
 		TrickManager._points = 0
 		TrickManager._xp = 0
 		TrickManager._xp_buffer = 0
 		TrickManager._tier = 0
 		get_tree().change_scene_to_file("res://scenes/skate_prototype.tscn")
-		#_control_spawn(true)
-		#_control_spawn(true)
-		#_control_spawn(true)
-		##var d : float = (_spawned_sections.back().snap_back.global_position).distance_to(Vector3($Camera3D.global_position.x, 0, $Camera3D.global_position.z))
-			#
-		#var tw1:Tween = create_tween()
-		#tw1.tween_property(self, "speed", 7 * speed_ref, 1.0).set_trans(Tween.TRANS_QUAD)
-		#await tw1.finished
-		#var tw2:Tween = create_tween()
-		#tw2.tween_property(self, "speed", speed_ref, 1.0).set_trans(Tween.TRANS_QUAD)
-		#await tw2.finished
-		#
-		## TODO : spawn skate 2
-		#skate.reset_orientation()
-		#skate.reset_velocities()
-		#skate.global_position = initial_skate_pos + 3 * Vector3.UP
-		#skate.process_mode = Node.PROCESS_MODE_INHERIT
-		#print(skate.name)
-		#set_active(ragdoll, false)
-		#ragdoll.global_position = skate.global_position
-		#set_active(skate, true)
-		#is_running = true
-		
+
 	if waiting_for_restart and not TrickManager.get_catch_pressed():
 		ready_to_restart = true
-
-func _on_quest_end_timeout() -> void:
-	_move_quests(680)
-	_current_quest = null
-	_quest_progression = 0
-	$NewQuest.start()
 
 func _on_holdfh_timeout() -> void:
 	$UI/Label2.visible = not $UI/Label2.visible

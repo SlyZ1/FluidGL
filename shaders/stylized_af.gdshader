@@ -5,17 +5,10 @@ global uniform sampler2D palette : source_color;
 global uniform sampler2D light_noise;
 
 uniform int color_id;
-//uniform float ref = 0.5;
 uniform float sig = 0.25;
-
-//void fragment() {
-//}
 
 void light() {
 	float nz = texture(light_noise, UV).r;
-	//float nz11 = 0.5 * nz - 1.0;
-	//vec2 tp = texture(noise, UV).rg;
-	//vec3 nn = vec3(sin(tp.x) * cos(tp.y), cos(tp.x), sin(tp.x) * sin(tp.y));
 	
 	float l = max(0.001, dot(NORMAL, LIGHT));
 	float sl = pow(max(0.001, dot(NORMAL, normalize(LIGHT + VIEW))), 8.0);
@@ -31,5 +24,6 @@ void light() {
 	const float end = 1.0;
 	const float subdiv = 5.0;
 	float lilevel = start + float(int(level * subdiv)) * (end - start) / subdiv;
+	
 	DIFFUSE_LIGHT += lilevel * lilevel * clr * clr;
 }

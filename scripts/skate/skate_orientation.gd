@@ -5,7 +5,7 @@ extends Node3D
 @export var capteur_mesh: ShapeCast3D
 @export var capteur_ground: ShapeCast3D
 @export var mesh_instance: Node3D
-@export var gravity: float = 20
+@export var gravity: float = 90
 @export_range(0, 1) var slope_thresh: float = 0.3
 @export_range(0, 1) var weak_slope_thresh: float = 0.8
 @export var outline_appear_curve: Curve
@@ -101,7 +101,7 @@ func reset_velocities() -> void:
 	velocity_front = 0
 
 func _integrate(dt: float) -> void:
-	var acc: float = -50 * dt
+	var acc: float = -80 * dt
 	if not grounded_back: velocity_back += acc
 	if not grounded_front: velocity_front += acc
 		

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Quest" format=3 uid="uid://cfr2qm2i87bsp"]
+
+[ext_resource type="Script" uid="uid://jkpmkae3y0n0" path="res://scripts/quest.gd" id="1_0m0du"]
+
+[resource]
+script = ExtResource("1_0m0du")
+steps = Array[String](["kickflip_gauche", "lenvers"])
+reward = 250
+metadata/_custom_type_script = "uid://jkpmkae3y0n0"

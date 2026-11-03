@@ -54,7 +54,6 @@ capteur_front = NodePath("CapteurFront")
 capteur_mesh = NodePath("Skate/ShapeCast3D")
 capteur_ground = NodePath("Ground")
 mesh_instance = NodePath("Skate/skate")
-gravity = 90.0
 outline_appear_curve = SubResource("Curve_oh2xr")
 outline_disappear_curve = SubResource("Curve_wfreb")
 
