@@ -50,6 +50,8 @@ private:
     // Pressure - Incompression
     std::vector<GLuint> m_zBuffers = {};
     std::vector<GLuint> m_rBuffers = {};
+    int m_indirectParamsIndex = 0;
+    GLuint m_indirectBuffer = 0;
     GLuint m_minusDivBuffer = 0;
     GLuint m_pressureBuffer = 0;
 
@@ -143,10 +145,10 @@ private:
     void prefixSum(GLuint data, int n, int recursionIndex = 0);
     void countingSort();
 
-    void precomputeCoarseIsAir();
-    void smooth(int l, int color, glm::ivec3 dim);
-    void restrict(int l, glm::ivec3 dim);
-    void prolongate(int l, glm::ivec3 dim);
+    void precomputeCoarseIsAir(bool dispatch = true);
+    void smooth(int l, int color, glm::ivec3 dim, bool dispatch = true);
+    void restrict(int l, glm::ivec3 dim, bool dispatch = true);
+    void prolongate(int l, glm::ivec3 dim, bool dispatch = true);
     void MGPrecond(GLuint zBuffer, GLuint rBuffer, bool dispatch = true);
 
     void integrateParticles();

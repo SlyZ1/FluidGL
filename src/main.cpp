@@ -57,6 +57,8 @@ void init(){
     FlipSolverGPUConfig flipConfig = FlipSolverGPUConfig();
     flipConfig.setPartPerH(2);
     flipConfig.setDensityMultiplier(1);
+    flipConfig.setCgMaxIter(30);
+    flipConfig.setCgTol(0.01f);
     
     solverManager = make_shared<SolverManager>(camera);
     weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfig);

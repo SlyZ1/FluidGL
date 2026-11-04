@@ -103,6 +103,15 @@ void CGS::init(int n, GLuint ABuffer, GLuint bBuffer, GLuint xBuffer){
     this->m_xBuffer = xBuffer;
 }
 
+int CGS::addDispatchParams(vector<DispatchParams> params){
+    int result = (int)m_dispatchParams.size();
+    m_dispatchParams.insert(m_dispatchParams.end(), params.begin(), params.end());
+    glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_indirectBuffer);
+    glBufferData(GL_DISPATCH_INDIRECT_BUFFER, m_dispatchParams.size() * sizeof(DispatchParams), 
+                                              m_dispatchParams.data(), GL_DYNAMIC_DRAW);
+    return result;
+}
+
 void CGS::reloadArgs(GLuint ABuffer, GLuint bBuffer, GLuint xBuffer){
     this->m_ABuffer = ABuffer;
     this->m_bBuffer = bBuffer;
@@ -195,7 +204,7 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
 
         // z = V(r)
         ShaderProgram::indirectBarrier();
-        if (m_precond) m_precond(m_zBuffer, m_rBuffer, true);
+        if (m_precond) m_precond(m_zBuffer, m_rBuffer, false);
 
         // rTr<->rTrnew, Compute rTrnew 
         swap_rtr_indices();
@@ -210,8 +219,7 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
             m_n, 
             RTR_NEW_SCALAR_INDEX
         );
-        // m_matOps->dot(m_rBuffer, m_rBuffer, m_scalarBuffer, m_n, RTR_NEW_SCALAR_INDEX);
-        // ShaderProgram::indirectDispatch(indirectBuffer, 1 * sizeof(DispatchParams));
+        
         xAlphaScalarOperations = vector<int>(16,0);
         xAlphaScalarOperations[RTR_NEW_SCALAR_INDEX] = 1;
         xAlphaScalarOperations[DTAD_SCALAR_INDEX] = -1;
@@ -240,6 +248,16 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_scalarBuffer);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_indirectBuffer);
         ShaderProgram::indirectDispatch(m_indirectBuffer, 3 * sizeof(DispatchParams));
+
+        if (i % 5 == 4){
+            ShaderProgram::indirectBarrier();
+            float rTr = 0;
+            float bTb = 0;
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_scalarBuffer);
+            glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, RTR_NEW_SCALAR_INDEX * sizeof(float), sizeof(float), &rTr);
+            glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, BTB_SCALAR_INDEX * sizeof(float), sizeof(float), &bTb);
+            if (rTr < tol) return m_xBuffer;
+        }
     }
     return m_xBuffer;
 }

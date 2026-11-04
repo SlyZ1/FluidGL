@@ -204,7 +204,7 @@ void MatOps::clear(GLuint buffer, int N, float value, bool dispatch){
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
     glUniform1f(ShaderProgram::getVarLoc("value"), value);
-    glUniform1f(ShaderProgram::getVarLoc("N"), N);
+    glUniform1i(ShaderProgram::getVarLoc("N"), N);
 
     if (!dispatch) return;
     m_clearProg.dispatch((N + 255) / 256);

@@ -57,6 +57,13 @@ public:
     CGS& operator=(const CGS&) = delete;
 
     MatOps* getMatOps() const { return &*m_matOps; }
+    GLuint getIndirectBuffer() const { return m_indirectBuffer; }
+
+    /**
+     * @brief Add additionnal indirect dispatch parameters for conditional dispatching (eg. when the solver is under the threshold)
+     * @returns The index of insertion in the vector
+     */
+    int addDispatchParams(std::vector<DispatchParams> params);
 
     /**
      * @brief Set a custom matrix-vector function

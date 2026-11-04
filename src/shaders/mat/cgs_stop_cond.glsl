@@ -17,7 +17,7 @@ uniform float tol;
 
 void main(){
     float rTr = scalars[rTrIndex];
-    float target = max(tol * tol * scalars[bTbIndex], 1e-30);
+    float target = max(tol/* * tol * scalars[bTbIndex]*/, 1e-30);
 
     if (!(rTr > target)){
         for(int i = 0; i < 3 * numIndirectParams; i++) {

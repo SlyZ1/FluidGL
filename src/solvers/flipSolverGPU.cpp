@@ -43,12 +43,12 @@ void FlipSolverGPU::createBuffers(){
 
     FluidInitializer initializer = m_config.getFluidInitializer();
 
-    vec3 dim = initializer.bounds(m_config.getPartRadius()) / m_config.getH();
+    vec3 boundsDim = initializer.bounds(m_config.getPartRadius()) / m_config.getH();
     float densityScale = 1.f;
     
-    int nx = (int)std::floor(dim.x * m_config.getPartPerH() * densityScale);
-    int ny = (int)std::floor(dim.y * m_config.getPartPerH() * densityScale);
-    int nz = (int)std::floor(dim.z * m_config.getPartPerH() * densityScale);
+    int nx = (int)std::floor(boundsDim.x * m_config.getPartPerH() * densityScale);
+    int ny = (int)std::floor(boundsDim.y * m_config.getPartPerH() * densityScale);
+    int nz = (int)std::floor(boundsDim.z * m_config.getPartPerH() * densityScale);
     int partN = nx * ny * nz;
     m_config.setPartN(partN);
 
@@ -107,16 +107,14 @@ void FlipSolverGPU::createBuffers(){
     ShaderProgram::genSSBO<uint>(m_firstCellParticleBuffer2, ceiledN, 0);
     ShaderProgram::genSSBO<uint>(m_cellParticleIdsBuffer, partN, 0);
 
-    int dimX = m_config.getGridX();
-    int dimY = m_config.getGridY();
-    int dimZ = m_config.getGridZ();
+    ivec3 dim = m_config.getGridDim();
     bool genBuffers = true;
     while (genBuffers) {
-        genBuffers = min({dimX, dimY, dimZ}) > 4;
+        genBuffers = min({dim.x, dim.y, dim.z}) > 4;
         GLuint zBuffer = 0;
         GLuint rBuffer = 0;
         GLuint isAirBuffer = 0;
-        int n = dimX * dimY * dimZ;
+        int n = dim.x * dim.y * dim.z;
         ShaderProgram::genSSBO<float>(zBuffer, n, 0.0f);
         ShaderProgram::genSSBO<float>(rBuffer, n, 0.0f);
         ShaderProgram::genSSBO<uint>(isAirBuffer, n, 0);
@@ -124,9 +122,7 @@ void FlipSolverGPU::createBuffers(){
         m_rBuffers.push_back(rBuffer);
         m_coarseIsAirBuffers.push_back(isAirBuffer);
 
-        dimX = (dimX + 1) / 2;
-        dimY = (dimY + 1) / 2;
-        dimZ = (dimZ + 1) / 2;
+        dim = (dim + 1) / 2;
     }
     
     ShaderProgram::genSSBO<float>(m_minusDivBuffer, m_config.getGridX() * m_config.getGridY() * m_config.getGridZ(), 0.0f);
@@ -165,6 +161,19 @@ void FlipSolverGPU::initCGS(){
     m_cgs.setPrecond([this](GLuint zBuffer, GLuint rBuffer, bool dispatch) {
         MGPrecond(zBuffer, rBuffer, dispatch);
     });
+
+    uvec3 dim = m_config.getGridDim();
+    vector<DispatchParams> params = {};
+    vector<DispatchParams> linearParams = {};
+    for (int i = 0; i < (int)m_zBuffers.size(); i++)
+    {
+        linearParams.push_back((DispatchParams){(dim.x * dim.y * dim.z + 255) / 256, 1, 1});
+        params.push_back((DispatchParams){(dim.x + 7u) / 8u, (dim.y + 7u) / 8u, (dim.z + 7u) / 8u});
+        dim = (dim + 1u) / 2u;
+    }
+    m_indirectParamsIndex = m_cgs.addDispatchParams(params);
+    m_cgs.addDispatchParams(linearParams);
+    m_indirectBuffer = m_cgs.getIndirectBuffer();
 }
 
 FlipSolverGPU::FlipSolverGPU(FlipSolverGPUConfig config) 
@@ -582,8 +591,8 @@ void FlipSolverGPU::surfaceTension(){
     // m_integrateGridShader.dispatch((m_config.getGridDim() + 7) / 8);
 }
 
-void FlipSolverGPU::precomputeCoarseIsAir(){
-    ivec3 dim = ivec3(m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
+void FlipSolverGPU::precomputeCoarseIsAir(bool dispatch){
+    ivec3 dim = m_config.getGridDim();
 
     m_mgCoarseIsAir.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_isAirBuffer);
@@ -594,9 +603,14 @@ void FlipSolverGPU::precomputeCoarseIsAir(){
     glUniform1i(ShaderProgram::getVarLoc("coarseGridX"), dim.x);
     glUniform1i(ShaderProgram::getVarLoc("coarseGridY"), dim.y);
     glUniform1i(ShaderProgram::getVarLoc("coarseGridZ"), dim.z);
-    m_mgCoarseIsAir.dispatch((dim + 7) / 8);
 
-    ShaderProgram::SSBOBarrier();
+    if (dispatch){
+        m_mgCoarseIsAir.dispatch((dim + 7) / 8);
+        ShaderProgram::SSBOBarrier();
+    } else {
+        ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + 0) * sizeof(DispatchParams));
+        ShaderProgram::indirectBarrier();
+    }
 
     for (int l = 0; l < (int)m_zBuffers.size() - 1; l++)
     {
@@ -610,14 +624,20 @@ void FlipSolverGPU::precomputeCoarseIsAir(){
         glUniform1i(ShaderProgram::getVarLoc("coarseGridX"), coarseDim.x);
         glUniform1i(ShaderProgram::getVarLoc("coarseGridY"), coarseDim.y);
         glUniform1i(ShaderProgram::getVarLoc("coarseGridZ"), coarseDim.z);
-        m_mgCoarseIsAir.dispatch((coarseDim + 7) / 8);
-        ShaderProgram::SSBOBarrier();
+
+        if (dispatch) {
+            m_mgCoarseIsAir.dispatch((coarseDim + 7) / 8);
+            ShaderProgram::SSBOBarrier();
+        } else {
+            ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + l+1) * sizeof(DispatchParams));
+            ShaderProgram::indirectBarrier();
+        }
 
         dim = coarseDim;
     }
 }
 
-void FlipSolverGPU::smooth(int l, int color, ivec3 dim){
+void FlipSolverGPU::smooth(int l, int color, ivec3 dim, bool dispatch){
     m_mgSmooth.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_rBuffers[l]);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_coarseIsAirBuffers[l]);
@@ -626,12 +646,17 @@ void FlipSolverGPU::smooth(int l, int color, ivec3 dim){
     glUniform1i(ShaderProgram::getVarLoc("gridX"), dim.x);
     glUniform1i(ShaderProgram::getVarLoc("gridY"), dim.y);
     glUniform1i(ShaderProgram::getVarLoc("gridZ"), dim.z);
-    m_mgSmooth.dispatch((dim + 7) / 8);
 
-    ShaderProgram::SSBOBarrier();
+    if (dispatch){
+        m_mgSmooth.dispatch((dim + 7) / 8);
+        ShaderProgram::SSBOBarrier();
+    } else {
+        ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + l) * sizeof(DispatchParams));
+        ShaderProgram::indirectBarrier();
+    }
 }
 
-void FlipSolverGPU::restrict(int l, ivec3 dim) {
+void FlipSolverGPU::restrict(int l, ivec3 dim, bool dispatch) {
     ivec3 coarseDim = (dim + 1) / 2;
     m_mgRestrict.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_rBuffers[l]);
@@ -644,12 +669,17 @@ void FlipSolverGPU::restrict(int l, ivec3 dim) {
     glUniform1i(ShaderProgram::getVarLoc("coarseGridX"), coarseDim.x);
     glUniform1i(ShaderProgram::getVarLoc("coarseGridY"), coarseDim.y);
     glUniform1i(ShaderProgram::getVarLoc("coarseGridZ"), coarseDim.z);
-    m_mgRestrict.dispatch((coarseDim + 7) / 8);
 
-    ShaderProgram::SSBOBarrier();
+    if (dispatch) {
+        m_mgRestrict.dispatch((coarseDim + 7) / 8);
+        ShaderProgram::SSBOBarrier();
+    } else {
+        ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + l+1) * sizeof(DispatchParams));
+        ShaderProgram::indirectBarrier();
+    }
 }
 
-void FlipSolverGPU::prolongate(int l, ivec3 dim){
+void FlipSolverGPU::prolongate(int l, ivec3 dim, bool dispatch){
     m_mgProlongate.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_zBuffers[l]);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_zBuffers[l+1]);
@@ -660,20 +690,29 @@ void FlipSolverGPU::prolongate(int l, ivec3 dim){
     glUniform1i(ShaderProgram::getVarLoc("coarseGridX"), (dim.x + 1) / 2);
     glUniform1i(ShaderProgram::getVarLoc("coarseGridY"), (dim.y + 1) / 2);
     glUniform1i(ShaderProgram::getVarLoc("coarseGridZ"), (dim.z + 1) / 2);
-    m_mgProlongate.dispatch((dim + 7) / 8);
 
-    ShaderProgram::SSBOBarrier();
+    if (dispatch) {
+        m_mgProlongate.dispatch((dim + 7) / 8);
+        ShaderProgram::SSBOBarrier();
+    } else {
+        ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + l) * sizeof(DispatchParams));
+        ShaderProgram::indirectBarrier();
+    }
 }
 
 void FlipSolverGPU::MGPrecond(GLuint zBuffer, GLuint rBuffer, bool dispatch) {
     const int RED = 0;
     const int BLACK = 1;
 
-    ivec3 dim = ivec3(m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
+    ivec3 dim = m_config.getGridDim();
     vector<ivec3> dims = {};
 
     MatOps* matOps = m_cgs.getMatOps();
     matOps->copy(rBuffer, m_rBuffers[0], dim.x * dim.y * dim.z, dispatch);
+    if (!dispatch) {
+        ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + (int)m_zBuffers.size() + 0) * sizeof(DispatchParams));
+        ShaderProgram::indirectBarrier();
+    }
 
     for (int l = 0; l < (int)m_zBuffers.size() - 1; l++)
     {
@@ -681,26 +720,30 @@ void FlipSolverGPU::MGPrecond(GLuint zBuffer, GLuint rBuffer, bool dispatch) {
         int n = dim.x * dim.y * dim.z;
 
         matOps->clear(m_zBuffers[l], n, 0.0f, dispatch);
+        if (!dispatch) {
+            ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + (int)m_zBuffers.size() + l) * sizeof(DispatchParams));
+            ShaderProgram::indirectBarrier();
+        }
 
         // Pre-smooth
         for (int nu = 0; nu < 2; nu++){
-            smooth(l, RED, dim);
-            smooth(l, BLACK, dim);
+            smooth(l, RED, dim, dispatch);
+            smooth(l, BLACK, dim, dispatch);
         }
         // Restrict
-        restrict(l, dim);
+        restrict(l, dim, dispatch);
 
         dim = (dim + 1) / 2;
     }
 
     int last = (int)m_zBuffers.size() - 1;
     matOps->clear(m_zBuffers[last], dim.x * dim.y * dim.z, 0.0f, dispatch);
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 2; i++)
     {
-        smooth(last, RED, dim);
-        smooth(last, BLACK, dim);
-        smooth(last, BLACK, dim);
-        smooth(last, RED, dim);
+        smooth(last, RED, dim, dispatch);
+        smooth(last, BLACK, dim, dispatch);
+        smooth(last, BLACK, dim, dispatch);
+        smooth(last, RED, dim, dispatch);
     }
 
     for (int l = (int)m_zBuffers.size() - 2; l >= 0; l--)
@@ -708,17 +751,21 @@ void FlipSolverGPU::MGPrecond(GLuint zBuffer, GLuint rBuffer, bool dispatch) {
         dim = dims[l];
         
         // Prolongate
-        prolongate(l, dim);
+        prolongate(l, dim, dispatch);
 
         // Post-smooth
         for (int nu = 0; nu < 2; nu++)
         {
-            smooth(l, BLACK, dim);
-            smooth(l, RED, dim);
+            smooth(l, BLACK, dim, dispatch);
+            smooth(l, RED, dim, dispatch);
         }
     }
 
     matOps->copy(m_zBuffers[0], zBuffer, dim.x * dim.y * dim.z, dispatch);
+    if (!dispatch) {
+        ShaderProgram::indirectDispatch(m_indirectBuffer, (m_indirectParamsIndex + (int)m_zBuffers.size() + 0) * sizeof(DispatchParams));
+        ShaderProgram::indirectBarrier();
+    }
 }
 
 void FlipSolverGPU::solveIncompressibility(int iterations, float tol, bool useCGS){
