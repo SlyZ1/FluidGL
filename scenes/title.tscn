@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cpgeb8hbo10c6"]
 
 [ext_resource type="Script" uid="uid://dwbuxbmx8v83e" path="res://scripts/title.gd" id="1_4ignj"]
-[ext_resource type="PackedScene" uid="uid://bwvau03vnk7bb" path="res://scenes/skate_prototype.tscn" id="2_wosw1"]
+[ext_resource type="PackedScene" uid="uid://bwvau03vnk7bb" path="res://scenes/gameplay_scene.tscn" id="2_wosw1"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="3_p6dhs"]
 [ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="4_pyl7j"]
 
@@ -9,12 +9,14 @@
 shader = ExtResource("3_p6dhs")
 shader_parameter/blur_amount = 1.10000005225
 
-[node name="TitleScreen" type="Node3D" unique_id=1694675722]
+[node name="TitleScreen" type="Node3D" unique_id=1694675722 node_paths=PackedStringArray("input_suggestion")]
 script = ExtResource("1_4ignj")
+input_suggestion = NodePath("UI/InputSuggestion")
+gameplay_scene = ExtResource("2_wosw1")
 
 [node name="Background" parent="." unique_id=611096490 instance=ExtResource("2_wosw1")]
 
-[node name="Control" type="Control" parent="." unique_id=1733424851]
+[node name="UI" type="Control" parent="." unique_id=1733424851]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,19 +24,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BackBufferCopy" type="BackBufferCopy" parent="Control" unique_id=152467745]
+[node name="ColorRect" type="ColorRect" parent="UI" unique_id=1859502306]
+material = SubResource("ShaderMaterial_lgns8")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="UI" unique_id=152467745]
 position = Vector2(576, 324.5)
 scale = Vector2(5.76, 3.215)
 copy_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="Control/BackBufferCopy" unique_id=1859502306]
-material = SubResource("ShaderMaterial_lgns8")
-offset_left = -99.826385
-offset_top = -100.93313
-offset_right = 100.1736
-offset_bottom = 100.62208
-
-[node name="Label" type="Label" parent="Control" unique_id=451288771]
+[node name="MainTitle" type="Label" parent="UI" unique_id=451288771]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -53,7 +61,7 @@ text = "FINGERTRICK"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label2" type="Label" parent="Control" unique_id=1382014618]
+[node name="InputSuggestion" type="Label" parent="UI" unique_id=1382014618]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -72,8 +80,8 @@ text = "Hold F And H"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Timer" type="Timer" parent="Control/Label2" unique_id=1449521898]
+[node name="AlternateTimer" type="Timer" parent="UI/InputSuggestion" unique_id=1449521898]
 wait_time = 0.5
 autostart = true
 
-[connection signal="timeout" from="Control/Label2/Timer" to="." method="_on_blink_timeout"]
+[connection signal="timeout" from="UI/InputSuggestion/AlternateTimer" to="." method="_on_blink_timeout"]

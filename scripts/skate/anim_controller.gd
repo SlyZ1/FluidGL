@@ -2,6 +2,7 @@ extends Node
 
 class_name AnimController
 
+@export var skate_physics: SkatePhysics
 @export_group("Tricks")
 @export_range(0, 1) var trick_cancel_end: float = 0.1
 @export_range(0, 1) var trick_catchable_start: float = 0.7
@@ -28,8 +29,6 @@ var default_trick_rotation: Quaternion = Quaternion.IDENTITY
 var trick_catched: bool = true
 var catch_pressed: bool = false
 
-var parent: Node3D
-
 var _mesh_instance_scale: Vector3
 
 func _ready() -> void:
@@ -37,20 +36,19 @@ func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick_performed)
 	TrickManager.trick_ended.connect(_on_trick_end)
 	TrickManager.trick_catched.connect(_on_trick_catched)
-	parent = get_parent()
-	parent.on_fall.connect(TrickManager.on_airborne)
-	parent.on_grounded.connect(TrickManager.on_ground)
+	skate_physics.on_fall.connect(TrickManager.on_airborne)
+	skate_physics.on_grounded.connect(TrickManager.on_ground)
 
 
 func _process(delta: float) -> void:
-	if ((parent.is_grounded() or parent.is_mesh_colliding()) and not trick_catched):
-		MapLoader.instance.stop()
+	if ((skate_physics.is_grounded() or skate_physics.is_mesh_colliding()) and not trick_catched):
+		GameManager.instance.stop()
 	
 	var current_rotation: Quaternion = default_trick_rotation
 	for trick in active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
-	parent.set_rot(Basis(current_rotation))
+	skate_physics.set_rot(Basis(current_rotation))
 	
 func set_default_trick_rotation(rot: Quaternion) -> void:
 	default_trick_rotation = rot
@@ -79,8 +77,8 @@ func _on_trick_performed(_name: String, _accuracy: float) -> void:
 	current_trick_duration = _duration
 	current_anim_duration = _anim.animation_duration
 	
-	if _anim.reset_velocities: parent.reset_velocities()
-	get_parent().apply_impulse(_anim.impulse_back, _anim.impulse_front)
+	if _anim.reset_velocities: skate_physics.reset_velocities()
+	skate_physics.apply_impulse(_anim.impulse_back, _anim.impulse_front)
 
 	_confirm_trick()
 
@@ -118,21 +116,21 @@ func _cancel_tricks() -> void:
 	
 func _successfully_catched(_dt: float) -> void:
 	if not catch_pressed:
-		parent.velocity_back = min(parent.velocity_back, catch_start_speed)
-		parent.velocity_front = min(parent.velocity_front, catch_start_speed)
-		parent.reset_orientation()
+		skate_physics.velocity_back = min(skate_physics.velocity_back, catch_start_speed)
+		skate_physics.velocity_front = min(skate_physics.velocity_front, catch_start_speed)
+		skate_physics.reset_orientation()
 		#_confirm_trick()
-		$"../../SFX/Catch".play(0.05)
-		if parent.impulsed_timer <= 0: 
+		#$"../../SFX/Catch".play(0.05)
+		if skate_physics.impulsed_timer <= 0: 
 			TrickManager.validate_xp()
 		
-	parent.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
+	skate_physics.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
 	trick_catched = true
 	catch_pressed = true
 
 func can_catch() -> bool:
 	var prog := TrickManager.get_progression()
-	return prog >= trick_cancel_end and prog > trick_catchable_start and not parent.is_grounded()
+	return prog >= trick_cancel_end and prog > trick_catchable_start and not skate_physics.is_grounded()
 	
 func _on_trick_catched(_progression: float, _dt: float) -> void:
 	# On Cancel
@@ -140,11 +138,11 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		_cancel_tricks()
 		return
 		
-	#if (_progression > trick_catchable_start and parent.is_grounded() and parent.impulsed_timer <= 0):
+	#if (_progression > trick_catchable_start and skate_physics.is_grounded() and skate_physics.impulsed_timer <= 0):
 		#TrickManager.validate_xp()
 		
 	# Successful Catch
-	if _progression > trick_catchable_start and not parent.is_grounded():
+	if _progression > trick_catchable_start and not skate_physics.is_grounded():
 		_cancel_tricks()
 		_successfully_catched(_dt)
 		return
@@ -153,4 +151,4 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 	if trick_catched: return
 		
 	print(_progression)
-	MapLoader.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)
+	GameManager.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)

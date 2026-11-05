@@ -1,0 +1,412 @@
+[gd_scene format=3 uid="uid://bwvau03vnk7bb"]
+
+[ext_resource type="Script" uid="uid://cbv8stkrtn8ru" path="res://scripts/main_managers/map_loader.gd" id="1_a47ne"]
+[ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="2_qshxn"]
+[ext_resource type="PackedScene" uid="uid://i8wl7n8qas82" path="res://sections/section_rail_2.tscn" id="3_0rqnr"]
+[ext_resource type="PackedScene" uid="uid://briofgnybt16n" path="res://sections/section_ramp_1.tscn" id="4_jst68"]
+[ext_resource type="PackedScene" uid="uid://cidsrnocieany" path="res://sections/section_ramp_2.tscn" id="5_xmxvq"]
+[ext_resource type="PackedScene" uid="uid://bxjsr5t8tqo5q" path="res://sections/section_ramp_3.tscn" id="6_e1t68"]
+[ext_resource type="PackedScene" uid="uid://wh5nmjkf5hu1" path="res://sections/section_ramp_4.tscn" id="7_wfdly"]
+[ext_resource type="PackedScene" uid="uid://55ciu1ybrl1o" path="res://sections/section_empty.tscn" id="8_5k0m8"]
+[ext_resource type="Script" uid="uid://vsj75ecd4be1" path="res://scripts/main_managers/game_manager.gd" id="9_js0h6"]
+[ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate_template.tscn" id="10_vxw8k"]
+[ext_resource type="PackedScene" uid="uid://b66n7507tsgkp" path="res://prefabs/skate_ragdoll_template.tscn" id="11_54hnc"]
+[ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/static_camera.gd" id="30_7oq1k"]
+[ext_resource type="Environment" uid="uid://cmks0nm0sqiqg" path="res://sky/main_environment.tres" id="31_blaph"]
+[ext_resource type="Script" uid="uid://v3s70tvc6v62" path="res://scripts/skybox_ratio.gd" id="32_ri4in"]
+[ext_resource type="Material" uid="uid://d34r84cfcwtw3" path="res://sky/main_sky_material.tres" id="33_ky5ee"]
+[ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="34_nk8o4"]
+[ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="35_ckq6w"]
+[ext_resource type="Script" uid="uid://m4e2eeucc7qd" path="res://scripts/UI/pause_ui.gd" id="35_qshxn"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="36_qxk33"]
+[ext_resource type="Shader" uid="uid://bk5hvsujij6nr" path="res://shaders/sky_canvas.gdshader" id="37_fnset"]
+[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="38_d6x1c"]
+[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="39_tua6t"]
+[ext_resource type="Script" uid="uid://dc0qunlfonhe6" path="res://scripts/UI/endscreen_ui.gd" id="40_0sji7"]
+[ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="41_n656w"]
+[ext_resource type="AudioStream" uid="uid://b7yvn1nwfygf5" path="res://audio/fingertrick.mp3" id="42_se55i"]
+[ext_resource type="AudioStream" uid="uid://cpf3mv1wfo53x" path="res://audio/stop.mp3" id="43_7jgrc"]
+[ext_resource type="AudioStream" uid="uid://c216etn8vteih" path="res://audio/ok.mp3" id="44_8rtgc"]
+[ext_resource type="AudioStream" uid="uid://c3y0pli1lmtg3" path="res://audio/rail.mp3" id="45_mjvfs"]
+[ext_resource type="AudioStream" uid="uid://dmwq5bp2hf8gn" path="res://audio/nice.mp3" id="46_s6gnh"]
+[ext_resource type="AudioStream" uid="uid://doikql1wh2wnj" path="res://audio/mort.mp3" id="47_pge5s"]
+[ext_resource type="AudioStream" uid="uid://bi3q06tnk8eat" path="res://audio/legendary.mp3" id="48_738e7"]
+[ext_resource type="AudioStream" uid="uid://cvnwvbl7q806w" path="res://audio/jump.mp3" id="49_r6vpo"]
+[ext_resource type="AudioStream" uid="uid://c1sk7y8myvq6j" path="res://audio/catch.mp3" id="50_u6lce"]
+[ext_resource type="AudioStream" uid="uid://o1nrqjuv3ak1" path="res://audio/amazing.mp3" id="51_wenn3"]
+[ext_resource type="AudioStream" uid="uid://dawyj0alt0gya" path="res://audio/epic.mp3" id="52_hpw7f"]
+[ext_resource type="AudioStream" uid="uid://01xk2iuk0yyf" path="res://audio/godlike.mp3" id="53_2cc6y"]
+[ext_resource type="AudioStream" uid="uid://cg84onv3ff72v" path="res://audio/great.mp3" id="54_x7nui"]
+[ext_resource type="AudioStream" uid="uid://y0f5r337yt2t" path="res://audio/crazy.mp3" id="55_anijw"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_5o71f"]
+dof_blur_far_distance = 118.47
+dof_blur_far_transition = 100.0
+dof_blur_near_distance = 27.3
+dof_blur_near_transition = -1.0
+dof_blur_amount = 0.04
+
+[sub_resource type="Curve" id="Curve_p1m0m"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.096573204, 0.6209677), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3o3sw"]
+shader = ExtResource("35_ckq6w")
+shader_parameter/blur_amount = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37qun"]
+shader = ExtResource("37_fnset")
+shader_parameter/backgroundColor = Color(0.18431373, 0.41960785, 0.76862746, 1)
+shader_parameter/imageColor = Color(0.3647059, 0.59607846, 0.9411765, 1)
+shader_parameter/image2Color = Color(0.70980394, 0.827451, 1, 1)
+shader_parameter/image = ExtResource("38_d6x1c")
+shader_parameter/image2 = ExtResource("39_tua6t")
+shader_parameter/scale = 0.08
+shader_parameter/padding = Vector2(1.22, 1.23)
+shader_parameter/vitesse = Vector2(0.777, -0.51)
+shader_parameter/opacite = 1.0
+shader_parameter/decalage_colonne = 1.745
+
+[node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container")]
+script = ExtResource("1_a47ne")
+spawn_distance = 300
+kill_distance = 60
+angle = 0.0
+speed = 35.0
+speed_increase_rate = 0.005
+container = NodePath("GroundContainer")
+sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly")])
+empty_section = ExtResource("8_5k0m8")
+
+[node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("restart_lag_timer", "skate", "skate_ragdoll")]
+script = ExtResource("9_js0h6")
+restart_lag_timer = NodePath("RestartLag")
+skate = NodePath("../Skate")
+skate_ragdoll = NodePath("../SkateRagdoll")
+
+[node name="RestartLag" type="Timer" parent="GameManager" unique_id=1344687735]
+one_shot = true
+
+[node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
+transform = Transform3D(-3.365777e-08, 0, 0.77, 0, 0.77, 0, -0.77, 0, -3.365777e-08, 0, 3.5, 0)
+
+[node name="Skate" parent="." unique_id=38373150 instance=ExtResource("10_vxw8k")]
+transform = Transform3D(-3.365777e-08, 0, 0.77, 0, 0.77, 0, -0.77, 0, -3.365777e-08, 0, 3.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=483684695 node_paths=PackedStringArray("target", "skate")]
+transform = Transform3D(0.59655654, 0.5615719, -0.5733737, 0, 0.7144211, 0.6997161, 0.80257106, -0.4174202, 0.42619258, -6.7924123, 14.084747, 6.004562)
+attributes = SubResource("CameraAttributesPractical_5o71f")
+fov = 66.2
+near = 0.2
+script = ExtResource("30_7oq1k")
+target = NodePath("../CameraTarget")
+skate = NodePath("../Skate")
+distance = 25.51
+angles = Vector2(-2.535, -0.485)
+offset = Vector3(3.815, 1.14, -1.88)
+skate_min_height = 7.0
+lerp_speed_multiplier = 5.0
+impact_strength = 0.545
+impact_curve = SubResource("Curve_p1m0m")
+impact_duration = 1.0
+impact_max_combo = 7
+
+[node name="CameraTarget" type="Node3D" parent="." unique_id=529490608]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=691525223]
+environment = ExtResource("31_blaph")
+script = ExtResource("32_ri4in")
+sky_mat = ExtResource("33_ky5ee")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2012255489]
+transform = Transform3D(-0.5055673, 0.63080204, 0.58863425, -0.11391028, -0.7250761, 0.6791826, 0.8552345, 0.27632093, 0.4384297, -1.1963387, 3.8094516, 0)
+shadow_enabled = true
+shadow_opacity = 0.55
+shadow_blur = 0.0
+directional_shadow_split_1 = 0.208
+directional_shadow_split_2 = 0.422
+directional_shadow_split_3 = 0.644
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
+directional_shadow_pancake_size = 22.7
+
+[node name="GroundContainer" type="Node3D" parent="." unique_id=474625706]
+
+[node name="MainAudio" type="AudioStreamPlayer" parent="." unique_id=2027468421]
+stream = ExtResource("42_se55i")
+volume_db = -10.0
+autoplay = true
+
+[node name="SFX" type="Node" parent="." unique_id=291289615]
+
+[node name="STOP PLEASE" type="AudioStreamPlayer" parent="SFX" unique_id=1913514310]
+stream = ExtResource("43_7jgrc")
+volume_db = -1.0
+
+[node name="Ok" type="AudioStreamPlayer" parent="SFX" unique_id=1393909303]
+stream = ExtResource("44_8rtgc")
+volume_db = 5.0
+
+[node name="Rail" type="AudioStreamPlayer" parent="SFX" unique_id=1653412726]
+stream = ExtResource("45_mjvfs")
+volume_db = 24.0
+
+[node name="Nice!" type="AudioStreamPlayer" parent="SFX" unique_id=2053019184]
+stream = ExtResource("46_s6gnh")
+volume_db = 5.0
+
+[node name="Mort" type="AudioStreamPlayer" parent="SFX" unique_id=100031872]
+stream = ExtResource("47_pge5s")
+volume_db = 10.0
+
+[node name="Legendary!!!" type="AudioStreamPlayer" parent="SFX" unique_id=1623831714]
+stream = ExtResource("48_738e7")
+volume_db = 4.0
+
+[node name="Jump" type="AudioStreamPlayer" parent="SFX" unique_id=2016010652]
+stream = ExtResource("49_r6vpo")
+volume_db = 10.0
+
+[node name="Catch" type="AudioStreamPlayer" parent="SFX" unique_id=2076263500]
+stream = ExtResource("50_u6lce")
+volume_db = -5.0
+
+[node name="Amazing!" type="AudioStreamPlayer" parent="SFX" unique_id=771814367]
+stream = ExtResource("51_wenn3")
+volume_db = 4.0
+
+[node name="Epic!!!" type="AudioStreamPlayer" parent="SFX" unique_id=1630445451]
+stream = ExtResource("52_hpw7f")
+volume_db = 2.0
+
+[node name="GODLIKE" type="AudioStreamPlayer" parent="SFX" unique_id=1210249202]
+stream = ExtResource("53_2cc6y")
+volume_db = 3.0
+
+[node name="Great!" type="AudioStreamPlayer" parent="SFX" unique_id=2013314048]
+stream = ExtResource("54_x7nui")
+volume_db = 5.0
+
+[node name="Crazy!" type="AudioStreamPlayer" parent="SFX" unique_id=2132270058]
+stream = ExtResource("55_anijw")
+volume_db = 2.0
+
+[node name="UI" type="Control" parent="." unique_id=1938638467]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StreakPanel" parent="UI" unique_id=199057457 instance=ExtResource("34_nk8o4")]
+layout_mode = 1
+popup_color = Color(0.9607843, 0.654902, 0.2901961, 1)
+
+[node name="PauseLayer" type="CanvasLayer" parent="UI" unique_id=243726203]
+visible = false
+script = ExtResource("35_qshxn")
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="UI/PauseLayer" unique_id=1808567820]
+position = Vector2(576, 324.5)
+scale = Vector2(5.76, 3.215)
+copy_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="UI/PauseLayer/BackBufferCopy" unique_id=1437553092]
+material = SubResource("ShaderMaterial_3o3sw")
+offset_left = -99.826385
+offset_top = -100.93313
+offset_right = 100.1736
+offset_bottom = 100.62208
+
+[node name="Label" type="Label" parent="UI/PauseLayer" unique_id=1928187016]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -256.0
+offset_top = 141.0
+offset_right = 256.0
+offset_bottom = 254.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("36_qxk33")
+theme_override_font_sizes/font_size = 74
+text = "Pause"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="UI/PauseLayer" unique_id=202121254]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -256.0
+offset_top = 252.0
+offset_right = 256.0
+offset_bottom = 365.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("36_qxk33")
+theme_override_font_sizes/font_size = 40
+text = "ESC to resume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainBackground" type="CanvasLayer" parent="UI" unique_id=1399466621]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="UI/MainBackground" unique_id=2003284729]
+material = SubResource("ShaderMaterial_37qun")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="EndScreen" type="Node" parent="UI" unique_id=1515080538 node_paths=PackedStringArray("input_suggestion_label", "input_suggestion_timer", "points_earned_label")]
+script = ExtResource("40_0sji7")
+input_suggestion_label = NodePath("InputSuggestion")
+input_suggestion_timer = NodePath("InputSuggestion/InputAlternateTimer")
+points_earned_label = NodePath("PointsEarned")
+
+[node name="InputSuggestion" type="Label" parent="UI/EndScreen" unique_id=1666461984]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -62.0
+offset_right = 574.5
+offset_bottom = 222.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("36_qxk33")
+theme_override_font_sizes/font_size = 31
+text = "Hold F And H"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InputAlternateTimer" type="Timer" parent="UI/EndScreen/InputSuggestion" unique_id=58528195]
+wait_time = 0.5
+
+[node name="PointsEarned" type="Label" parent="UI/EndScreen" unique_id=893113799]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -142.0
+offset_right = 574.5
+offset_bottom = 142.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("36_qxk33")
+theme_override_font_sizes/font_size = 60
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuestInputs(deprecated)" type="Node" parent="UI" unique_id=1930562873]
+
+[node name="Input1" parent="UI/QuestInputs(deprecated)" unique_id=7957100 instance=ExtResource("41_n656w")]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -333.0
+offset_top = 37.0
+offset_right = -333.0
+offset_bottom = 37.0
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Input2" parent="UI/QuestInputs(deprecated)" unique_id=1297023805 instance=ExtResource("41_n656w")]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -215.0
+offset_top = 37.0
+offset_right = -215.0
+offset_bottom = 37.0
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Input3" parent="UI/QuestInputs(deprecated)" unique_id=506145894 instance=ExtResource("41_n656w")]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -97.0
+offset_top = 37.0
+offset_right = -97.0
+offset_bottom = 37.0
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Input4" parent="UI/QuestInputs(deprecated)" unique_id=703435643 instance=ExtResource("41_n656w")]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 21.0
+offset_top = 37.0
+offset_right = 21.0
+offset_bottom = 37.0
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Input5" parent="UI/QuestInputs(deprecated)" unique_id=502797229 instance=ExtResource("41_n656w")]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 132.0
+offset_top = 37.0
+offset_right = 132.0
+offset_bottom = 37.0
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Input6" parent="UI/QuestInputs(deprecated)" unique_id=328165781 instance=ExtResource("41_n656w")]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 250.0
+offset_top = 37.0
+offset_right = 250.0
+offset_bottom = 37.0
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+
+[node name="Inputs" type="Control" parent="UI/QuestInputs(deprecated)" unique_id=481270804]
+visible = false
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -2.3079224
+offset_right = 1.0
+offset_bottom = 3.3079834
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset_ratio = Vector2(1, 1)
+
+[connection signal="timeout" from="GameManager/RestartLag" to="GameManager" method="_on_restart_lag_timeout"]
+[connection signal="timeout" from="GameManager/RestartLag" to="UI/EndScreen" method="_on_restart_lag_timeout"]
+[connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]

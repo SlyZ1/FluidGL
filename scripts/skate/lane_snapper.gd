@@ -2,6 +2,7 @@ extends Node
 
 class_name LaneSnapper
 
+@export var skate_physics: SkatePhysics
 @export var lane_position: float = 5
 
 var _lane_tween: Tween
@@ -13,11 +14,11 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	# Snap To Lane
-	if (abs(get_parent().global_position.z - lane_position) > 0.1 
+	if (abs(skate_physics.global_position.z - lane_position) > 0.1 
 		and (_lane_tween == null or !_lane_tween.is_valid() or !_lane_tween.is_running())
 		and _snap
 	):
-		if get_parent().global_position.z <= 0: _on_go_left()
+		if skate_physics.global_position.z <= 0: _on_go_left()
 		else: _on_go_right()
 		
 func toggle(snap: bool) -> void:
@@ -28,11 +29,11 @@ func kill_tween() -> void:
 		_lane_tween.kill()
 
 func _on_go_left(force: bool = false) -> void:
-	if not force and get_parent().is_grounded(): return
+	if not force and skate_physics.is_grounded(): return
 	_lane_tween = create_tween()
-	_lane_tween.tween_property(get_parent(), "global_position:z", -lane_position, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_lane_tween.tween_property(skate_physics, "global_position:z", -lane_position, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
 func _on_go_right(force: bool = false) -> void:
-	if not force and get_parent().is_grounded(): return
+	if not force and skate_physics.is_grounded(): return
 	_lane_tween = create_tween()
-	_lane_tween.tween_property(get_parent(), "global_position:z", lane_position, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_lane_tween.tween_property(skate_physics, "global_position:z", lane_position, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)

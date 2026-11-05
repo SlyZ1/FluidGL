@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dqi8e4nn6yni4"]
 
-[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate/skate_orientation.gd" id="1_sgunh"]
+[ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate/skate_physics.gd" id="1_sgunh"]
 [ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/skate/anim_controller.gd" id="2_2wimw"]
 [ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
 [ext_resource type="Script" uid="uid://c0lmnpo3d6tr6" path="res://scripts/skate/rail_controller.gd" id="4_v6g56"]
@@ -46,7 +46,7 @@ shader_parameter/clr = SubResource("GradientTexture1D_55io4")
 shader_parameter/imp = 0.0
 shader_parameter/noise = SubResource("NoiseTexture2D_55io4")
 
-[node name="SkateNode" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
+[node name="Skate" type="Node3D" unique_id=38373150 node_paths=PackedStringArray("capteur_back", "capteur_front", "capteur_mesh", "capteur_ground", "mesh_instance")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 script = ExtResource("1_sgunh")
 capteur_back = NodePath("CapteurBack")
@@ -81,20 +81,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5538435e-08, 0, -0.35547793
 shape = SubResource("BoxShape3D_q1d6x")
 target_position = Vector3(0, 0, 0.365)
 
-[node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("mesh_instance")]
+[node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("skate_physics", "mesh_instance")]
 script = ExtResource("2_2wimw")
+skate_physics = NodePath("..")
 trick_cancel_end = 0.08
 trick_catchable_start = 0.2
 trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
 
-[node name="RailController" type="Node" parent="." unique_id=1946039828 node_paths=PackedStringArray("lane_snapper", "anim_controller")]
+[node name="RailController" type="Node" parent="." unique_id=1946039828 node_paths=PackedStringArray("skate_physics", "lane_snapper", "anim_controller")]
 script = ExtResource("4_v6g56")
+skate_physics = NodePath("..")
 lane_snapper = NodePath("../LaneSnapper")
 anim_controller = NodePath("../AnimController")
 
-[node name="LaneSnapper" type="Node" parent="." unique_id=1734990674]
+[node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("skate_physics")]
 script = ExtResource("5_xumek")
+skate_physics = NodePath("..")
 
 [node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller")]
 script = ExtResource("5_wfreb")

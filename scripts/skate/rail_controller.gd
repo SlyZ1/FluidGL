@@ -2,6 +2,7 @@ extends Node
 
 class_name RailController
 
+@export var skate_physics: SkatePhysics
 @export var lane_snapper: LaneSnapper
 @export var anim_controller: AnimController
 @export var rail_xp_rate: float = 1
@@ -24,23 +25,18 @@ var _rail_pose_cible: Quaternion = Quaternion.IDENTITY
 var _rail_weight_tween: Tween
 var _rail_cote_cible: float = 1.0
 
-var _parent: Node3D
-
 var _current_rail: Path3D
 var _prev_rail: Path3D
 
 var is_on_rail: bool
 var _exit_rail_timer: float = 0
 
-func _ready() -> void:
-	_parent = get_parent()
-
 func touches_path(rail: Path3D) -> float:
-	var zyt: Vector3 = get_zy_from_x(rail, _parent.global_position.x)
+	var zyt: Vector3 = get_zy_from_x(rail, skate_physics.global_position.x)
 	if zyt.z == -1:
 		return -INF
-	var dy: float = _parent.global_position.y - zyt.y
-	var dz: float = abs(_parent.global_position.z - zyt.x) 
+	var dy: float = skate_physics.global_position.y - zyt.y
+	var dz: float = abs(skate_physics.global_position.z - zyt.x) 
 	if dz <= rail_z_thresh and dy <= rail_y_thresh and dy >= -2:
 		return zyt.z
 	else:
@@ -112,7 +108,7 @@ func _calc_rail_pose() -> Quaternion:
 	var angles: Vector3 = rail_slide_angles * PI / 180.0
 	angles.x *= _rail_cote  # inclinaison vers l'intérieur du virage
 	if rail_suivre_direction:
-		angles.y -= atan(_rail_pente(_current_rail, _parent.global_position.x))
+		angles.y -= atan(_rail_pente(_current_rail, skate_physics.global_position.x))
 	return Quaternion.from_euler(angles)
 
 func _tween_rail_weight(cible: float) -> void:
@@ -126,18 +122,18 @@ func _rail_vitesse_verticale(rail: Path3D, x: float) -> float:
 	var a: float = get_zy_from_x(rail, x - h).y
 	var b: float = get_zy_from_x(rail, x + h).y
 	var pente: float = (b - a) / (2.0 * h)   # dy/dx
-	var v: Vector3 = MapLoader.s_speed
+	var v: Vector3 = MapLoader.instance.speed_vector
 	return pente * v.x - v.y
 
 func _rail_logic(delta: float):
 	_find_rail()
 	is_on_rail = false
 	if _current_rail:
-		var zyt := get_zy_from_x(_current_rail, _parent.global_position.x)
+		var zyt := get_zy_from_x(_current_rail, skate_physics.global_position.x)
 		if zyt.z > 1 or zyt.z < 0: 
 			# When Fall from rail
 			$"../../SFX/Rail".stop()
-			if zyt.z > 1 and _prev_rail: _parent.reset_velocities()
+			if zyt.z > 1 and _prev_rail: skate_physics.reset_velocities()
 			_current_rail = null
 			_prev_rail = _current_rail
 			return
@@ -149,14 +145,14 @@ func _rail_logic(delta: float):
 				if _exit_rail_timer > 0: 
 					_current_rail = null
 					return
-				MapLoader.instance.stop()
+				GameManager.instance.stop()
 			# When jump from rail
 			else: 
 				$"../../SFX/Rail".stop()
-				_parent.reset_velocities()
-				var impulse := _rail_vitesse_verticale(_current_rail, _parent.global_position.x)
+				skate_physics.reset_velocities()
+				var impulse := _rail_vitesse_verticale(_current_rail, skate_physics.global_position.x)
 				impulse = min(impulse, 40)
-				_parent.apply_impulse(impulse, impulse)
+				skate_physics.apply_impulse(impulse, impulse)
 				_current_rail = null
 				_prev_rail = _current_rail
 				_exit_rail_timer = 0.1
@@ -166,7 +162,7 @@ func _rail_logic(delta: float):
 			$"../../SFX/Rail".play(0.)
 			TrickManager.add_trick_count()
 			TrickManager.set_possible_tricks(["instable_saut"])
-			_rail_offset = Vector2(_parent.global_position.z - zyt.x, _parent.global_position.y - zyt.y)
+			_rail_offset = Vector2(skate_physics.global_position.z - zyt.x, skate_physics.global_position.y - zyt.y)
 			_rail_offset_weight = 1.0
 			if _rail_tween and _rail_tween.is_valid():
 				_rail_tween.kill()
@@ -180,12 +176,12 @@ func _rail_logic(delta: float):
 				
 		is_on_rail = true
 				
-		_parent.reset_orientation()
-		_parent.global_position.z = zyt.x + _rail_offset.x * _rail_offset_weight
-		_parent.global_position.y = zyt.y + _rail_offset.y * _rail_offset_weight
+		skate_physics.reset_orientation()
+		skate_physics.global_position.z = zyt.x + _rail_offset.x * _rail_offset_weight
+		skate_physics.global_position.y = zyt.y + _rail_offset.y * _rail_offset_weight
 			
 	if _current_rail == null and _prev_rail != null:
-		_parent.reset_velocities()
+		skate_physics.reset_velocities()
 			
 	_prev_rail = _current_rail
 	
@@ -198,7 +194,7 @@ func _process(dt: float) -> void:
 	var inversion: float = -1.0 if false else 1.0
 
 	if est_sur_rail:
-		var k: float = _rail_courbure(_current_rail, _parent.global_position.x)
+		var k: float = _rail_courbure(_current_rail, skate_physics.global_position.x)
 		if absf(k) > rail_seuil_courbure:
 			_rail_cote_cible = signf(k) * inversion
 

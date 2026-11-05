@@ -1,5 +1,7 @@
 extends Node3D
 
+class_name SkatePhysics
+
 @export var capteur_back: ShapeCast3D
 @export var capteur_front: ShapeCast3D
 @export var capteur_mesh: ShapeCast3D
@@ -36,7 +38,7 @@ func _ready() -> void:
 	_mesh_scale = mesh_instance.basis.get_scale()
 
 func _limit_rotation(direction: Vector3) -> Vector3:
-	var up: Vector3 = MapLoader.up()
+	var up: Vector3 = MapLoader.instance.up()
 
 	var horizontal: Vector3 = direction - up * direction.dot(up)
 	var longueur_h: float = horizontal.length()
@@ -166,12 +168,11 @@ func _corriger_roue(capteur: ShapeCast3D, p: Vector3) -> float:
 	var g: Vector3 = capteur.get_collision_point(i)
 	var n: Vector3 = capteur.get_collision_normal(i)
 	if n.y < slope_thresh:
-		print(n.y)
-		MapLoader.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
+		GameManager.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
 		return 0
 	return g.y + (rayon - n.x * (p.x - g.x) - n.z * (p.z - g.z)) / n.y
 
-func _ground_snap(dt: float) -> void:
+func _ground_snap(_dt: float) -> void:
 	var p_back: Vector3 = capteur_back.global_position
 	var p_front: Vector3 = capteur_front.global_position
 	var corrige_back: bool = false
@@ -189,8 +190,8 @@ func _ground_snap(dt: float) -> void:
 		var n_back: Vector3 = capteur_back.get_collision_normal(_get_most_up_normal(capteur_back))
 		corrige_back = true
 		normal += n_back
-		var theta_back: float = acos(n_back.dot(-MapLoader.s_speed.normalized()))
-		velocity_back = MapLoader.s_speed.length() / tan(theta_back)
+		var theta_back: float = acos(n_back.dot(-MapLoader.instance.speed_vector.normalized()))
+		velocity_back = MapLoader.instance.speed_vector.length() / tan(theta_back)
 		velocity_back = max(velocity_back, -10.0)
 
 	var y_front: float = _corriger_roue(capteur_front, p_front)
@@ -200,8 +201,8 @@ func _ground_snap(dt: float) -> void:
 		var n_front: Vector3 = capteur_front.get_collision_normal(_get_most_up_normal(capteur_front))
 		corrige_front = true
 		normal += n_front 
-		var theta_front: float = acos(n_front.dot(-MapLoader.s_speed.normalized()))
-		velocity_front = MapLoader.s_speed.length() / tan(theta_front)
+		var theta_front: float = acos(n_front.dot(-MapLoader.instance.speed_vector.normalized()))
+		velocity_front = MapLoader.instance.speed_vector.length() / tan(theta_front)
 		velocity_front = max(velocity_front, -10.0)
 
 	if corrige_back or corrige_front:

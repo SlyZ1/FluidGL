@@ -10,29 +10,14 @@ class_name MapLoader
 @export var container: Node3D
 @export var sections: Array[PackedScene]
 @export var empty_section: PackedScene
-@export var skate: Node3D
-@export var ragdoll: RigidBody3D
-@export var substep: float = 1.0 / 300.0
-@export var max_steps_par_frame: int = 30
 @export_range(0,1) var empty_ratio: float = 0.3
 
-@onready var freezed_skate : Node3D
-@onready var initial_skate_pos :Vector3 = $Skate.global_position
-
-signal on_stop
-
-func set_active(node: Node3D, active: bool) -> void:
-	node.visible = active
-	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
-
 var is_running: bool = true
-var speed_ref : float
 var ready_to_restart := false
 
 var _step_accumulateur: float = 0
 
-static var s_speed: Vector3 = Vector3.ZERO
-static var s_angle: float = 0
+var speed_vector: Vector3 = Vector3.ZERO
 
 var _speed_xp_accel: float = 1
 
@@ -57,42 +42,23 @@ func _exit_tree() -> void:
 func _ready() -> void:
 	_next_spawn = _new_section(Vector3.ZERO, true)
 	TrickManager.xp_changed.connect(_on_xp_changed)
-	set_active(ragdoll, false)
-	set_active(skate, true)
-	freezed_skate = $Skate.duplicate()
-	freezed_skate.process_mode = Node.PROCESS_MODE_DISABLED
+	GameManager.instance.on_stop.connect(_on_stop)
+	GameManager.instance.on_start.connect(_on_start)
 
 func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
-
-func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
-	$SFX/Mort.play()
-	on_stop.emit()
-	is_running = false
-	if not no_ragdoll:
-		ragdoll.global_transform = skate.global_transform
-		set_active(ragdoll, true)
-		
-		var impulse: Vector3 = impulse_direction if impulse_direction != Vector3.ZERO else (Vector3.UP + Vector3.FORWARD).normalized() * 12
-		ragdoll.apply_central_impulse(impulse)
-		
-		var axe := Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
-		ragdoll.apply_torque_impulse(axe * 10)
-		set_active(skate, false)
-
-		$RestartLag.start()
-
-	else:
-		skate.process_mode = Node.PROCESS_MODE_DISABLED
-
-	speed_ref = speed
-	create_tween().tween_property(self, "speed", 0.0, 2.0)
-
-static func right() -> Vector3:
-	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.RIGHT
 	
-static func up() -> Vector3:
-	return Basis.from_euler(Vector3(0, 0, deg_to_rad(s_angle))) * Vector3.UP
+func _on_stop() -> void:
+	create_tween().tween_property(self, "speed", 0.01, 2.0)
+	
+func _on_start() -> void:
+	_speed_xp_accel = 1
+
+func right() -> Vector3:
+	return Basis.from_euler(Vector3(0, 0, deg_to_rad(angle))) * Vector3.RIGHT
+	
+func up() -> Vector3:
+	return Basis.from_euler(Vector3(0, 0, deg_to_rad(angle))) * Vector3.UP
 
 func _new_section(snap_to: Vector3, empty := false) -> Section:
 	var index: int = randi() % sections.size()
@@ -134,51 +100,13 @@ func _control_spawn(should_spawn_empty := false):
 		front_section.queue_free()
 		_spawned_sections.pop_front()
 
-func _control_speed(delta: float):
+func control_speed(delta: float):
 	for section: Section in _spawned_sections:
 		section.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
 	if _next_spawn: _next_spawn.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
-	if _spawned_sections.size() > 0: s_speed = speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
+	if _spawned_sections.size() > 0: speed_vector = speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("pause"):
-		if not $UI/PauseLayer.visible:
-			Engine.time_scale = 0
-			$UI/PauseLayer.visible = true
-		else:
-			Engine.time_scale = 1
-			$UI/PauseLayer.visible = false
-	s_angle = angle
+func _process(_delta: float) -> void:
 	container.rotation_degrees.z = angle
 	_control_spawn()
-	
-	_step_accumulateur += delta
-	var steps: int = 0
-	while _step_accumulateur >= substep and steps < max_steps_par_frame:
-		_control_speed(substep)
-		if skate and skate.can_process() and skate.has_method("step"):
-			skate.step(substep)
-		_step_accumulateur -= substep
-		steps += 1
-
-	if ready_to_restart and TrickManager.get_catch_pressed():
-		waiting_for_restart = false
-		ready_to_restart = false
-		
-		TrickManager._points = 0
-		TrickManager._xp = 0
-		TrickManager._xp_buffer = 0
-		TrickManager._tier = 0
-		get_tree().change_scene_to_file("res://scenes/skate_prototype.tscn")
-
-	if waiting_for_restart and not TrickManager.get_catch_pressed():
-		ready_to_restart = true
-
-func _on_holdfh_timeout() -> void:
-	$UI/Label2.visible = not $UI/Label2.visible
-
-func _on_restart_lag_timeout() -> void:
-	waiting_for_restart = true
-	$UI/Label2/Timer.start()
-	$UI/Label3.text = "POINTS EARNED: %d" % TrickManager._points

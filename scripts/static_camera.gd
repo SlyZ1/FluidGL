@@ -45,7 +45,7 @@ func _ready() -> void:
 	_update()
 	_target_distance = distance
 	_actual_distance = distance
-	MapLoader.instance.on_stop.connect(_on_stop)
+	GameManager.instance.on_stop.connect(_on_stop)
 	TrickManager.trick_validated.connect(_create_impact)
 
 # Fonction pour rotate la cam

@@ -15,12 +15,14 @@ func _on_catch(_progression: float, _dt: float) -> void:
 	_reset_quest()
 
 func _on_quest_end_timeout() -> void:
+	if not GameManager.instance.game_started: return
 	_move_quests(680)
 	_current_quest = null
 	_quest_progression = 0
 	$NewQuest.start()
 
 func _on_trick(_name: String, _accuracy: float) -> void:
+	if not GameManager.instance.game_started: return
 	if not _current_quest: return
 
 	if _name == _current_quest.steps[_quest_progression]:
@@ -37,6 +39,7 @@ func _on_trick(_name: String, _accuracy: float) -> void:
 		_reset_quest()
 
 func _on_new_quest_timeout() -> void:
+	if not GameManager.instance.game_started: return
 	_current_quest = quests.pick_random()
 	while _current_quest.reward > 100 and not completed_first_quest:
 		_current_quest = quests.pick_random()
@@ -48,11 +51,13 @@ func _on_new_quest_timeout() -> void:
 	$QuestEnd.start()
 
 func _move_quests(target_y: float) -> void:
+	if not GameManager.instance.game_started: return
 	for i in range(len(_current_quest.steps)):
 		var whom = get_node("../UI/Input" + str(i + 1))
 		get_tree().create_tween().tween_property(whom, "position:y", target_y, 1.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT).set_delay(0.3 * i)
 
 func _reset_quest() -> void:
+	if not GameManager.instance.game_started: return
 	for i in range(_quest_progression):
 		get_node("../UI/Input" + str(i + 1)).incorrect()
 	_quest_progression = 0
