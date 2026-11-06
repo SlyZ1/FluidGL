@@ -27,7 +27,7 @@ function(set_common_target_options target)
     else()
         target_compile_options(${target} PRIVATE -Wall -Wextra -fopenmp)
     endif()
-    target_compile_features(${target} PRIVATE cxx_std_17)
+    target_compile_features(${target} PRIVATE cxx_std_20)
 endfunction()
 
 # Get libraries directly from their repo

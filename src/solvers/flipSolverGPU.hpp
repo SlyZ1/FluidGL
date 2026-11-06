@@ -12,6 +12,8 @@
 #include "configs/flipSolverGPUConfig.hpp"
 #include "particleSolver.hpp"
 
+#include "objects/mesh.hpp"
+
 class FlipSolverGPU : public IParticleSolver {
 private:
     CGS m_cgs = {};
@@ -125,9 +127,7 @@ private:
     StatIndex m_numPartStatIndex = 0;
     StatIndex m_numCellsStatIndex = 0;
 
-    glm::vec2 m_obstaclePos = glm::vec2(0.f);
-    glm::vec2 m_obstacleVel = glm::vec2(0.f);
-    float m_obstacleRadius = 0.f;
+    std::weak_ptr<Mesh> m_obstacle = {};
     
     std::vector<std::vector<int>> m_particlesInGrid = {};
 
@@ -153,7 +153,7 @@ private:
 
     void integrateParticles();
     void pushAppartParticles(int iterations);
-    void particleCollisions();
+    void particleCollisions(std::shared_ptr<Mesh> obstacle);
     void particlesToGrid();
     void surfaceTension();
     void solveIncompressibility(int iterations, float tol, bool useCGS = true);
@@ -173,7 +173,7 @@ public:
     std::shared_ptr<GLuint> getVelBuffer() const override { return std::make_shared<GLuint>(m_partVelBuffer); };
     std::shared_ptr<GLuint> getPartNBuffer() const { return std::make_shared<GLuint>(m_aliveNBuffer); };
 
-    void updateObstacle(glm::vec2 pos, glm::vec2 vel, float radius);
+    void setObstacle(std::weak_ptr<Mesh> obstacle) { m_obstacle = obstacle; }
 
     const FlipSolverGPUConfig& getConfig() const override {
         return m_config; 

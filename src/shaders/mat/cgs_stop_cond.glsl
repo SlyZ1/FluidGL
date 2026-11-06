@@ -14,10 +14,11 @@ uniform int rTr0ValueIndex;
 uniform int numScalars;
 uniform int numIndirectParams;
 uniform float tol;
+uniform uint accuracyFirst;
 
 void main(){
     float rTr = scalars[rTrIndex];
-    float target = max(tol/* * tol * scalars[bTbIndex]*/, 1e-30);
+    float target = accuracyFirst == 1u ? tol : max(tol, tol * tol * scalars[bTbIndex]);
 
     if (!(rTr > target)){
         for(int i = 0; i < 3 * numIndirectParams; i++) {

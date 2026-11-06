@@ -9,8 +9,7 @@
 #include "gizmos/wireframes.hpp"
 #include "core/camera.hpp"
 
-
-class SolverGizmos : public ISolverVisitor {
+class SolverGizmos : public ISolverVisitor, public IStatsProvider {
 private:
     template<typename T>
     struct WireframeData {
@@ -31,6 +30,9 @@ private:
     WireframeData<FluidInitializer> m_solverInitializerData = {};
 
     SolverType m_solverType = SolverType::MaxType;
+
+    StatIndex m_renderStatIndex = 0;
+    GPUTimer m_renderTimer = {};
 
     void resetWireframes();
 

@@ -56,6 +56,7 @@ class Camera {
         bool getIsMoving(int frame);
         void hasStoppedMoving() { m_isMoving = false; m_isLooking = false; }
         void resetMousePos();
+        std::vector<float> rayFromMouse(float mouseX, float mouseY, float width, float );
 
         void toggleFreeView(bool freeView);
         bool getFreeView() const { return m_freeView; }

@@ -1,14 +1,13 @@
 #ifndef RENDERER_TEMPLATE_HPP
 #define RENDERER_TEMPLATE_HPP
 
-#include "solvers/solver.hpp"
-#include <memory>
+#include "helpers/stats.hpp"
 
-class IRenderer {
+class IRenderer : public IStatsProvider {
 public:
-    IRenderer() {}
+    IRenderer(std::string statsName) : IStatsProvider(statsName) {}
     virtual ~IRenderer() = default;
-    virtual void render() = 0;
+    virtual void render(bool clear = false) = 0;
     virtual void reload() = 0;
 };
 

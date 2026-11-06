@@ -158,6 +158,7 @@ void FlipSolverGPU::initCGS(){
         }
     };
     m_cgs.setCustomMatVec(sparseMatVec);
+    m_cgs.setAccuracyFirst(m_config.getAccuracyFirst());
     m_cgs.setPrecond([this](GLuint zBuffer, GLuint rBuffer, bool dispatch) {
         MGPrecond(zBuffer, rBuffer, dispatch);
     });
@@ -451,7 +452,7 @@ void FlipSolverGPU::pushAppartParticles(int iterations){
     }
 }
 
-void FlipSolverGPU::particleCollisions(){
+void FlipSolverGPU::particleCollisions(shared_ptr<Mesh> obstacle){
     ShaderProgram::SSBOBarrier();
 
     m_collisionShader.use();
@@ -460,6 +461,8 @@ void FlipSolverGPU::particleCollisions(){
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_partVelBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_isDeadBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_aliveNBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, obstacle->getSDF());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, obstacle->getSDFGrad());
 
     vec3 minPos = cellToPos(0, m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
     vec3 maxPos = cellToPos(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() - 1, m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
@@ -468,9 +471,16 @@ void FlipSolverGPU::particleCollisions(){
     glUniform3f(ShaderProgram::getVarLoc("minPos"), minPos.x, minPos.y, minPos.z);
     glUniform3f(ShaderProgram::getVarLoc("maxPos"), maxPos.x, maxPos.y, maxPos.z);
     glUniform1f(ShaderProgram::getVarLoc("radius"), m_config.getPartRadius());
-    glUniform2f(ShaderProgram::getVarLoc("obstaclePos"), m_obstaclePos.x, m_obstaclePos.y);
-    glUniform2f(ShaderProgram::getVarLoc("obstacleVel"), m_obstacleVel.x, m_obstacleVel.y);
-    glUniform1f(ShaderProgram::getVarLoc("obstacleRadius"), m_obstacleRadius * 10);
+
+    glUniform3i(ShaderProgram::getVarLoc("N"), obstacle->getN().x, obstacle->getN().y, obstacle->getN().z);
+    vec3 obstacleScale = obstacle->getScale();
+    float s = glm::max(obstacleScale.x, glm::max(obstacleScale.y, obstacleScale.z));
+    glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getPartRadius() / s);
+    Bounds obstacleBounds = obstacle->getSDFBounds();
+    glUniform3f(ShaderProgram::getVarLoc("obstacleMinBound"), obstacleBounds.min.x, obstacleBounds.min.y, obstacleBounds.min.z);
+    glUniform3f(ShaderProgram::getVarLoc("obstacleMaxBound"), obstacleBounds.max.x, obstacleBounds.max.y, obstacleBounds.max.z);
+    glUniform3f(ShaderProgram::getVarLoc("obstacleVelocity"), obstacle->getVel().x, obstacle->getVel().y, obstacle->getVel().z);
+    glUniformMatrix4fv(ShaderProgram::getVarLoc("obstacleInverseMatrix"), 1, GL_FALSE, &inverse(obstacle->getModelMatrix())[0][0]);
 
     m_collisionShader.dispatch((m_config.getPartN() + 255) / 256);
 }
@@ -892,18 +902,21 @@ void FlipSolverGPU::gridToParticles(){
 void FlipSolverGPU::update(){
     if (m_isPaused) return;
 
+    auto lockedObstacle = m_obstacle.lock();
+    if (!lockedObstacle) return;
+
     m_integrateTimer.beginFrame();
     integrateParticles();
     m_integrateTimer.endFrame();
 
-    particleCollisions();
+    particleCollisions(lockedObstacle);
     
     m_pushAppartTimer.beginFrame();
     pushAppartParticles(m_config.getNumPushAppart());
     m_pushAppartTimer.endFrame();
 
     m_collisionTimer.beginFrame();
-    particleCollisions();
+    particleCollisions(lockedObstacle);
     m_collisionTimer.endFrame();
 
     m_scanTimer.beginFrame();
@@ -935,10 +948,4 @@ void FlipSolverGPU::update(){
     m_stats->setTimer(m_incompressibilityStatIndex, m_incompressibilityTimer.getLastResultMs());
     m_stats->setTimer(m_g2pStatIndex,               m_g2pTimer.getLastResultMs());
     m_stats->setTimer(m_scanStatIndex,              m_scanTimer.getLastResultMs());
-}
-
-void FlipSolverGPU::updateObstacle(vec2 pos, vec2 vel, float rad){
-    m_obstaclePos = pos;
-    m_obstacleVel = vel;
-    m_obstacleRadius = rad;
 }

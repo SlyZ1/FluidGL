@@ -46,6 +46,10 @@ public:
         ImGui::DragFloat3(("##" + name).c_str(), &value.x, step, min, max, format);
     }
 
+    static inline void drawCheckbox(const std::string& name, bool& value){
+        ImGui::Checkbox(("##" + name).c_str(), &value);
+    }
+
     static void TextWithShadow(
         const char* text,
         ImVec4 textColor = ImVec4(1,1,1,1),

@@ -97,6 +97,26 @@ void Camera::resetMousePos(){
     m_lastMouseY = m_app->mouseY();
 }
 
+vector<float> Camera::rayFromMouse(float mouseX, float mouseY, float width, float height){
+    vector<float> result = vector<float>(6);
+
+    float ndcX =  2.0f * mouseX / width  - 1.0f;
+    float ndcY =  1.0f - 2.0f * mouseY / height;
+
+    mat4 invVP = inverse(projectionMatrix() * viewMatrix());
+
+    vec4 nearPt = invVP * vec4(ndcX, ndcY, -1.0f, 1.0f);
+    vec4 farPt  = invVP * vec4(ndcX, ndcY,  1.0f, 1.0f);
+    nearPt /= nearPt.w;
+    farPt  /= farPt.w;
+
+    vec3 rayOrigin = getPosition();
+    vec3 rayDir = normalize(vec3(farPt) - vec3(nearPt));
+    result[0] = rayOrigin.x; result[1] = rayOrigin.y; result[2] = rayOrigin.z;
+    result[3] = rayDir.x; result[4] = rayDir.y; result[5] = rayDir.z;
+    return result;
+}
+
 bool Camera::getIsMoving(int frame){
     bool result = m_isMoving || m_isLooking;
     if (result) m_lastMovingFrame = frame;
@@ -112,9 +132,9 @@ void Camera::toggleFreeView(bool freeView) {
 mat4 Camera::viewMatrix() const {
     vec3 forward = getLookDirection();
     vec3 worldUp = abs(forward.y) < 0.999f ? vec3(0,1,0) : vec3(0,0,1);
-    return glm::lookAt(m_pos, m_pos + forward, worldUp);
+    return lookAt(m_pos, m_pos + forward, worldUp);
 }
 
 mat4 Camera::projectionMatrix() const {
-    return glm::perspective(radians(m_fov), (float)m_app->width() / m_app->height(), 0.1f, 20000.0f);
+    return perspective(radians(m_fov), (float)m_app->width() / m_app->height(), 0.1f, 20000.0f);
 }

@@ -30,6 +30,8 @@ const char* SolverUI::solverName(SolverType type){
     drawingFunction(#uppercasedName, uppercasedName, min, max); \
     config.set##uppercasedName(uppercasedName);
 
+#define CHECK_BOX_DRAWING_FUNCTION(label, name, min, max) UtilsUI::drawCheckbox(label, name)
+
 
 void SolverUI::visit(IParticleSolver& solver) {
     IParticleSolverConfig& config = static_cast<IParticleSolverConfig&>(solver.getDraftConfig());
@@ -61,6 +63,7 @@ void SolverUI::visit(FlipSolverGPU& solver) {
     
     UtilsUI::BeginTwoColumnLayout();
 
+    // GENERAL
     DRAW_FIELD(UtilsUI::drawDrag, "Domain Size", vec3, DomainSize, 0, 10000)
     ImGui::Dummy(ImVec2(0, 10));
     DRAW_FIELD(UtilsUI::drawDrag, "Particle Radius", float, PartRadius, 0.01f, 200)
@@ -72,6 +75,7 @@ void SolverUI::visit(FlipSolverGPU& solver) {
     DRAW_FIELD(UtilsUI::drawDrag, "Num Push Appart", int, NumPushAppart, 0, 100)
     ImGui::Dummy(ImVec2(0, 10));
 
+    // INITIALIZER
     float partRadius = config.getPartRadius();
     vec3 initPos = (config.getFluidInitializer().min(partRadius) + config.getFluidInitializer().max(partRadius)) / 2.0f;
     vec3 initSize = config.getFluidInitializer().max(partRadius) - config.getFluidInitializer().min(partRadius);
@@ -95,6 +99,7 @@ void SolverUI::visit(FlipSolverGPU& solver) {
     
     UtilsUI::EndTwoColumnLayout();
 
+    // FORCES
     if (UtilsUI::BeginCustomHeader("Forces")) {
         UtilsUI::BeginTwoColumnLayout();
 
@@ -107,6 +112,7 @@ void SolverUI::visit(FlipSolverGPU& solver) {
         ImGui::TreePop();
     } UtilsUI::EndCustomHeader();
 
+    // CGS
     if (UtilsUI::BeginCustomHeader("CGS")) {
         UtilsUI::BeginTwoColumnLayout();
 
@@ -114,6 +120,7 @@ void SolverUI::visit(FlipSolverGPU& solver) {
 #define CUSTOM_DRAW(label, name, min, max) UtilsUI::drawDrag(label, name, min, max, "%.5f", 5e-5f)
         DRAW_FIELD(CUSTOM_DRAW, "Tolerance", float, CgTol, 1e-5f, 1e-1f)
 #undef CUSTOM_DRAW
+        DRAW_FIELD(CHECK_BOX_DRAWING_FUNCTION, "Accuracy First", bool, AccuracyFirst, 0, 0)
 
         UtilsUI::EndTwoColumnLayout();
         ImGui::TreePop();
@@ -135,3 +142,6 @@ void SolverUI::visit(XpbdSolverCPU& solver) {
         ImGui::TreePop();
     } UtilsUI::EndCustomHeader();
 }
+
+#undef DRAW_FIELD
+#undef CHECK_BOX_DRAWING_FUNCTION

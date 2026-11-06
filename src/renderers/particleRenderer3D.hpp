@@ -54,7 +54,16 @@ private:
     // ShaderProgram gridShader = {};
     // ShaderProgram waterShader = {};
 
+    StatIndex m_renderTimeStatIndex = 0;
+
+    StatIndex m_numPartStatIndex = 0;
+    StatIndex m_numTriStatIndex = 0;
+
+    GPUTimer m_renderTimer = {};
+
     ShaderProgram m_particleShader = {};
+
+    unsigned int m_internalFrameCounter = 0;
 
     static constexpr std::array<float, 12> s_quadVerts = {
         1.f,  1.f, 0.f,
@@ -68,7 +77,7 @@ private:
     };
 
     void initOpenGL();
-    void renderLogic();
+    void renderLogic(bool clear);
 
 public:
     ParticleRenderer3D(std::weak_ptr<Camera> camera);
@@ -84,7 +93,7 @@ public:
     void setNumParticlesBuffer(std::shared_ptr<GLuint> partNBuffer) { m_partNBuffer = partNBuffer; }
     void setRenderMode(bool renderIndirect) { m_renderIndirect = renderIndirect; }
 
-    void render() override;
+    void render(bool clear = false) override;
     void reload() override;
 };
 

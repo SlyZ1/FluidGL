@@ -18,7 +18,13 @@ void TriangleRenderer::initOpenGL() {
 }
 
 TriangleRenderer::TriangleRenderer(std::weak_ptr<Camera> camera) 
-: IRenderer(), m_camera(camera) {
+: IRenderer("Triangle Renderer"), m_camera(camera) {
+    
+    m_renderTimeStatIndex = m_stats->registerTimer("Render Time");
+    m_numTriStatIndex = m_stats->registerCounter("Num Triangles");
+
+    m_renderTimer.init();
+
     m_triangleShader.create();
     m_triangleShader.load(GL_VERTEX_SHADER, Utils::joinPath(s_shadersPath, "/triangleVert.glsl"));
     m_triangleShader.load(GL_FRAGMENT_SHADER, Utils::joinPath(s_shadersPath, "/triangleFrag.glsl"));
@@ -31,10 +37,12 @@ TriangleRenderer::~TriangleRenderer() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
-    glDeleteBuffers(1, &m_indiciesBuffer);
 }
 
-void TriangleRenderer::render() {
+void TriangleRenderer::render(bool clear) {
+    if (m_numIndicies <= 0 || m_posBuffer == 0) return;
+    m_renderTimer.beginFrame();
+
     m_triangleShader.use();
 
     glBindVertexArray(m_VAO);
@@ -44,12 +52,6 @@ void TriangleRenderer::render() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
     glVertexAttribDivisor(0, 0);
     glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_velBuffer);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
-    glVertexAttribDivisor(1, 1);
-    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
 
@@ -62,14 +64,17 @@ void TriangleRenderer::render() {
         glUniformMatrix4fv(ShaderProgram::getVarLoc("uProj"), 1, GL_FALSE, &camera->projectionMatrix()[0][0]);
     }
 
+    glUniformMatrix4fv(ShaderProgram::getVarLoc("uModel"), 1, GL_FALSE, &m_modelMatrix[0][0]);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glDrawElements(GL_TRIANGLES, m_numIndicies, GL_UNSIGNED_INT, 0);
+    glDisable(GL_CULL_FACE);
+    m_renderTimer.endFrame();
+    m_stats->setTimer(m_renderTimeStatIndex, m_renderTimer.getLastResultMs());
 }
 
 void TriangleRenderer::reload() {
@@ -80,6 +85,7 @@ void TriangleRenderer::reload() {
 
 void TriangleRenderer::setIndicies(span<const unsigned int> indicies) {
     m_numIndicies = (int)indicies.size();
+    m_stats->setCounter(m_numTriStatIndex, m_numIndicies / 3);
 
     glBindVertexArray(m_VAO);
     

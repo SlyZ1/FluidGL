@@ -15,8 +15,11 @@ using namespace glm;
         m_wireframes->uploadData(); \
     }
 
-SolverGizmos::SolverGizmos(weak_ptr<Camera> camera) {
+SolverGizmos::SolverGizmos(weak_ptr<Camera> camera) : IStatsProvider("Solver's gizmos") {
     m_wireframes = make_unique<Wireframes>(camera);
+
+    m_renderStatIndex = m_stats->registerTimer("Render Time");
+    m_renderTimer.init();
 }
 
 SolverGizmos::~SolverGizmos() {}
@@ -30,6 +33,7 @@ void SolverGizmos::resetWireframes() {
 void SolverGizmos::visit(IParticleSolver&) {}
 
 void SolverGizmos::visit(FlipSolverCPU& solver) {
+    m_renderTimer.beginFrame();
     const FlipSolverCPUConfig& config = solver.getDraftConfig();
 
     if (m_solverType != SolverType::FlipCPU) resetWireframes();
@@ -38,9 +42,12 @@ void SolverGizmos::visit(FlipSolverCPU& solver) {
     vec3 newDomainSize = vec3(config.getDomainSize(), 0);
     vec3 domainBounds = m_solverDomainData.data * 0.5f;
     UPDATE_WIREFRAME(Box2D, m_solverDomainData, newDomainSize, -domainBounds, domainBounds, m_domainColor)
+    m_renderTimer.endFrame();
+    m_stats->setTimer(m_renderStatIndex, m_renderTimer.getLastResultMs());
 }
 
 void SolverGizmos::visit(FlipSolverGPU& solver) {
+    m_renderTimer.beginFrame();
     const FlipSolverGPUConfig& config = solver.getDraftConfig();
 
     if (m_solverType != SolverType::FlipGPU) resetWireframes();
@@ -59,13 +66,19 @@ void SolverGizmos::visit(FlipSolverGPU& solver) {
         initializerBounds.max(config.getPartRadius()), 
         m_initializerColor
     )
+    m_renderTimer.endFrame();
+    m_stats->setTimer(m_renderStatIndex, m_renderTimer.getLastResultMs());
 }
 
-void SolverGizmos::visit(XpbdSolverCPU& solver) {
-    const XpbdSolverCPUConfig& config = solver.getDraftConfig();
+void SolverGizmos::visit(XpbdSolverCPU&) {
+    m_renderTimer.beginFrame();
+    //const XpbdSolverCPUConfig& config = solver.getDraftConfig();
 
     if (m_solverType != SolverType::XpbdCPU) resetWireframes();
     m_solverType = SolverType::XpbdCPU;
+
+    m_renderTimer.endFrame();
+    m_stats->setTimer(m_renderStatIndex, m_renderTimer.getLastResultMs());
 }
 
 void SolverGizmos::render() const {

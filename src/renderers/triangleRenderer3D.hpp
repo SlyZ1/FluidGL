@@ -4,8 +4,6 @@
 #include "renderer.hpp"
 #include "core/shader_program.hpp"
 #include "core/camera.hpp"
-#include "solvers/visitors/solverGizmos.hpp"
-#include "solvers/solverManager.hpp"
 #include <span>
 
 class TriangleRenderer : public IRenderer {
@@ -23,10 +21,16 @@ private:
     GLuint m_velBuffer = 0;
     GLuint m_normalBuffer = 0;
 
-    GLuint m_indiciesBuffer = 0;
+    glm::mat4 m_modelMatrix = glm::mat4(1.0f);
+
     int m_numIndicies = -1;
 
     static std::string s_shadersPath;
+
+    StatIndex m_renderTimeStatIndex = 0;
+    StatIndex m_numTriStatIndex = 0;
+
+    GPUTimer m_renderTimer = {};
 
     ShaderProgram m_triangleShader = {};
 
@@ -50,7 +54,7 @@ public:
     TriangleRenderer(const TriangleRenderer&) = delete;
     TriangleRenderer& operator=(const TriangleRenderer&) = delete;
 
-    void render() override;
+    void render(bool clear = false) override;
     void reload() override;
 
     void setIndicies(std::span<const unsigned int> indices);
@@ -58,6 +62,7 @@ public:
     void setPosBuffer(GLuint posBuffer) { m_posBuffer = posBuffer; }
     void setVelBuffer(GLuint velBuffer) { m_velBuffer = velBuffer; }
     void setNormalBuffer(GLuint normalBuffer) { m_normalBuffer = normalBuffer; }
+    void setModelMatrix(glm::mat4 modelMatrix) { m_modelMatrix = modelMatrix; }
 };
 
 #endif

@@ -17,6 +17,7 @@ protected:
     int m_cgMaxIter = 20;
     float m_cgTol = 1e-3f;
     int m_numPushAppart = 2;
+    bool m_accuracyFirst = true;
     FluidInitializer m_fluidInitializer = FluidInitializer(
         glm::vec3(-450, -100, -150),
         glm::vec3(-150, 100, 150),
@@ -55,6 +56,9 @@ public:
 
     float getCgTol() const { return m_cgTol; }
     void setCgTol(float cgTol) { m_cgTol = cgTol; }
+
+    bool getAccuracyFirst() const { return m_accuracyFirst; }
+    void setAccuracyFirst(bool accuracyFirst) { m_accuracyFirst = accuracyFirst; }
 
     FluidInitializer getFluidInitializer() const { return m_fluidInitializer; }
     void setFluidInitializer(FluidInitializer fluidInitializer) { m_fluidInitializer = fluidInitializer; }

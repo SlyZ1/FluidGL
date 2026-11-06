@@ -16,7 +16,8 @@
 #include "helpers/logger.hpp"
 
 #include "solvers/solverManager.hpp"
-#include "renderers/particleRenderer3D.hpp"
+#include "renderers/triangleRenderer3D.hpp"
+#include "objects/mesh.hpp"
 
 #include "ui/ui.hpp"
 
@@ -30,6 +31,12 @@ shared_ptr<Camera> camera;
 shared_ptr<UI> ui;
 
 shared_ptr<SolverManager> solverManager = {};
+shared_ptr<TriangleRenderer> triangleRenderer = {};
+shared_ptr<Wireframes> suzanneWireframes = {};
+bool toggleSuzanneWireframes = true;
+weak_ptr<Mesh> suzanne;
+WireframeIndex suzanneSDFBounds = 0;
+float configDt = 1.0f;
 
 vector<vec3> poses = { vec3(0,0,0), vec3(0.5f, 0.f, 0.f) };
 
@@ -59,13 +66,28 @@ void init(){
     flipConfig.setDensityMultiplier(1);
     flipConfig.setCgMaxIter(30);
     flipConfig.setCgTol(0.01f);
-    
+    configDt = flipConfig.getDt();
+
     solverManager = make_shared<SolverManager>(camera);
     weak_ptr<FlipSolverGPU> solver = solverManager->instantiate(flipConfig);
     
+    suzanne = solverManager->getObstacle();
+    auto lockedSuzanne = suzanne.lock();
+    
+    triangleRenderer = make_shared<TriangleRenderer>(camera);
+    triangleRenderer->setModelMatrix(lockedSuzanne->getModelMatrix());
+
+    suzanneWireframes = make_shared<Wireframes>(camera);
+    suzanneSDFBounds = suzanneWireframes->addBox(lockedSuzanne->getSDFBounds().min, lockedSuzanne->getSDFBounds().max, vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    suzanneWireframes->uploadData();
+
+    triangleRenderer->setPosBuffer(lockedSuzanne->getPosBuffer());
+    triangleRenderer->setNormalBuffer(lockedSuzanne->getNormalBuffer());
+    triangleRenderer->setIndicies(lockedSuzanne->getIndiciesBuffer());
+    
     UIContext ctx = { app, solverManager };
     ui = make_shared<UI>(ctx);
-    ui->setStatsContext({ app, solver });
+    ui->setStatsContext({ app, solver, solverManager->getRenderer(), triangleRenderer });
     
     Logger::logSuccess("Program started.", __LOG_DATA__);
 }
@@ -78,10 +100,12 @@ void inputs(){
 
     if (app->keyPressedOnce(GLFW_KEY_G, frameCount)){
         solverManager->toggleGizmos(!solverManager->getGizmosToggled());
+        toggleSuzanneWireframes = !toggleSuzanneWireframes;
     }
 
     if (app->keyPressedOnce(GLFW_KEY_R, frameCount)){
         solverManager->reloadRenderer();
+        triangleRenderer->reload();
         Logger::logInfo("Shaders reloaded.", __LOG_DATA__);
     }
     
@@ -97,10 +121,28 @@ void inputs(){
     if (app->keyPressedOnce(GLFW_KEY_RIGHT, frameCount)){
         solverManager->update();
     }
+
+    vector<float> ray = camera->rayFromMouse(app->mouseX(), app->mouseY(), app->width(), app->height());
+    vec3 rayOrigin = vec3(ray[0], ray[1], ray[2]);
+    vec3 rayDir = vec3(ray[3], ray[4], ray[5]);
+    vec3 pos = rayOrigin + abs(rayOrigin.z) * rayDir / std::max(abs(rayDir.z), 1e-3f);
+
+    auto lockedSuzanne = suzanne.lock();
+    if (lockedSuzanne){
+        vec3 oldPos = lockedSuzanne->getPos();
+        lockedSuzanne->setVel((pos - oldPos) / configDt / 10.f);
+        lockedSuzanne->setPos(pos);
+        triangleRenderer->setModelMatrix(lockedSuzanne->getModelMatrix());
+        suzanneWireframes->updateBox(suzanneSDFBounds, lockedSuzanne->getSDFBounds().min, lockedSuzanne->getSDFBounds().max, vec4(0.5f, 0.5f, 0.5f, 1.0f));
+        suzanneWireframes->uploadData();
+    }
 }
 
 void end(){
     solverManager.reset();
+
+    triangleRenderer.reset();
+    suzanneWireframes.reset();
 
     ui.reset();
     camera.reset();
@@ -119,6 +161,8 @@ int main(){
 
         solverManager->update();
         solverManager->render();
+        triangleRenderer->render();
+        if (toggleSuzanneWireframes) suzanneWireframes->render();
 
         inputs();
 

@@ -42,6 +42,8 @@ private:
 
     std::unique_ptr<MatOps> m_matOps;
 
+    bool m_accuracyFirst = true;
+
     void initBuffers();
     void deleteBuffers();
     void swap_rtr_indices();
@@ -58,6 +60,7 @@ public:
 
     MatOps* getMatOps() const { return &*m_matOps; }
     GLuint getIndirectBuffer() const { return m_indirectBuffer; }
+    void setAccuracyFirst(bool accuracyFirst) { m_accuracyFirst = accuracyFirst; }
 
     /**
      * @brief Add additionnal indirect dispatch parameters for conditional dispatching (eg. when the solver is under the threshold)

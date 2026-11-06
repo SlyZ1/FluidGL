@@ -245,6 +245,7 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
         glUniform1i(ShaderProgram::getVarLoc("numScalars"), NUM_SCALARS);
         glUniform1i(ShaderProgram::getVarLoc("numIndirectParams"), (int)m_dispatchParams.size());
         glUniform1f(ShaderProgram::getVarLoc("tol"), tol);
+        glUniform1ui(ShaderProgram::getVarLoc("accuracyFirst"), m_accuracyFirst ? 1u : 0u);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_scalarBuffer);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_indirectBuffer);
         ShaderProgram::indirectDispatch(m_indirectBuffer, 3 * sizeof(DispatchParams));
@@ -256,7 +257,8 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_scalarBuffer);
             glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, RTR_NEW_SCALAR_INDEX * sizeof(float), sizeof(float), &rTr);
             glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, BTB_SCALAR_INDEX * sizeof(float), sizeof(float), &bTb);
-            if (rTr < tol) return m_xBuffer;
+            float target = m_accuracyFirst ? tol : max(tol, tol * tol * bTb);
+            if (rTr < target) return m_xBuffer;
         }
     }
     return m_xBuffer;

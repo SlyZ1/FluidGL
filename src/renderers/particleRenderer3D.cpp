@@ -8,7 +8,14 @@ using namespace glm;
 string ParticleRenderer3D::s_shadersPath = "src/shaders/renderers/particle";
 
 ParticleRenderer3D::ParticleRenderer3D(weak_ptr<Camera> camera) 
-: IRenderer(), m_camera(camera) {
+: IRenderer("Particle Renderer"), m_camera(camera) {
+
+    m_renderTimeStatIndex = m_stats->registerTimer("Render Time");
+
+    m_numPartStatIndex = m_stats->registerCounter("Num Particles");
+    m_numTriStatIndex = m_stats->registerCounter("Num Triangles");
+
+    m_renderTimer.init();
 
     m_particleShader.create();
     m_particleShader.load(GL_VERTEX_SHADER, Utils::joinPath(s_shadersPath, "/particleVert.glsl"));
@@ -135,7 +142,7 @@ void ParticleRenderer3D::initOpenGL(){
     // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurredTex, 0);
 }
 
-void ParticleRenderer3D::renderLogic() {
+void ParticleRenderer3D::renderLogic(bool clear) {
     if (!m_posBuffer || !m_velBuffer) return;
     m_particleShader.use();
 
@@ -160,16 +167,21 @@ void ParticleRenderer3D::renderLogic() {
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
 }
 
-void ParticleRenderer3D::render(){
-    renderLogic();
-    if (!m_renderIndirect)
+void ParticleRenderer3D::render(bool clear){
+    m_renderTimer.beginFrame();
+
+    renderLogic(clear);
+    if (!m_renderIndirect){
         glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, m_numParticles);
+        m_stats->setCounter(m_numPartStatIndex, m_numParticles);
+        m_stats->setCounter(m_numTriStatIndex, m_numParticles * 2);
+    }
     else{
         glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
@@ -181,6 +193,15 @@ void ParticleRenderer3D::render(){
 
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_drawBuffer);
         glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, (void*)0);
+
+        if (m_internalFrameCounter % 50 == 0){
+            ShaderProgram::indirectBarrier();
+            int drawnParticles = 0;
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, *m_partNBuffer);
+            glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(unsigned int), &drawnParticles);
+            m_stats->setCounter(m_numPartStatIndex, drawnParticles);
+            m_stats->setCounter(m_numTriStatIndex, drawnParticles * 2);
+        }
     }
 
     // cumulativeParticleShader.use();
@@ -256,6 +277,11 @@ void ParticleRenderer3D::render(){
     // glBindFramebuffer(GL_FRAMEBUFFER, 0);
     // glClear(GL_COLOR_BUFFER_BIT);
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    m_renderTimer.endFrame();
+
+    m_stats->setTimer(m_renderTimeStatIndex, m_renderTimer.getLastResultMs());
+    m_internalFrameCounter++;
 }
 
 void ParticleRenderer3D::reload(){
