@@ -24,7 +24,6 @@ func play(type: SoundEffectSettings.SOUND_EFFECT_TYPE) -> void:
 	if _sound_effects_dict.has(type):
 		var sound_settings := _sound_effects_dict[type]
 		
-		print("play ", SoundEffectSettings.SOUND_EFFECT_TYPE.find_key(type))
 		sound_settings.sound_effect.loop = sound_settings.repeat_until_stopped
 
 		var new_audio = AudioStreamPlayer.new()
@@ -47,7 +46,3 @@ func play(type: SoundEffectSettings.SOUND_EFFECT_TYPE) -> void:
 func on_global_stop() -> void:
 	for type in _sound_effects_dict.keys():
 		stop_repeated_sound_effect(type)
-
-	for child in get_children():
-		if child is AudioStreamPlayer:
-			child.queue_free()

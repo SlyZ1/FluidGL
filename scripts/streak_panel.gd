@@ -56,7 +56,6 @@ func _maj_barre(_new_val: float) -> void:
 var _wow_tween: Tween
 var _wow_index: int = -1
 func spawn_wow(index: int) -> void:
-	if index > 1: print(index, " ", _wow_index)
 	index = clampi(index, 0, wow_texts.size() - 1)
 	if index == _wow_index and _wow_tween:
 		return

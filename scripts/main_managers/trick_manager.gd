@@ -73,6 +73,7 @@ func _process(delta: float) -> void:
 	
 	_update_xp(0, max(0, decrease))
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
+	if GameManager.instance: if not GameManager.instance.game_started: return
 	
 	#if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
 		#Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
@@ -85,7 +86,6 @@ func _process(delta: float) -> void:
 	if get_catch_pressed() and not _started:
 		_started = true
 		input_lag_timer.start()
-		print("GO !")
 	
 	# Set input lag when changing inputs
 	if _last_input != input_string:

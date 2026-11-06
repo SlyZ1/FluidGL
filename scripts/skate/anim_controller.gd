@@ -85,7 +85,6 @@ func _on_trick_performed(_name: String, _accuracy: float) -> void:
 	if abs(_anim.rot_angle) > 0.001:
 		trick_catched = false
 		var trick := BasicTrick.new(_name)
-		print(_name)
 		active_tricks.push_back(trick)
 		trick.tween = tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 

@@ -146,6 +146,7 @@ func _rail_logic(delta: float):
 					_current_rail = null
 					return
 				GameManager.instance.stop()
+				return
 			# When jump from rail
 			else: 
 				AudioManager.stop_repeated_sound_effect(SoundEffectSettings.SOUND_EFFECT_TYPE.ON_RAIL)
