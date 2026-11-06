@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Anim" format=3 uid="uid://bg0e8c7c2t1xx"]
 
-[ext_resource type="Curve" uid="uid://bs6qtligyoqs0" path="res://scenes/hard_ease_out.tres" id="1_dy5s1"]
+[ext_resource type="Curve" uid="uid://bs6qtligyoqs0" path="res://curves/hard_ease_out.tres" id="1_dy5s1"]
 [ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_vlq55"]
 
 [resource]

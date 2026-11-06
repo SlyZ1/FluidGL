@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://54h1ii807ow0"]
+
+[ext_resource type="Script" uid="uid://dnwlmkb6txlm3" path="res://scripts/audio/sound_effect_settings.gd" id="1_77r75"]
+[ext_resource type="AudioStream" uid="uid://o1nrqjuv3ak1" path="res://audio/points_amazing.mp3" id="2_77r75"]
+
+[resource]
+script = ExtResource("1_77r75")
+type = 7
+sound_effect = ExtResource("2_77r75")
+volume = 4.0
+start_offset = 0.05
+metadata/_custom_type_script = "uid://dnwlmkb6txlm3"

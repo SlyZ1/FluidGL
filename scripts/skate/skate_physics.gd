@@ -36,6 +36,7 @@ var _mesh_scale: Vector3
 func _ready() -> void:
 	_scale = global_basis.get_scale()
 	_mesh_scale = mesh_instance.basis.get_scale()
+	GameManager.instance.on_substep.connect(_step)
 
 func _limit_rotation(direction: Vector3) -> Vector3:
 	var up: Vector3 = MapLoader.instance.up()
@@ -208,7 +209,8 @@ func _ground_snap(_dt: float) -> void:
 	if corrige_back or corrige_front:
 		set_pos(p_back, p_front, normal.normalized())
 
-func step(dt: float) -> void:
+func _step(dt: float) -> void:
+	if !can_process(): return
 	_integrate(dt)
 	_ground_snap(dt)
 	
@@ -218,8 +220,7 @@ func step(dt: float) -> void:
 			on_grounded.emit()
 	elif _is_grounded:
 		if impulsed_timer >= 0:
-			
-			$"../SFX/Jump".play(0.1)
+			AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.JUMP)
 			print("Jump")
 			on_jump.emit()
 		else:

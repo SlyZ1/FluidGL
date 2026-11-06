@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 TrickManager="*uid://4qaamgw26etu"
 PlayerState="*uid://bb4ptvtb3wi6x"
+AudioManager="*uid://dhs56xnym1ry2"
 
 [display]
 

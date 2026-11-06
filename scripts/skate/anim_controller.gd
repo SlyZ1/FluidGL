@@ -40,7 +40,7 @@ func _ready() -> void:
 	skate_physics.on_grounded.connect(TrickManager.on_ground)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if ((skate_physics.is_grounded() or skate_physics.is_mesh_colliding()) and not trick_catched):
 		GameManager.instance.stop()
 	
@@ -82,7 +82,6 @@ func _on_trick_performed(_name: String, _accuracy: float) -> void:
 
 	_confirm_trick()
 
-	var already_active := active_tricks.find_custom(func(trick): return trick.trick_name == _name)
 	if abs(_anim.rot_angle) > 0.001:
 		trick_catched = false
 		var trick := BasicTrick.new(_name)
@@ -120,7 +119,7 @@ func _successfully_catched(_dt: float) -> void:
 		skate_physics.velocity_front = min(skate_physics.velocity_front, catch_start_speed)
 		skate_physics.reset_orientation()
 		#_confirm_trick()
-		#$"../../SFX/Catch".play(0.05)
+		AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.CATCH)
 		if skate_physics.impulsed_timer <= 0: 
 			TrickManager.validate_xp()
 		
@@ -150,5 +149,4 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 	# if already catched and grounded, nothing happens
 	if trick_catched: return
 		
-	print(_progression)
 	GameManager.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)

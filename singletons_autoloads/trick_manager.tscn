@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://4qaamgw26etu"]
+
+[ext_resource type="Script" uid="uid://bl4l670eyl4xq" path="res://scripts/main_managers/trick_manager.gd" id="1_8e7cy"]
+[ext_resource type="Curve" uid="uid://bgunqnh1xon10" path="res://curves/bullet_time_curve.tres" id="2_qi75u"]
+
+[node name="Node" type="Node" unique_id=1981453306 node_paths=PackedStringArray("input_lag_timer", "trick_timing_timer")]
+script = ExtResource("1_8e7cy")
+bullet_time_curve = ExtResource("2_qi75u")
+input_lag_timer = NodePath("InputLag")
+trick_timing_timer = NodePath("TrickTiming")
+
+[node name="TrickTiming" type="Timer" parent="." unique_id=342368335]
+wait_time = 0.67
+one_shot = true
+
+[node name="InputLag" type="Timer" parent="." unique_id=1158126311]
+wait_time = 0.05
+one_shot = true
+
+[connection signal="timeout" from="TrickTiming" to="." method="_trick_ended"]

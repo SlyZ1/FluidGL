@@ -18,26 +18,13 @@
 [ext_resource type="PackedScene" uid="uid://bykj6c41eouqh" path="res://prefabs/streak_panel.tscn" id="34_nk8o4"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="35_ckq6w"]
 [ext_resource type="Script" uid="uid://m4e2eeucc7qd" path="res://scripts/UI/pause_ui.gd" id="35_qshxn"]
-[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="36_qxk33"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://fonts/PORKYS_.TTF" id="36_qxk33"]
 [ext_resource type="Shader" uid="uid://bk5hvsujij6nr" path="res://shaders/sky_canvas.gdshader" id="37_fnset"]
 [ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="38_d6x1c"]
 [ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="39_tua6t"]
 [ext_resource type="Script" uid="uid://dc0qunlfonhe6" path="res://scripts/UI/endscreen_ui.gd" id="40_0sji7"]
 [ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="41_n656w"]
 [ext_resource type="AudioStream" uid="uid://b7yvn1nwfygf5" path="res://audio/fingertrick.mp3" id="42_se55i"]
-[ext_resource type="AudioStream" uid="uid://cpf3mv1wfo53x" path="res://audio/stop.mp3" id="43_7jgrc"]
-[ext_resource type="AudioStream" uid="uid://c216etn8vteih" path="res://audio/ok.mp3" id="44_8rtgc"]
-[ext_resource type="AudioStream" uid="uid://c3y0pli1lmtg3" path="res://audio/rail.mp3" id="45_mjvfs"]
-[ext_resource type="AudioStream" uid="uid://dmwq5bp2hf8gn" path="res://audio/nice.mp3" id="46_s6gnh"]
-[ext_resource type="AudioStream" uid="uid://doikql1wh2wnj" path="res://audio/mort.mp3" id="47_pge5s"]
-[ext_resource type="AudioStream" uid="uid://bi3q06tnk8eat" path="res://audio/legendary.mp3" id="48_738e7"]
-[ext_resource type="AudioStream" uid="uid://cvnwvbl7q806w" path="res://audio/jump.mp3" id="49_r6vpo"]
-[ext_resource type="AudioStream" uid="uid://c1sk7y8myvq6j" path="res://audio/catch.mp3" id="50_u6lce"]
-[ext_resource type="AudioStream" uid="uid://o1nrqjuv3ak1" path="res://audio/amazing.mp3" id="51_wenn3"]
-[ext_resource type="AudioStream" uid="uid://dawyj0alt0gya" path="res://audio/epic.mp3" id="52_hpw7f"]
-[ext_resource type="AudioStream" uid="uid://01xk2iuk0yyf" path="res://audio/godlike.mp3" id="53_2cc6y"]
-[ext_resource type="AudioStream" uid="uid://cg84onv3ff72v" path="res://audio/great.mp3" id="54_x7nui"]
-[ext_resource type="AudioStream" uid="uid://y0f5r337yt2t" path="res://audio/crazy.mp3" id="55_anijw"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_5o71f"]
 dof_blur_far_distance = 118.47
@@ -67,16 +54,7 @@ shader_parameter/vitesse = Vector2(0.777, -0.51)
 shader_parameter/opacite = 1.0
 shader_parameter/decalage_colonne = 1.745
 
-[node name="Node3D" type="Node3D" unique_id=611096490 node_paths=PackedStringArray("container")]
-script = ExtResource("1_a47ne")
-spawn_distance = 300
-kill_distance = 60
-angle = 0.0
-speed = 35.0
-speed_increase_rate = 0.005
-container = NodePath("GroundContainer")
-sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly")])
-empty_section = ExtResource("8_5k0m8")
+[node name="Node3D" type="Node3D" unique_id=611096490]
 
 [node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("restart_lag_timer", "skate", "skate_ragdoll")]
 script = ExtResource("9_js0h6")
@@ -86,6 +64,16 @@ skate_ragdoll = NodePath("../SkateRagdoll")
 
 [node name="RestartLag" type="Timer" parent="GameManager" unique_id=1344687735]
 one_shot = true
+
+[node name="MapLoader" type="Node3D" parent="." unique_id=1846749011]
+script = ExtResource("1_a47ne")
+spawn_distance = 300
+kill_distance = 60
+angle = 0.0
+speed = 35.0
+speed_increase_rate = 0.005
+sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly")])
+empty_section = ExtResource("8_5k0m8")
 
 [node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
 transform = Transform3D(-3.365777e-08, 0, 0.77, 0, 0.77, 0, -0.77, 0, -3.365777e-08, 0, 3.5, 0)
@@ -137,60 +125,6 @@ stream = ExtResource("42_se55i")
 volume_db = -10.0
 autoplay = true
 
-[node name="SFX" type="Node" parent="." unique_id=291289615]
-
-[node name="STOP PLEASE" type="AudioStreamPlayer" parent="SFX" unique_id=1913514310]
-stream = ExtResource("43_7jgrc")
-volume_db = -1.0
-
-[node name="Ok" type="AudioStreamPlayer" parent="SFX" unique_id=1393909303]
-stream = ExtResource("44_8rtgc")
-volume_db = 5.0
-
-[node name="Rail" type="AudioStreamPlayer" parent="SFX" unique_id=1653412726]
-stream = ExtResource("45_mjvfs")
-volume_db = 24.0
-
-[node name="Nice!" type="AudioStreamPlayer" parent="SFX" unique_id=2053019184]
-stream = ExtResource("46_s6gnh")
-volume_db = 5.0
-
-[node name="Mort" type="AudioStreamPlayer" parent="SFX" unique_id=100031872]
-stream = ExtResource("47_pge5s")
-volume_db = 10.0
-
-[node name="Legendary!!!" type="AudioStreamPlayer" parent="SFX" unique_id=1623831714]
-stream = ExtResource("48_738e7")
-volume_db = 4.0
-
-[node name="Jump" type="AudioStreamPlayer" parent="SFX" unique_id=2016010652]
-stream = ExtResource("49_r6vpo")
-volume_db = 10.0
-
-[node name="Catch" type="AudioStreamPlayer" parent="SFX" unique_id=2076263500]
-stream = ExtResource("50_u6lce")
-volume_db = -5.0
-
-[node name="Amazing!" type="AudioStreamPlayer" parent="SFX" unique_id=771814367]
-stream = ExtResource("51_wenn3")
-volume_db = 4.0
-
-[node name="Epic!!!" type="AudioStreamPlayer" parent="SFX" unique_id=1630445451]
-stream = ExtResource("52_hpw7f")
-volume_db = 2.0
-
-[node name="GODLIKE" type="AudioStreamPlayer" parent="SFX" unique_id=1210249202]
-stream = ExtResource("53_2cc6y")
-volume_db = 3.0
-
-[node name="Great!" type="AudioStreamPlayer" parent="SFX" unique_id=2013314048]
-stream = ExtResource("54_x7nui")
-volume_db = 5.0
-
-[node name="Crazy!" type="AudioStreamPlayer" parent="SFX" unique_id=2132270058]
-stream = ExtResource("55_anijw")
-volume_db = 2.0
-
 [node name="UI" type="Control" parent="." unique_id=1938638467]
 layout_mode = 3
 anchors_preset = 15
@@ -202,6 +136,7 @@ grow_vertical = 2
 [node name="StreakPanel" parent="UI" unique_id=199057457 instance=ExtResource("34_nk8o4")]
 layout_mode = 1
 popup_color = Color(0.9607843, 0.654902, 0.2901961, 1)
+wow_sounds = Array[int]([13, 13, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
 
 [node name="PauseLayer" type="CanvasLayer" parent="UI" unique_id=243726203]
 visible = false

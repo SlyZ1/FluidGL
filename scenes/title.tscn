@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dwbuxbmx8v83e" path="res://scripts/title.gd" id="1_4ignj"]
 [ext_resource type="PackedScene" uid="uid://bwvau03vnk7bb" path="res://scenes/gameplay_scene.tscn" id="2_wosw1"]
 [ext_resource type="Shader" uid="uid://bu8mo82gx8oei" path="res://shaders/blur.gdshader" id="3_p6dhs"]
-[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="4_pyl7j"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://fonts/PORKYS_.TTF" id="4_pyl7j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lgns8"]
 shader = ExtResource("3_p6dhs")

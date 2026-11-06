@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://b7iudw7g16chv"]
+
+[ext_resource type="Script" uid="uid://dnwlmkb6txlm3" path="res://scripts/audio/sound_effect_settings.gd" id="1_i7emb"]
+[ext_resource type="AudioStream" uid="uid://cpf3mv1wfo53x" path="res://audio/points_stop_please.mp3" id="2_i7emb"]
+
+[resource]
+script = ExtResource("1_i7emb")
+type = 12
+sound_effect = ExtResource("2_i7emb")
+volume = -1.0
+start_offset = 0.05
+metadata/_custom_type_script = "uid://dnwlmkb6txlm3"

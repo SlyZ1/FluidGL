@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://bc3d4fs34glhx"]
+
+[ext_resource type="Script" uid="uid://dnwlmkb6txlm3" path="res://scripts/audio/sound_effect_settings.gd" id="1_2cqlc"]
+[ext_resource type="AudioStream" uid="uid://dawyj0alt0gya" path="res://audio/points_epic.mp3" id="2_2cqlc"]
+
+[resource]
+script = ExtResource("1_2cqlc")
+type = 9
+sound_effect = ExtResource("2_2cqlc")
+volume = 2.0
+start_offset = 0.05
+metadata/_custom_type_script = "uid://dnwlmkb6txlm3"

@@ -11,6 +11,7 @@ extends Control
 @export var wow_duration: float
 @export var wow_texts: Array[String]
 @export var wow_colors: Array[Color]
+@export var wow_sounds: Array[SoundEffectSettings.SOUND_EFFECT_TYPE]
 @export var wow_template: Label
 
 var _wow_size: Vector2
@@ -23,18 +24,14 @@ func _ready() -> void:
 	TrickManager.trick_ended.connect(_on_trick_ended)
 	TrickManager.xp_changed.connect(_on_xp_changed)
 	TrickManager.tier_changed.connect(_on_tier_changed)
-	#wow_template.visible = false
 	_wow_size = wow_template.size
 	_wow_scale = wow_template.scale
 	_tier_scale = tier_fill.scale
 	_points_scale = points.scale
 
-func _process(delta: float) -> void:
-	pass
-
-func points_popup(points: int) -> void:
+func points_popup(num_points: int) -> void:
 	var label = popup_template.duplicate()
-	label.text = "+" + str(points)
+	label.text = "+" + str(num_points)
 	label.add_theme_color_override("font_color", popup_color)
 	add_child(label)
 	
@@ -52,17 +49,14 @@ func points_popup(points: int) -> void:
 func _on_trick_ended():
 	pass
 	
-var _xp_tween: Tween
 func _maj_barre(_new_val: float) -> void:
-	#if _xp_tween and _xp_tween.is_valid():
-		#_xp_tween.kill()
-	#_xp_tween = create_tween()
 	create_tween().tween_method(tier_fill.set_remplissage, tier_fill.remplissage, _new_val, 0.2) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			
 var _wow_tween: Tween
 var _wow_index: int = -1
 func spawn_wow(index: int) -> void:
+	if index > 1: print(index, " ", _wow_index)
 	index = clampi(index, 0, wow_texts.size() - 1)
 	if index == _wow_index and _wow_tween:
 		return
@@ -70,19 +64,17 @@ func spawn_wow(index: int) -> void:
 
 	var label: Label = wow_template
 	label.text = wow_texts[index]
-	if not wow_texts[index] in ["", "..."]:
-		var asp : AudioStreamPlayer = get_node("../../SFX/" + wow_texts[index]) as AudioStreamPlayer
-		asp.play(0.05)
+	if not wow_sounds[index] == SoundEffectSettings.SOUND_EFFECT_TYPE.NO_SOUND:
+		AudioManager.play(wow_sounds[index])
 	label.add_theme_color_override("font_color", wow_colors[index])
 
 	if (_wow_tween and _wow_tween.is_valid()):
 		_wow_tween.kill()
-	_wow_tween = label.create_tween()  # le tween meurt avec le label
+	_wow_tween = label.create_tween()
 	_wow_tween.tween_method(
 		func(t: float) -> void:
 			var k: float = wow_curve.sample(t) if wow_curve else 1.0
 			label.scale = _wow_scale * (1.0 + k * wow_strengh),
-			#label.modulate.a = 1.0 - smoothstep(0.75, 1.0, t),
 		0.0, 1.0, wow_duration
 	)
 

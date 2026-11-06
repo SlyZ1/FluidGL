@@ -132,7 +132,7 @@ func _rail_logic(delta: float):
 		var zyt := get_zy_from_x(_current_rail, skate_physics.global_position.x)
 		if zyt.z > 1 or zyt.z < 0: 
 			# When Fall from rail
-			$"../../SFX/Rail".stop()
+			AudioManager.stop_repeated_sound_effect(SoundEffectSettings.SOUND_EFFECT_TYPE.ON_RAIL)
 			if zyt.z > 1 and _prev_rail: skate_physics.reset_velocities()
 			_current_rail = null
 			_prev_rail = _current_rail
@@ -141,14 +141,14 @@ func _rail_logic(delta: float):
 		if not TrickManager.get_catch_pressed():
 			# When arrive on rail without catch
 			if not _prev_rail: 
-				$"../../SFX/Rail".stop()
+				AudioManager.stop_repeated_sound_effect(SoundEffectSettings.SOUND_EFFECT_TYPE.ON_RAIL)
 				if _exit_rail_timer > 0: 
 					_current_rail = null
 					return
 				GameManager.instance.stop()
 			# When jump from rail
 			else: 
-				$"../../SFX/Rail".stop()
+				AudioManager.stop_repeated_sound_effect(SoundEffectSettings.SOUND_EFFECT_TYPE.ON_RAIL)
 				skate_physics.reset_velocities()
 				var impulse := _rail_vitesse_verticale(_current_rail, skate_physics.global_position.x)
 				impulse = min(impulse, 40)
@@ -159,7 +159,7 @@ func _rail_logic(delta: float):
 				return
 				
 		if not _prev_rail:
-			$"../../SFX/Rail".play(0.)
+			AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.ON_RAIL)
 			TrickManager.add_trick_count()
 			TrickManager.set_possible_tricks(["instable_saut"])
 			_rail_offset = Vector2(skate_physics.global_position.z - zyt.x, skate_physics.global_position.y - zyt.y)

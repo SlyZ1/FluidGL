@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://duirb02lssfwm"]
+
+[ext_resource type="Script" uid="uid://dnwlmkb6txlm3" path="res://scripts/audio/sound_effect_settings.gd" id="1_6fa5a"]
+[ext_resource type="AudioStream" uid="uid://c3y0pli1lmtg3" path="res://audio/on_rail.mp3" id="2_6fa5a"]
+
+[resource]
+script = ExtResource("1_6fa5a")
+type = 3
+sound_effect = ExtResource("2_6fa5a")
+volume = 20.0
+pitch_randomness = 0.2
+repeat_until_stopped = true
+metadata/_custom_type_script = "uid://dnwlmkb6txlm3"

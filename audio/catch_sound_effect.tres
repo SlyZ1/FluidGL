@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://cw3y32ghmer4h"]
+
+[ext_resource type="Script" uid="uid://dnwlmkb6txlm3" path="res://scripts/audio/sound_effect_settings.gd" id="1_v5xid"]
+[ext_resource type="AudioStream" uid="uid://c1sk7y8myvq6j" path="res://audio/catch.mp3" id="2_v5xid"]
+
+[resource]
+script = ExtResource("1_v5xid")
+type = 2
+sound_effect = ExtResource("2_v5xid")
+volume = -5.0
+pitch_randomness = 0.3
+start_offset = 0.05
+metadata/_custom_type_script = "uid://dnwlmkb6txlm3"

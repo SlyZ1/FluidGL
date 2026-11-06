@@ -1,5 +1,9 @@
 extends Node
 
+@export var bullet_time_curve: Curve
+@export var input_lag_timer: Timer
+@export var trick_timing_timer: Timer
+
 signal trick_performed(_name: String, _accuracy: float)
 signal trick_ended
 signal trick_catched(_progression: float, _dt: float)
@@ -16,7 +20,6 @@ var _possible_tricks : Array[String] = []
 var _tricks : TrickGraph
 var _started := false
 var _nb_tricks_since_grounded := 0
-var _is_catched_pressed := false
 var _time_since_different_input: float
 
 var _last_input := ""
@@ -28,18 +31,17 @@ var _xp_buffer := 0.0
 var _points := 0
 var _tier := 0
 
-var bullet_time_curve : Curve = preload("res://prefabs/bullet_time_curve.tres")
 const bullet_time_duration := 0.5
 var bullet_timer : Timer
 
-func _reset() -> void:
+func reset() -> void:
 	_current_trick = ""
 	_started = false
 	_possible_tricks = _tricks.get_neighbours("")
 	_nb_tricks_since_grounded = 0
-	if not $TrickTiming.is_stopped():
-		$TrickTiming.start()
-		$TrickTiming.stop()
+	if not trick_timing_timer.is_stopped():
+		trick_timing_timer.start()
+		trick_timing_timer.stop()
 
 func _ready() -> void:
 	_tricks = TrickGraph.new("res://combo_graph.json")
@@ -47,7 +49,7 @@ func _ready() -> void:
 	bullet_timer.one_shot = true
 	bullet_timer.ignore_time_scale = true
 	add_child(bullet_timer)
-	_reset()
+	reset()
 	
 func _compute_input() -> String:
 	var fhybrv := [Input.is_action_pressed("F"), Input.is_action_pressed("H"), Input.is_action_pressed("Y"), Input.is_action_pressed("B"), Input.is_action_pressed("R"), Input.is_action_pressed("V")]
@@ -63,7 +65,7 @@ func get_catch_pressed() -> bool:
 	return input == "FHybrv"
 
 func get_progression() -> float:
-	return ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
+	return (trick_timing_timer.wait_time - trick_timing_timer.time_left) / trick_timing_timer.wait_time
 
 func _process(delta: float) -> void:
 	var decrease := (_tier * _tier * _tier * 0.3 + 1) * 100 * delta
@@ -82,12 +84,12 @@ func _process(delta: float) -> void:
 	# Start tricks
 	if get_catch_pressed() and not _started:
 		_started = true
-		$InputLag.start()
+		input_lag_timer.start()
 		print("GO !")
 	
 	# Set input lag when changing inputs
 	if _last_input != input_string:
-		$InputLag.start()
+		input_lag_timer.start()
 		_time_since_different_input = 0.0
 	_last_input = input_string
 
@@ -97,7 +99,7 @@ func _process(delta: float) -> void:
 		
 	# If catching the skate
 	if get_catch_pressed():
-		var t: float = ($TrickTiming.wait_time - $TrickTiming.time_left) / $TrickTiming.wait_time
+		var t: float = (trick_timing_timer.wait_time - trick_timing_timer.time_left) / trick_timing_timer.wait_time
 		trick_catched.emit(t, delta)
 		_last_input_executed = ""
 		return
@@ -120,8 +122,8 @@ func _process(delta: float) -> void:
 			if trick.input == _last_input_executed:
 				break
 			_last_input_executed = trick.input
-			var tot: float = $TrickTiming.wait_time
-			var t: float = $TrickTiming.time_left
+			var tot: float = trick_timing_timer.wait_time
+			var t: float = trick_timing_timer.time_left
 			
 			var good_timing: float = (t - tot / 2) / tot # between [-0.5, 0.5]
 			good_timing *= 5
@@ -130,9 +132,9 @@ func _process(delta: float) -> void:
 			break
 
 func get_time_left(stopped_val: float = -INF) -> float:
-	if $TrickTiming.is_stopped():
+	if trick_timing_timer.is_stopped():
 		return stopped_val
-	return $TrickTiming.time_left
+	return trick_timing_timer.time_left
 
 func _update_xp(increased_by: float, decreased_by: float):
 	var sum := increased_by - decreased_by
@@ -157,18 +159,18 @@ func _update_xp(increased_by: float, decreased_by: float):
 
 
 func _trick_performed(_name: String, _accuracy: float) -> void:
-	$InputLag.start()
+	input_lag_timer.start()
 	bullet_timer.stop()
 	bullet_timer.start(bullet_time_duration)
 	_nb_tricks_since_grounded += 1
 
-	var increased_by: int = 50 * _nb_tricks_since_grounded * float(_tier + 1)
+	var increased_by: float = 50 * _nb_tricks_since_grounded * (_tier + 1)
 	_xp_buffer += increased_by
 
 	_current_trick = _name
 	_possible_tricks = _tricks.get_neighbours(_name)
 
-	$TrickTiming.start(get_trick_duration(_name))
+	trick_timing_timer.start(get_trick_duration(_name))
 
 	trick_performed.emit(_name, _accuracy)
 	trick_validated.emit(_nb_tricks_since_grounded)
@@ -181,7 +183,7 @@ func _trick_ended() -> void:
 	
 func set_possible_tricks(possible_tricks: Array[String]) -> void:
 	_possible_tricks = possible_tricks
-	$"TrickTiming".stop()
+	trick_timing_timer.stop()
 	
 func add_trick_count() -> void:
 	_nb_tricks_since_grounded += 1
@@ -197,11 +199,11 @@ func on_airborne() -> void:
 	_started = true
 	
 func on_ground() -> void:
-	_reset()
+	reset()
 	
 func on_successful_catch() -> void: 
 	#trick_validated.emit()
-	$TrickTiming.stop()
+	trick_timing_timer.stop()
 	
 func validate_xp() -> void:
 	_update_xp(_xp_buffer, 0)

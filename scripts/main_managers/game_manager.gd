@@ -12,6 +12,7 @@ class_name GameManager
 signal on_stop
 signal on_start
 signal on_pause(paused: bool)
+signal on_substep(dt: float)
 
 static var auto_start: bool = false
 
@@ -32,6 +33,9 @@ func set_active(node: Node3D, active: bool) -> void:
 	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
 
 func _ready() -> void:
+	on_stop.connect(AudioManager.on_global_stop)
+	on_stop.connect(TrickManager.reset)
+
 	set_active(skate, false)
 	set_active(skate_ragdoll, false)
 	if auto_start: start()
@@ -46,19 +50,18 @@ func _exit_tree() -> void:
 		instance = null
 		
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
-	#$SFX/Mort.play()
+	AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.DEATH)
 	on_stop.emit()
 	game_started = false
-	#is_running = false
 	if not no_ragdoll:
+		set_active(skate, false)
+
 		skate_ragdoll.global_transform = skate.global_transform
 		set_active(skate_ragdoll, true)
 		var impulse: Vector3 = impulse_direction if impulse_direction != Vector3.ZERO else (Vector3.UP + Vector3.FORWARD).normalized() * 12
 		skate_ragdoll.apply_central_impulse(impulse)
 		var axe := Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
 		skate_ragdoll.apply_torque_impulse(axe * 10)
-		
-		set_active(skate, false)
 
 		restart_lag_timer.start()
 	else:
@@ -80,9 +83,7 @@ func _run_physics_substeps(dt: float) -> void:
 	_physics_step_accumulateur += dt
 	var steps: int = 0
 	while _physics_step_accumulateur >= substep and steps < max_steps_par_frame:
-		MapLoader.instance.control_speed(substep)
-		if skate and skate.can_process() and skate.has_method("step"):
-			skate.step(substep)
+		on_substep.emit(substep)
 		_physics_step_accumulateur -= substep
 		steps += 1
 

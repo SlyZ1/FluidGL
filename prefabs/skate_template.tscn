@@ -84,8 +84,8 @@ target_position = Vector3(0, 0, 0.365)
 [node name="AnimController" type="Node" parent="." unique_id=671014669 node_paths=PackedStringArray("skate_physics", "mesh_instance")]
 script = ExtResource("2_2wimw")
 skate_physics = NodePath("..")
-trick_cancel_end = 0.08
-trick_catchable_start = 0.2
+trick_cancel_end = 0.0
+trick_catchable_start = 0.0
 trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
 

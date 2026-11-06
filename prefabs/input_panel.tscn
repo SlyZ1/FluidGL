@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ikljigiecowi"]
 
 [ext_resource type="StyleBox" uid="uid://dgq7ambxtn2t5" path="res://prefabs/rounded_box_white.tres" id="1_ql8b6"]
-[ext_resource type="Script" uid="uid://0bal7x7pmdb" path="res://prefabs/input_panel.gd" id="1_v4aj5"]
+[ext_resource type="Script" uid="uid://0bal7x7pmdb" path="res://scripts/quests (deprecated)/input_panel.gd" id="1_v4aj5"]
 [ext_resource type="StyleBox" uid="uid://cc4h0v0eb5prm" path="res://prefabs/rounded_box.tres" id="2_v4aj5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ushs"]

@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bykj6c41eouqh"]
 
 [ext_resource type="Script" uid="uid://bsk5i0bpxbhd4" path="res://scripts/streak_panel.gd" id="1_ymcwo"]
-[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://Matcha Style.ttf" id="2_1fx2o"]
+[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://fonts/Matcha Style.ttf" id="2_1fx2o"]
 [ext_resource type="Shader" uid="uid://dymfd8cg5kxm7" path="res://shaders/streak_panel.gdshader" id="2_4hqtd"]
 [ext_resource type="Script" uid="uid://bld81h7uoodvt" path="res://scripts/tier_fill.gd" id="4_y865s"]
-[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://PORKYS_.TTF" id="5_dsygr"]
+[ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://fonts/PORKYS_.TTF" id="5_dsygr"]
 
 [sub_resource type="Curve" id="Curve_dsygr"]
 _data = [Vector2(0, 0.49514556), 0.0, 0.0, 0, 0, Vector2(0.35999995, 1), 0.0, 0.0, 0, 0, Vector2(0.65090907, 0.36893195), 0.0, 0.0, 0, 0, Vector2(1, 0.49514556), 0.0, 0.0, 0, 0]

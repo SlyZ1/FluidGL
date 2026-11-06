@@ -7,15 +7,12 @@ class_name MapLoader
 @export var angle: float = -15
 @export var speed: float = 1
 @export_range(0,1) var speed_increase_rate: float = 1
-@export var container: Node3D
 @export var sections: Array[PackedScene]
 @export var empty_section: PackedScene
 @export_range(0,1) var empty_ratio: float = 0.3
 
 var is_running: bool = true
 var ready_to_restart := false
-
-var _step_accumulateur: float = 0
 
 var speed_vector: Vector3 = Vector3.ZERO
 
@@ -40,10 +37,14 @@ func _exit_tree() -> void:
 		instance = null
 
 func _ready() -> void:
-	_next_spawn = _new_section(Vector3.ZERO, true)
+	_next_spawn = _new_section(-20 * Vector3.RIGHT, true)
+	_control_speed(0.5)
+	_control_spawn()
+	_control_spawn(true)
 	TrickManager.xp_changed.connect(_on_xp_changed)
 	GameManager.instance.on_stop.connect(_on_stop)
 	GameManager.instance.on_start.connect(_on_start)
+	GameManager.instance.on_substep.connect(_control_speed)
 
 func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
@@ -72,8 +73,8 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 	empty = empty || randf() < empty_ratio
 	
 	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
-	new_section.snap(snap_to, container)
-	container.add_child(new_section)
+	new_section.snap(snap_to, self)
+	add_child(new_section)
 	new_section.visible = false
 	return new_section
 
@@ -100,7 +101,7 @@ func _control_spawn(should_spawn_empty := false):
 		front_section.queue_free()
 		_spawned_sections.pop_front()
 
-func control_speed(delta: float):
+func _control_speed(delta: float):
 	for section: Section in _spawned_sections:
 		section.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
 	if _next_spawn: _next_spawn.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
@@ -108,5 +109,5 @@ func control_speed(delta: float):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	container.rotation_degrees.z = angle
+	rotation_degrees.z = angle
 	_control_spawn()

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://bnwcfi8iivcou"]
+
+[ext_resource type="Script" uid="uid://dnwlmkb6txlm3" path="res://scripts/audio/sound_effect_settings.gd" id="1_qnsfh"]
+[ext_resource type="AudioStream" uid="uid://y0f5r337yt2t" path="res://audio/points_crazy.mp3" id="2_qnsfh"]
+
+[resource]
+script = ExtResource("1_qnsfh")
+type = 8
+sound_effect = ExtResource("2_qnsfh")
+volume = 2.0
+start_offset = 0.05
+metadata/_custom_type_script = "uid://dnwlmkb6txlm3"
