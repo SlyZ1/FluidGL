@@ -36,9 +36,9 @@ private:
     static void EndCustomHeader();
 
     // Stats
-    void drawTimers(StatsPrimitive<float> timers);
-    void drawCounters(StatsPrimitive<int> counters);
-    void drawStorages(StatsPrimitive<int> storage); 
+    void drawTimers(StatsPrimitive<float> timers, std::string statsName);
+    void drawCounters(StatsPrimitive<int> counters, std::string statsName);
+    void drawStorages(StatsPrimitive<int> storage, std::string statsName);
     void renderStats();
 
     // Params

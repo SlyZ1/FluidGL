@@ -2,6 +2,7 @@
 
 #include <omp.h>
 #include <iostream>
+#include "core/shader_program.hpp"
 
 #include "helpers/utils.hpp"
 
@@ -25,7 +26,7 @@ void FlipSolverCPU::genBuffers(){
         m_partPos[i] = (vec4(x-10, y, 0, 0) - vec4(a*0.5f, a*0.5f, 0, 0)) * 2.f * m_config.getPartRadius() * 1.f;
     }
 
-    glDeleteBuffers(1, &m_posVBO); glDeleteBuffers(1, &m_velVBO);
+    ShaderProgram::deleteBuffer(m_posVBO); ShaderProgram::deleteBuffer(m_velVBO);
     glGenBuffers(1, &m_posVBO); glGenBuffers(1, &m_velVBO);
 }
 

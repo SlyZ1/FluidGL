@@ -18,10 +18,10 @@ Mesh::Mesh() {
 }
 
 Mesh::~Mesh() {
-    glDeleteBuffers(1, &m_posBuffer);
-    glDeleteBuffers(1, &m_normalBuffer);
-    glDeleteBuffers(1, &m_sdfBuffer);
-    glDeleteBuffers(1, &m_sdfGradBuffer);
+    ShaderProgram::deleteBuffer(m_posBuffer);
+    ShaderProgram::deleteBuffer(m_normalBuffer);
+    ShaderProgram::deleteBuffer(m_sdfBuffer);
+    ShaderProgram::deleteBuffer(m_sdfGradBuffer);
 }
 
 void Mesh::loadObj(string path) {

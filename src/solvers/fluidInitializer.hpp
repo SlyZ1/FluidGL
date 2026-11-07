@@ -26,6 +26,12 @@ public:
         m_max = max / clampedScale;
     }
 
+    void setSizeAndPos(glm::vec3 size, glm::vec3 pos, float scale){
+        float clampedScale = glm::max(scale, 1e-8f);
+        m_min = (pos - size * 0.5f) / clampedScale;
+        m_max = (pos + size * 0.5f) / clampedScale;
+    }
+
     glm::vec3 pos(float scale) const {
         return (m_min + m_max) * 0.5f * scale;
     }

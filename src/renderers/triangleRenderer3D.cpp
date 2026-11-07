@@ -10,10 +10,10 @@ void TriangleRenderer::initOpenGL() {
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     
-    glDeleteBuffers(1, &m_VBO);
+    ShaderProgram::deleteBuffer(m_VBO);
     glGenBuffers(1, &m_VBO);
     
-    glDeleteBuffers(1, &m_EBO);
+    ShaderProgram::deleteBuffer(m_EBO);
     glGenBuffers(1, &m_EBO);
 }
 
@@ -35,8 +35,8 @@ TriangleRenderer::TriangleRenderer(std::weak_ptr<Camera> camera)
 
 TriangleRenderer::~TriangleRenderer() {
     glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
+    ShaderProgram::deleteBuffer(m_VBO);
+    ShaderProgram::deleteBuffer(m_EBO);
 }
 
 void TriangleRenderer::render(bool clear) {

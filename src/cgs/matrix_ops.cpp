@@ -40,7 +40,7 @@ MatOps::MatOps(){
     m_clearProg.load(GL_COMPUTE_SHADER, "src/shaders/mat/clear.glsl");
     m_clearProg.link();
 
-    glDeleteBuffers(1, &m_partialDotBuffer);
+    ShaderProgram::deleteBuffer(m_partialDotBuffer);
     glGenBuffers(1, &m_partialDotBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_partialDotBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, 1024 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
@@ -48,8 +48,8 @@ MatOps::MatOps(){
 }
 
 MatOps::~MatOps(){
-    glDeleteBuffers(1, &m_partialDotBuffer);
-    glDeleteBuffers(1, &m_alphaBuffer);
+    ShaderProgram::deleteBuffer(m_partialDotBuffer);
+    ShaderProgram::deleteBuffer(m_alphaBuffer);
 }
 
 void MatOps::ensurePartialCapacity(int N){

@@ -49,10 +49,15 @@ class ShaderProgram {
 
         template<typename T>
         static void genDataSSBO(GLuint& buffer, int size, const T* data, GLenum usage = GL_DYNAMIC_DRAW){
-            glDeleteBuffers(1, &buffer);
+            deleteBuffer(buffer);
             glGenBuffers(1, &buffer);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
             glBufferData(GL_SHADER_STORAGE_BUFFER, size * sizeof(T), data, usage);
+        }
+
+        static void deleteBuffer(GLuint& buffer) {
+            glDeleteBuffers(1, &buffer);
+            buffer = 0;
         }
 
         template<typename T>

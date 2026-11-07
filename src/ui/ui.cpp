@@ -16,7 +16,7 @@ void UI::setStatsContext(const vector<weak_ptr<IStatsProvider>>& ctx){
 
 // ----------------------------------------- STATS -----------------------------------------
 
-void UI::drawTimers(StatsPrimitive<float> timers){
+void UI::drawTimers(StatsPrimitive<float> timers, string statsName){
     Stat<TimerValue> totalTimeStat = timers.get(0);
     if (timers.numStats() <= 2){
         UtilsUI::BeginTwoColumnLayout();
@@ -29,7 +29,7 @@ void UI::drawTimers(StatsPrimitive<float> timers){
     else {
         ImGui::Indent();
 
-        string headerName = "Latencies: " + Utils::formatFloat(totalTimeStat.value, 2) + "ms###latencies";
+        string headerName = "Latencies: " + Utils::formatFloat(totalTimeStat.value, 2) + "ms###latencies" + statsName;
         if (!ImGui::CollapsingHeader(headerName.c_str())) { ImGui::Unindent(); return; }
 
         UtilsUI::BeginTwoColumnLayout();
@@ -51,10 +51,11 @@ void UI::drawTimers(StatsPrimitive<float> timers){
     }
 }
 
-void UI::drawCounters(StatsPrimitive<int> counters){
+void UI::drawCounters(StatsPrimitive<int> counters, string statsName){
     if (counters.numStats() > 1){
         ImGui::Indent();
-        if (!ImGui::CollapsingHeader("Counters")) { ImGui::Unindent(); return; }
+        string headerName = "Counters###counters" + statsName;
+        if (!ImGui::CollapsingHeader(headerName.c_str())) { ImGui::Unindent(); return; }
     }
 
     UtilsUI::BeginTwoColumnLayout();
@@ -71,10 +72,11 @@ void UI::drawCounters(StatsPrimitive<int> counters){
     if (counters.numStats() > 1) ImGui::Unindent();
 }
 
-void UI::drawStorages(StatsPrimitive<int> storages){
+void UI::drawStorages(StatsPrimitive<int> storages, string statsName){
     if (storages.numStats() > 1){
         ImGui::Indent();
-        if (!ImGui::CollapsingHeader("Storages")) { ImGui::Unindent(); return; }
+        string headerName = "Storages###storage" + statsName;
+        if (!ImGui::CollapsingHeader(headerName.c_str())) { ImGui::Unindent(); return; }
     }
 
     UtilsUI::BeginTwoColumnLayout();
@@ -108,9 +110,9 @@ void UI::renderStats(){
             if (!stats) continue;
 
             if (ImGui::CollapsingHeader(stats->name.c_str())) {
-                drawTimers(stats->getTimers());
-                drawCounters(stats->getCounters());
-                drawStorages(stats->getStorages());
+                drawTimers(stats->getTimers(), stats->name.c_str());
+                drawCounters(stats->getCounters(), stats->name.c_str());
+                drawStorages(stats->getStorages(), stats->name.c_str());
             }
             if (stats->numStats() > 0) ImGui::Dummy(ImVec2(0, 2.f));
         }

@@ -36,7 +36,7 @@ struct PrefixSumGPU {
         load(globalSum, "/prefixsum/globalsum.glsl");
     }
     ~PrefixSumGPU() {
-        for (GLuint b : blockSums) glDeleteBuffers(1, &b);
+        for (GLuint b : blockSums) ShaderProgram::deleteBuffer(b);
     }
 
     static void load(ShaderProgram& p, const string& path) {
@@ -116,7 +116,7 @@ static vector<uint32_t> gpuScan(PrefixSumGPU& ps, const vector<uint32_t>& input)
     vector<uint32_t> out(padded);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, buf);
     glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, padded * sizeof(uint32_t), out.data());
-    glDeleteBuffers(1, &buf);
+    ShaderProgram::deleteBuffer(buf);
 
     out.resize(n);
     return out;

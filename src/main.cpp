@@ -64,8 +64,14 @@ void init(){
     FlipSolverGPUConfig flipConfig = FlipSolverGPUConfig();
     flipConfig.setPartPerH(2);
     flipConfig.setDensityMultiplier(1);
-    flipConfig.setCgMaxIter(30);
+    flipConfig.setCgMaxIter(5);
     flipConfig.setCgTol(0.01f);
+    flipConfig.setDomainSize(vec3(226.0f, 158.0f, 218.5f));
+    flipConfig.setPartRadius(0.5f);
+    FluidInitializer initializer = FluidInitializer();
+    initializer.setSizeAndPos(vec3(120, 76, 96), vec3(0, 29.5f, 0), flipConfig.getPartRadius());
+    flipConfig.setFluidInitializer(initializer);
+    flipConfig.setDt(0.07f);
     configDt = flipConfig.getDt();
 
     solverManager = make_shared<SolverManager>(camera);

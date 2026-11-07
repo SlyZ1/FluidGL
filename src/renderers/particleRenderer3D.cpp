@@ -52,13 +52,13 @@ ParticleRenderer3D::ParticleRenderer3D(weak_ptr<Camera> camera)
 
 ParticleRenderer3D::~ParticleRenderer3D(){
     glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
-    glDeleteBuffers(1, &m_drawBuffer);
+    ShaderProgram::deleteBuffer(m_VBO);
+    ShaderProgram::deleteBuffer(m_EBO);
+    ShaderProgram::deleteBuffer(m_drawBuffer);
 
-    // glDeleteBuffers(1, &gridVBO);
-    // glDeleteBuffers(1, &posesVBO);
-    // glDeleteBuffers(1, &colorsVBO);
+    // ShaderProgram::deleteBuffer(gridVBO);
+    // ShaderProgram::deleteBuffer(posesVBO);
+    // ShaderProgram::deleteBuffer(colorsVBO);
     
     // glDeleteFramebuffers(1, &depthFBO);
     // glDeleteFramebuffers(1, &cumulativeDepthFBO);
@@ -83,19 +83,19 @@ void ParticleRenderer3D::initOpenGL(){
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     
-    glDeleteBuffers(1, &m_VBO);
+    ShaderProgram::deleteBuffer(m_VBO);
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, s_quadVerts.size() * sizeof(float), s_quadVerts.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
     
-    glDeleteBuffers(1, &m_EBO);
+    ShaderProgram::deleteBuffer(m_EBO);
     glGenBuffers(1, &m_EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, s_quadIndices.size() * sizeof(GLuint), s_quadIndices.data(), GL_STATIC_DRAW);
 
-    glDeleteBuffers(1, &m_drawBuffer);
+    ShaderProgram::deleteBuffer(m_drawBuffer);
     glGenBuffers(1, &m_drawBuffer);
     DrawElementsIndirectCommand command = { 6, 0, 0, 0, 0 };
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_drawBuffer);

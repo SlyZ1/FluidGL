@@ -37,11 +37,11 @@ void main(){
 
     vec3 pos = partPos[i].xyz;
     vec3 vel = partVel[i].xyz;
-    if (pos.y > maxPos.y - 4 * radius){
-        partPos[i].x = maxPos.x + 100;
-        killParticle(i);
-        return;
-    }
+    // if (pos.y > maxPos.y - 4 * radius){
+    //     partPos[i].x = maxPos.x + 100;
+    //     killParticle(i);
+    //     return;
+    // }
 
     if (all(greaterThan(pos, obstacleMinBound)) && all(lessThan(pos, obstacleMaxBound))){
         float s = length(vec3(obstacleInverseMatrix[0]));
@@ -56,7 +56,7 @@ void main(){
                 pos += normal * (5 * radius - sdfVal);
 
                 vec3 relativeVel = vel - obstacleVelocity;
-                relativeVel -= normal * min(dot(normal, relativeVel), 0);
+                relativeVel -= normal * dot(normal, relativeVel);
                 vel = relativeVel + obstacleVelocity;
             }
         }

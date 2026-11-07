@@ -1,10 +1,12 @@
 #include "xpdbSolverCPU.hpp"
 
+#include "core/shader_program.hpp"
+
 using namespace std;
 using namespace glm;
 
 void XpbdSolverCPU::genBuffers(){
-    glDeleteBuffers(1, &m_posBuffer); glDeleteBuffers(1, &m_velBuffer);
+    ShaderProgram::deleteBuffer(m_posBuffer); ShaderProgram::deleteBuffer(m_velBuffer);
     glGenBuffers(1, &m_posBuffer); glGenBuffers(1, &m_velBuffer);
 }
 
@@ -14,7 +16,7 @@ XpbdSolverCPU::XpbdSolverCPU(XpbdSolverCPUConfig config)
 }
 
 XpbdSolverCPU::~XpbdSolverCPU() {
-    glDeleteBuffers(1, &m_posBuffer); glDeleteBuffers(1, &m_velBuffer);
+    ShaderProgram::deleteBuffer(m_posBuffer); ShaderProgram::deleteBuffer(m_velBuffer);
 }
 
 void XpbdSolverCPU::integrate() {

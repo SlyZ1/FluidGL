@@ -13,26 +13,26 @@ CGS::~CGS() {
 }
 
 void CGS::deleteBuffers(){
-    glDeleteBuffers(1, &m_ATABuffer);
-    glDeleteBuffers(1, &m_ATBuffer);
-    glDeleteBuffers(1, &m_ATbBuffer);
-    glDeleteBuffers(1, &m_zeroBuffer);
-    glDeleteBuffers(1, &m_dBuffer);
-    glDeleteBuffers(1, &m_AdBuffer);
-    glDeleteBuffers(1, &m_rBuffer);
-    glDeleteBuffers(1, &m_scalarBuffer);
-    glDeleteBuffers(1, &m_indirectBuffer);
-    glDeleteBuffers(1, &m_zBuffer);
+    ShaderProgram::deleteBuffer(m_ATABuffer);
+    ShaderProgram::deleteBuffer(m_ATBuffer);
+    ShaderProgram::deleteBuffer(m_ATbBuffer);
+    ShaderProgram::deleteBuffer(m_zeroBuffer);
+    ShaderProgram::deleteBuffer(m_dBuffer);
+    ShaderProgram::deleteBuffer(m_AdBuffer);
+    ShaderProgram::deleteBuffer(m_rBuffer);
+    ShaderProgram::deleteBuffer(m_scalarBuffer);
+    ShaderProgram::deleteBuffer(m_indirectBuffer);
+    ShaderProgram::deleteBuffer(m_zBuffer);
 }
 
 void CGS::initBuffers(){
-    glGenBuffers(1, &m_ATABuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATABuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * m_n * sizeof(float), nullptr, GL_DYNAMIC_COPY);
+    // glGenBuffers(1, &m_ATABuffer);
+    // glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATABuffer);
+    // glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * m_n * sizeof(float), nullptr, GL_DYNAMIC_COPY);
     
-    glGenBuffers(1, &m_ATBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * m_n * sizeof(float), nullptr, GL_DYNAMIC_COPY);
+    // glGenBuffers(1, &m_ATBuffer);
+    // glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATBuffer);
+    // glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * m_n * sizeof(float), nullptr, GL_DYNAMIC_COPY);
     
     glGenBuffers(1, &m_ATbBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATbBuffer);
@@ -78,12 +78,12 @@ void CGS::initBuffers(){
 }
 
 void CGS::compute_ATA_ATb(GLuint AMatrixbuffer, GLuint bMatrixBuffer){
-    m_matOps->transpose(AMatrixbuffer, m_ATBuffer, m_n);
-    m_matOps->multiply(m_ATBuffer, AMatrixbuffer, m_ATABuffer, m_n);
-    m_matOps->copy(m_ATABuffer, AMatrixbuffer, m_n * m_n);
+    // m_matOps->transpose(AMatrixbuffer, m_ATBuffer, m_n);
+    // m_matOps->multiply(m_ATBuffer, AMatrixbuffer, m_ATABuffer, m_n);
+    // m_matOps->copy(m_ATABuffer, AMatrixbuffer, m_n * m_n);
 
-    m_matOps->matVec(m_ATBuffer, bMatrixBuffer, m_ATbBuffer, m_n);
-    m_matOps->copy(m_ATbBuffer, bMatrixBuffer, m_n);
+    // m_matOps->matVec(m_ATBuffer, bMatrixBuffer, m_ATbBuffer, m_n);
+    // m_matOps->copy(m_ATbBuffer, bMatrixBuffer, m_n);
 }
 
 void CGS::init(int n, GLuint ABuffer, GLuint bBuffer, GLuint xBuffer){

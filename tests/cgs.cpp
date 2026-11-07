@@ -66,7 +66,7 @@ struct System {
         glBufferData(GL_SHADER_STORAGE_BUFFER, N * sizeof(float), x0.data(), GL_DYNAMIC_DRAW);
         cgs.init(N, A, b, x);
     }
-    ~System() { glDeleteBuffers(1, &A); glDeleteBuffers(1, &b); glDeleteBuffers(1, &x); }
+    ~System() { ShaderProgram::deleteBuffer(A); ShaderProgram::deleteBuffer(b); ShaderProgram::deleteBuffer(x); }
     System(const System&) = delete;
     System& operator=(const System&) = delete;
 

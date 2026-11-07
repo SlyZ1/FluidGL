@@ -10,32 +10,32 @@ using namespace std;
 string FlipSolverGPU::s_shadersPath = "src/shaders/FLIP";
 
 void FlipSolverGPU::deleteBuffers(){
-    glDeleteBuffers(1, &m_rXBuffer); glDeleteBuffers(1, &m_rYBuffer); glDeleteBuffers(1, &m_rZBuffer);
-    glDeleteBuffers(1, &m_velXBuffer); glDeleteBuffers(1, &m_velYBuffer); glDeleteBuffers(1, &m_velZBuffer);
-    glDeleteBuffers(1, &m_oldVelXBuffer); glDeleteBuffers(1, &m_oldVelYBuffer); glDeleteBuffers(1, &m_oldVelZBuffer);
-    glDeleteBuffers(1, &m_partPosBuffer); glDeleteBuffers(1, &m_partVelBuffer); 
-    glDeleteBuffers(1, &m_oldPartPosBuffer); glDeleteBuffers(1, &m_oldPartVelBuffer);
-    glDeleteBuffers(1, &m_isAirBuffer); 
+    ShaderProgram::deleteBuffer(m_rXBuffer); ShaderProgram::deleteBuffer(m_rYBuffer); ShaderProgram::deleteBuffer(m_rZBuffer);
+    ShaderProgram::deleteBuffer(m_velXBuffer); ShaderProgram::deleteBuffer(m_velYBuffer); ShaderProgram::deleteBuffer(m_velZBuffer);
+    ShaderProgram::deleteBuffer(m_oldVelXBuffer); ShaderProgram::deleteBuffer(m_oldVelYBuffer); ShaderProgram::deleteBuffer(m_oldVelZBuffer);
+    ShaderProgram::deleteBuffer(m_partPosBuffer); ShaderProgram::deleteBuffer(m_partVelBuffer); 
+    ShaderProgram::deleteBuffer(m_oldPartPosBuffer); ShaderProgram::deleteBuffer(m_oldPartVelBuffer);
+    ShaderProgram::deleteBuffer(m_isAirBuffer); 
 
-    glDeleteBuffers(1, &m_isDeadBuffer); glDeleteBuffers(1, &m_aliveNBuffer);
+    ShaderProgram::deleteBuffer(m_isDeadBuffer); ShaderProgram::deleteBuffer(m_aliveNBuffer);
 
-    for (GLuint buffer : m_blockSumBuffers) glDeleteBuffers(1, &buffer);
-    for (GLuint buffer : m_zBuffers) glDeleteBuffers(1, &buffer);
-    for (GLuint buffer : m_rBuffers) glDeleteBuffers(1, &buffer);
-    for (GLuint buffer : m_coarseIsAirBuffers) glDeleteBuffers(1, &buffer);
+    for (GLuint buffer : m_blockSumBuffers) ShaderProgram::deleteBuffer(buffer);
+    for (GLuint buffer : m_zBuffers) ShaderProgram::deleteBuffer(buffer);
+    for (GLuint buffer : m_rBuffers) ShaderProgram::deleteBuffer(buffer);
+    for (GLuint buffer : m_coarseIsAirBuffers) ShaderProgram::deleteBuffer(buffer);
     m_blockSumBuffers.clear();
     m_zBuffers.clear();
     m_rBuffers.clear();
     m_coarseIsAirBuffers.clear();
 
-    glDeleteBuffers(1, &m_cellOfBuffer);
-    glDeleteBuffers(1, &m_firstCellParticleBuffer); glDeleteBuffers(1, &m_cellParticleIdsBuffer);
-    glDeleteBuffers(1, &m_firstCellParticleBuffer2);
+    ShaderProgram::deleteBuffer(m_cellOfBuffer);
+    ShaderProgram::deleteBuffer(m_firstCellParticleBuffer); ShaderProgram::deleteBuffer(m_cellParticleIdsBuffer);
+    ShaderProgram::deleteBuffer(m_firstCellParticleBuffer2);
 
-    glDeleteBuffers(1, &m_minusDivBuffer); glDeleteBuffers(1, &m_pressureBuffer);
+    ShaderProgram::deleteBuffer(m_minusDivBuffer); ShaderProgram::deleteBuffer(m_pressureBuffer);
 
-    glDeleteBuffers(1, &m_rhoBuffer); glDeleteBuffers(1, &m_smoothRhoBuffer); glDeleteBuffers(1, &m_gradRhoBuffer);
-    glDeleteBuffers(1, &m_curvatureBuffer);
+    ShaderProgram::deleteBuffer(m_rhoBuffer); ShaderProgram::deleteBuffer(m_smoothRhoBuffer); ShaderProgram::deleteBuffer(m_gradRhoBuffer);
+    ShaderProgram::deleteBuffer(m_curvatureBuffer);
 }
 
 void FlipSolverGPU::createBuffers(){
@@ -62,7 +62,7 @@ void FlipSolverGPU::createBuffers(){
     for (int x = 0; x < nx; x++)
         for (int y = 0; y < ny; y++)
             for (int z = 0; z < nz; z++) {
-                if (i >= partN) return;
+                if (i >= partN) continue;
                 partPos[i] = (vec4(x,y,z,1) + vec4(1, 0, 1, 0) * 0.5f * (float)((int)y % 2) - vec4(nx,ny,nz,1) * 0.5f) 
                                 * m_config.getH() / m_config.getPartPerH() / densityScale;
 
@@ -95,12 +95,13 @@ void FlipSolverGPU::createBuffers(){
     ShaderProgram::genDataSSBO<uint>(m_aliveNBuffer, 1, &uintPartN);
 
     int ceiledN = (int)glm::ceil((float)(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() + 1) / 512.f) * 512;
-    for (int i = ceiledN; i > SHARED_SIZE; i/=512)
-    {
+    int n = ceiledN;
+    do {
+        n = (n + 511) / 512;
         GLuint blockSumBuffer = 0;
-        ShaderProgram::genSSBO<uint>(blockSumBuffer, (i + 511) / 512, 0);
+        ShaderProgram::genSSBO<uint>(blockSumBuffer, n, 0);
         m_blockSumBuffers.push_back(blockSumBuffer);
-    }
+    } while (n >= SHARED_SIZE);
 
     ShaderProgram::genSSBO<uint>(m_cellOfBuffer, partN, 0);
     ShaderProgram::genSSBO<uint>(m_firstCellParticleBuffer, ceiledN, 0);

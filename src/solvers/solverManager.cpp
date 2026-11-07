@@ -33,7 +33,7 @@ weak_ptr<FlipSolverCPU> SolverManager::instantiate(const FlipSolverCPUConfig& co
     m_renderCallback = {};
     m_updateCallback = {};
 
-    auto updateRendererData = [weakSolver   = weak_ptr<FlipSolverCPU>(solver),
+    auto onConfigChanged = [weakSolver   = weak_ptr<FlipSolverCPU>(solver),
                             weakRenderer = weak_ptr<ParticleRenderer3D>(renderer)]() {
         auto s = weakSolver.lock();
         auto r = weakRenderer.lock();
@@ -44,7 +44,7 @@ weak_ptr<FlipSolverCPU> SolverManager::instantiate(const FlipSolverCPUConfig& co
         r->setPartRadius(newConfig.getPartRadius());
     };
 
-    auto updateRendererBuffers = [weakSolver   = weak_ptr<FlipSolverCPU>(solver),
+    auto onReload = [weakSolver   = weak_ptr<FlipSolverCPU>(solver),
                             weakRenderer = weak_ptr<ParticleRenderer3D>(renderer)]() {
         auto s = weakSolver.lock();
         auto r = weakRenderer.lock();
@@ -54,10 +54,10 @@ weak_ptr<FlipSolverCPU> SolverManager::instantiate(const FlipSolverCPUConfig& co
         r->setVelBuffer(s->getVelBuffer());
     };
 
-    solver->setConfigChangedCallback(updateRendererData);
-    solver->setReloadCallback(updateRendererBuffers);
-    updateRendererData();
-    updateRendererBuffers();
+    solver->setConfigChangedCallback(onConfigChanged);
+    solver->setReloadCallback(onReload);
+    onConfigChanged();
+    onReload();
 
     m_renderer = renderer;
 
@@ -80,8 +80,8 @@ weak_ptr<FlipSolverGPU> SolverManager::instantiate(const FlipSolverGPUConfig& co
     solver->setObstacle(m_obstacle);
     
     auto onConfigChanged = [weakSolver   = weak_ptr<FlipSolverGPU>(solver),
-                               weakRenderer = weak_ptr<ParticleRenderer3D>(renderer),
-                               weakObstacle = weak_ptr<Mesh>(m_obstacle)]() {
+                            weakRenderer = weak_ptr<ParticleRenderer3D>(renderer),
+                            weakObstacle = weak_ptr<Mesh>(m_obstacle)]() {
         auto s = weakSolver.lock();
         auto r = weakRenderer.lock();
         auto o = weakObstacle.lock();
@@ -90,16 +90,19 @@ weak_ptr<FlipSolverGPU> SolverManager::instantiate(const FlipSolverGPUConfig& co
         const FlipSolverGPUConfig& newConfig = s->getConfig();
         r->setNumParticles(newConfig.getPartN());
         r->setPartRadius(newConfig.getPartRadius());
-
+        
         o->constructSDF(newConfig.getPartRadius());
     };
 
-    auto updateRendererBuffers = [weakSolver   = weak_ptr<FlipSolverGPU>(solver),
-                            weakRenderer = weak_ptr<ParticleRenderer3D>(renderer)]() {
+    auto onReload = [weakSolver   = weak_ptr<FlipSolverGPU>(solver),
+                     weakRenderer = weak_ptr<ParticleRenderer3D>(renderer)]() {
         auto s = weakSolver.lock();
         auto r = weakRenderer.lock();
         if (!s || !r) return;
         
+        cout << s->getPosBuffer() << " " << *s->getPosBuffer() << " : getPosBuffer" << endl;
+        cout << s->getVelBuffer() << " " << *s->getVelBuffer() << " : getVelBuffer" << endl;
+
         r->setPosBuffer(s->getPosBuffer());
         r->setVelBuffer(s->getVelBuffer());
         r->setNumParticlesBuffer(s->getPartNBuffer());
@@ -107,9 +110,9 @@ weak_ptr<FlipSolverGPU> SolverManager::instantiate(const FlipSolverGPUConfig& co
     };
 
     solver->setConfigChangedCallback(onConfigChanged);
-    solver->setReloadCallback(updateRendererBuffers);
+    solver->setReloadCallback(onReload);
     onConfigChanged();
-    updateRendererBuffers();
+    onReload();
 
     m_renderer = renderer;
 

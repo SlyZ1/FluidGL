@@ -21,9 +21,9 @@ Wireframes::Wireframes(std::weak_ptr<Camera> camera) : m_camera(camera) {
 
 Wireframes::~Wireframes() {
     glDeleteVertexArrays(1, &m_lineVAO);
-    glDeleteBuffers(1, &m_lineVertVBO);
-    glDeleteBuffers(1, &m_linesVBO);
-    glDeleteBuffers(1, &m_colorsVBO);
+    ShaderProgram::deleteBuffer(m_lineVertVBO);
+    ShaderProgram::deleteBuffer(m_linesVBO);
+    ShaderProgram::deleteBuffer(m_colorsVBO);
 }
 
 WireframeIndex Wireframes::addLine(vec3 start, vec3 end, vec4 color) {

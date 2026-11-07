@@ -34,7 +34,7 @@ static bool testMatrixMultiplication(float eps = 1e-5f){
     for (int i = 0; i < N * N; i++)
         isCorrect = isCorrect && (abs(c[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferA); glDeleteBuffers(1, &bufferB); glDeleteBuffers(1, &bufferC);
+    ShaderProgram::deleteBuffer(bufferA); ShaderProgram::deleteBuffer(bufferB); ShaderProgram::deleteBuffer(bufferC);
 
     return isCorrect;
 }
@@ -65,7 +65,7 @@ static bool testMatrixSquare(float eps = 1e-5f){
     for (int i = 0; i < N * N; i++)
         isCorrect = isCorrect && (abs(b[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferA); glDeleteBuffers(1, &bufferB);
+    ShaderProgram::deleteBuffer(bufferA); ShaderProgram::deleteBuffer(bufferB);
 
     return isCorrect;
 }
@@ -106,7 +106,7 @@ static bool testMatrixVector(float eps = 1e-5f){
     for (int i = 0; i < N; i++)
         isCorrect = isCorrect && (abs(r[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferA); glDeleteBuffers(1, &bufferV); glDeleteBuffers(1, &bufferResult);
+    ShaderProgram::deleteBuffer(bufferA); ShaderProgram::deleteBuffer(bufferV); ShaderProgram::deleteBuffer(bufferResult);
 
     return isCorrect;
 }
@@ -155,7 +155,7 @@ static bool testDot(float eps = 1e-4f){
 
     Logger::log("Expected result: " + to_string(expectedDot) + ", result: " + to_string(result[2]), __LOG_DATA__);
 
-    glDeleteBuffers(1, &bufferU); glDeleteBuffers(1, &bufferV); glDeleteBuffers(1, &bufferResult);
+    ShaderProgram::deleteBuffer(bufferU); ShaderProgram::deleteBuffer(bufferV); ShaderProgram::deleteBuffer(bufferResult);
 
     return isCorrect;
 }
@@ -193,7 +193,7 @@ static bool testDotMultiIndices(float eps = 1e-4f){
 
     Logger::log("Expected result: " + to_string(expectedDot) + ", result: " + to_string(result[2]), __LOG_DATA__);
 
-    glDeleteBuffers(1, &bufferU); glDeleteBuffers(1, &bufferV); glDeleteBuffers(1, &bufferResult);
+    ShaderProgram::deleteBuffer(bufferU); ShaderProgram::deleteBuffer(bufferV); ShaderProgram::deleteBuffer(bufferResult);
 
     return isCorrect;
 }
@@ -246,7 +246,7 @@ static bool testDotIndirect(float eps = 1e-4f){
 
     Logger::log("Expected result: " + to_string(expectedDot) + ", result: " + to_string(result[2]), __LOG_DATA__);
 
-    glDeleteBuffers(1, &bufferU); glDeleteBuffers(1, &bufferV); glDeleteBuffers(1, &bufferResult); glDeleteBuffers(1, &indirectBuffer);
+    ShaderProgram::deleteBuffer(bufferU); ShaderProgram::deleteBuffer(bufferV); ShaderProgram::deleteBuffer(bufferResult); ShaderProgram::deleteBuffer(indirectBuffer);
 
     return isCorrect;
 }
@@ -294,7 +294,7 @@ static bool testSaxpyScalarOperations(float eps = 1e-3f){
     for (int i = 0; i < N; i++)
         isCorrect = isCorrect && (abs(z[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferX); glDeleteBuffers(1, &bufferY); glDeleteBuffers(1, &bufferZ); glDeleteBuffers(1, &bufferAlpha);
+    ShaderProgram::deleteBuffer(bufferX); ShaderProgram::deleteBuffer(bufferY); ShaderProgram::deleteBuffer(bufferZ); ShaderProgram::deleteBuffer(bufferAlpha);
 
     return isCorrect;
 }
@@ -331,7 +331,7 @@ static bool testSaxpyFloatAlpha(float eps = 1e-3f){
     for (int i = 0; i < N; i++)
         isCorrect = isCorrect && (abs(z[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferX); glDeleteBuffers(1, &bufferY); glDeleteBuffers(1, &bufferZ);
+    ShaderProgram::deleteBuffer(bufferX); ShaderProgram::deleteBuffer(bufferY); ShaderProgram::deleteBuffer(bufferZ);
 
     return isCorrect;
 }
@@ -366,7 +366,7 @@ static bool testCopy(float eps = 1e-5f){
     for (int i = 0; i < N; i++)
         isCorrect = isCorrect && (abs(x[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferX); glDeleteBuffers(1, &bufferY);
+    ShaderProgram::deleteBuffer(bufferX); ShaderProgram::deleteBuffer(bufferY);
 
     return isCorrect;
 }
@@ -401,7 +401,7 @@ static bool testTranspose(float eps = 1e-5f){
     for (int i = 0; i < N * N; i++)
         isCorrect = isCorrect && (abs(matT[i] - result[i]) < eps);
 
-    glDeleteBuffers(1, &bufferA); glDeleteBuffers(1, &bufferResult);
+    ShaderProgram::deleteBuffer(bufferA); ShaderProgram::deleteBuffer(bufferResult);
 
     return isCorrect;
 }
