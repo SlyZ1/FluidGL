@@ -28,6 +28,7 @@ private:
 
     WireframeData<glm::vec3> m_solverDomainData = {};
     WireframeData<FluidInitializer> m_solverInitializerData = {};
+    WireframeData<FluidInitializer> m_smokeDensitySourceData = {};
 
     SolverType m_solverType = SolverType::MaxType;
 
@@ -46,8 +47,11 @@ public:
     SolverGizmos& operator=(SolverGizmos&&) = default;
 
     void visit(IParticleSolver& solver) override;
+    void visit(EulerSolverGPU& solver) override;
     void visit(FlipSolverCPU& solver) override;
     void visit(FlipSolverGPU& solver) override;
+    void visit(LiquidFlipSolverGPU& solver) override;
+    void visit(SmokeFlipSolverGPU& solver) override;
     void visit(XpbdSolverCPU& solver) override;
 
     void render() const;

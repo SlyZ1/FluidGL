@@ -33,36 +33,19 @@ void CGS::initBuffers(){
     // glGenBuffers(1, &m_ATBuffer);
     // glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATBuffer);
     // glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * m_n * sizeof(float), nullptr, GL_DYNAMIC_COPY);
-    
-    glGenBuffers(1, &m_ATbBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ATbBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), nullptr, GL_DYNAMIC_COPY);
 
-    glGenBuffers(1, &m_zeroBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_zeroBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
-
-    glGenBuffers(1, &m_zBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_zBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
-
-    glGenBuffers(1, &m_dBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_dBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
-    
-    glGenBuffers(1, &m_AdBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_AdBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
-
-    glGenBuffers(1, &m_rBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_rBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_n * sizeof(float), vector<float>(m_n, 0.0f).data(), GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_ATbBuffer, m_n, 0.0f, GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_zeroBuffer, m_n, 0.0f, GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_onesBuffer, m_n, 1.0f, GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_dBuffer, m_n, 0.0f, GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_AdBuffer, m_n, 0.0f, GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_zBuffer, m_n, 0.0f, GL_DYNAMIC_COPY);
+    ShaderProgram::genSSBO<float>(m_rBuffer, m_n, 0.0f, GL_DYNAMIC_COPY);
     
     vector<float> scalars = vector<float>(NUM_SCALARS, 0);
+    scalars[N_SCALAR_INDEX] = m_n;
     scalars[MINUS_ONE_SCALAR_INDEX] = -1;
-    glGenBuffers(1, &m_scalarBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_scalarBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, NUM_SCALARS * sizeof(float), scalars.data(), GL_DYNAMIC_COPY);
+    ShaderProgram::genDataSSBO<float>(m_scalarBuffer, NUM_SCALARS, scalars.data(), GL_DYNAMIC_COPY);
 
     m_dispatchParams = vector<DispatchParams>{
         {GLuint((m_n + 63) / 64), 1, 1},     // matVec
@@ -124,7 +107,18 @@ void CGS::swap_rtr_indices(){
     RTR_SCALAR_INDEX = temp;
 }
 
-GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reuse){
+void CGS::project(GLuint buffer){
+    static vector<int> projectionOperations = vector<int>(16,0);
+    projectionOperations[MINUS_ONE_SCALAR_INDEX] = 1;
+    projectionOperations[SUM_B_SCALAR_INDEX] = 1;
+    projectionOperations[N_SCALAR_INDEX] = -1;
+
+    // b = b - sum b : sum b = <b, (1)>, then b = b - sum_b / n * (1)
+    m_matOps->dot(m_onesBuffer, buffer, m_scalarBuffer, m_n, SUM_B_SCALAR_INDEX);
+    m_matOps->saxpy(buffer, m_onesBuffer, buffer, m_scalarBuffer, m_n, projectionOperations, true);
+}
+
+GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reuse, bool projectB){
     m_dispatchParams[0] = matVecParams;
     glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_indirectBuffer);
     glBufferData(GL_DISPATCH_INDIRECT_BUFFER, m_dispatchParams.size() * sizeof(DispatchParams), 
@@ -137,21 +131,27 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
 
     // saxpy exponent operators
     minusOperations[MINUS_ONE_SCALAR_INDEX] = 1;
+    
     xAlphaScalarOperations[RTR_NEW_SCALAR_INDEX] = 1;
     xAlphaScalarOperations[DTAD_SCALAR_INDEX] = -1;
+    
     rAlphaScalarOperations[RTR_NEW_SCALAR_INDEX] = 1;
     rAlphaScalarOperations[DTAD_SCALAR_INDEX] = -1;
     rAlphaScalarOperations[MINUS_ONE_SCALAR_INDEX] = 1;
+    
     betaScalarOperations[RTR_NEW_SCALAR_INDEX] = 1;
     betaScalarOperations[RTR_SCALAR_INDEX] = -1;
     
     vector<float> initScalars = vector<float>(NUM_SCALARS, 0.0f);
     initScalars[MINUS_ONE_SCALAR_INDEX] = -1.0f;
+    initScalars[N_SCALAR_INDEX] = m_n;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_scalarBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, initScalars.size() * sizeof(float), initScalars.data(), GL_DYNAMIC_DRAW);
     
     ShaderProgram::SSBOBarrier();
 
+    // project b
+    if (projectB) project(m_bBuffer);
     
     // clear x
     if (!reuse) m_matOps->copy(m_zeroBuffer, m_xBuffer, m_n, true);
@@ -160,6 +160,8 @@ GLuint CGS::solve(int maxIter, float tol, DispatchParams matVecParams, bool reus
     // r = b - Ad
     m_matVec(m_ABuffer, m_xBuffer, m_AdBuffer, m_n, true);
     m_matOps->saxpy(m_bBuffer, m_AdBuffer, m_rBuffer, m_scalarBuffer, m_n, minusOperations, true);
+
+    if (projectB) project(m_rBuffer);
     
     // z = V(r)
     if (m_precond) m_precond(m_zBuffer, m_rBuffer, true);

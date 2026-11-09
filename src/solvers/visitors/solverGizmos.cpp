@@ -1,7 +1,8 @@
 #include "solverGizmos.hpp"
 
-#include "solvers/flipSolverCPU.hpp"
-#include "solvers/flipSolverGPU.hpp"
+#include "solvers/flip/flipSolverCPU.hpp"
+#include "solvers/flip/liquidFlipSolverGPU.hpp"
+#include "solvers/flip/smokeFlipSolverGPU.hpp"
 #include "solvers/xpdbSolverCPU.hpp"
 
 using namespace std;
@@ -28,9 +29,14 @@ void SolverGizmos::resetWireframes() {
     m_wireframes->reset();
     m_solverDomainData = {};
     m_solverInitializerData = {};
+    m_smokeDensitySourceData = {};
 }
 
 void SolverGizmos::visit(IParticleSolver&) {}
+
+void SolverGizmos::visit(EulerSolverGPU&){
+    
+}
 
 void SolverGizmos::visit(FlipSolverCPU& solver) {
     m_renderTimer.beginFrame();
@@ -47,11 +53,7 @@ void SolverGizmos::visit(FlipSolverCPU& solver) {
 }
 
 void SolverGizmos::visit(FlipSolverGPU& solver) {
-    m_renderTimer.beginFrame();
     const FlipSolverGPUConfig& config = solver.getDraftConfig();
-
-    if (m_solverType != SolverType::FlipGPU) resetWireframes();
-    m_solverType = SolverType::FlipGPU;
     
     vec3 newDomainSize = config.getDomainSize();
     vec3 domainBounds = config.getDomainSize() * 0.5f;
@@ -66,6 +68,38 @@ void SolverGizmos::visit(FlipSolverGPU& solver) {
         initializerBounds.max(config.getPartRadius()), 
         m_initializerColor
     )
+}
+
+void SolverGizmos::visit(LiquidFlipSolverGPU& solver) {
+    m_renderTimer.beginFrame();
+    if (m_solverType != SolverType::LiquidFlipGPU) resetWireframes();
+    m_solverType = SolverType::LiquidFlipGPU;
+
+    visit((FlipSolverGPU&)solver);
+    m_renderTimer.endFrame();
+    m_stats->setTimer(m_renderStatIndex, m_renderTimer.getLastResultMs());
+}
+
+void SolverGizmos::visit(SmokeFlipSolverGPU& solver) {
+    m_renderTimer.beginFrame();
+    if (m_solverType != SolverType::SmokeFlipGPU) resetWireframes();
+    m_solverType = SolverType::SmokeFlipGPU;
+
+    const SmokeFlipSolverGPUConfig& config = solver.getDraftConfig();
+
+    FluidInitializer densitySource = config.getDensitySource();
+    UPDATE_WIREFRAME(
+        Box, 
+        m_smokeDensitySourceData, 
+        densitySource, 
+        densitySource.min(config.getPartRadius()), 
+        densitySource.max(config.getPartRadius()), 
+        m_initializerColor
+    )
+    m_renderTimer.endFrame();
+    m_stats->setTimer(m_renderStatIndex, m_renderTimer.getLastResultMs());
+
+    visit((FlipSolverGPU&)solver);
     m_renderTimer.endFrame();
     m_stats->setTimer(m_renderStatIndex, m_renderTimer.getLastResultMs());
 }

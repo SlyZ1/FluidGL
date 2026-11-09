@@ -16,6 +16,8 @@ private:
     static constexpr int DTAD_SCALAR_INDEX = 2;
     static constexpr int RTR0_SCALAR_INDEX = 3;
     static constexpr int BTB_SCALAR_INDEX = 4;
+    static constexpr int SUM_B_SCALAR_INDEX = 4;
+    static constexpr int N_SCALAR_INDEX = 8;
     static constexpr int MINUS_ONE_SCALAR_INDEX = 9;
     static constexpr int NUM_SCALARS = 10;
 
@@ -23,6 +25,7 @@ private:
     // Main system Ax = b
     GLuint m_ABuffer = 0;
     GLuint m_bBuffer = 0;
+    GLuint m_onesBuffer = 0;
     GLuint m_ATBuffer = 0;
     GLuint m_ATbBuffer = 0;
     GLuint m_ATABuffer = 0;
@@ -47,6 +50,7 @@ private:
     void initBuffers();
     void deleteBuffers();
     void swap_rtr_indices();
+    void project(GLuint buffer);
 
     std::function<void(GLuint, GLuint, GLuint, int, bool)> m_matVec = nullptr;
     std::function<void(GLuint, GLuint, bool)> m_precond = nullptr; 
@@ -119,7 +123,7 @@ public:
      * @param matVecParams  The dispatch parameters of the compute shader used in matVec, used for some indirect dispatching.
      * @param reuse         Default is true. Describes whether or not the value of \p xBuffer is used as the initialization for the solver.
      */
-    GLuint solve(int maxIter, float tol, DispatchParams matVecParams, bool reuse=true);
+    GLuint solve(int maxIter, float tol, DispatchParams matVecParams, bool reuse=true, bool projectB=false);
 };
 
 #endif

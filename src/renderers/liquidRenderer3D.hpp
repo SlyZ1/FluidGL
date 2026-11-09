@@ -1,11 +1,11 @@
-#ifndef GPU_RENDERER_3D_HPP
-#define GPU_RENDERER_3D_HPP
+#ifndef LIQUID_PARTICLE_RENDERER_3D_HPP
+#define LIQUID_PARTICLE_RENDERER_3D_HPP
 
 #include "renderer.hpp"
 #include "core/shader_program.hpp"
 #include "core/camera.hpp"
 
-class ParticleRenderer3D : public IRenderer {
+class LiquidRenderer3D : public IRenderer {
 private:
     std::weak_ptr<Camera> m_camera;
 
@@ -80,11 +80,11 @@ private:
     void renderLogic(bool clear);
 
 public:
-    ParticleRenderer3D(std::weak_ptr<Camera> camera);
-    ~ParticleRenderer3D() override;
+    LiquidRenderer3D(std::weak_ptr<Camera> camera);
+    ~LiquidRenderer3D() override;
 
-    ParticleRenderer3D(const ParticleRenderer3D&) = delete;
-    ParticleRenderer3D& operator=(const ParticleRenderer3D&) = delete;
+    LiquidRenderer3D(const LiquidRenderer3D&) = delete;
+    LiquidRenderer3D& operator=(const LiquidRenderer3D&) = delete;
 
     void setPosBuffer(std::shared_ptr<GLuint> posBuffer) { m_posBuffer = posBuffer; }
     void setVelBuffer(std::shared_ptr<GLuint> velBuffer) { m_velBuffer = velBuffer; }

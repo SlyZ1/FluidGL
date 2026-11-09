@@ -16,11 +16,11 @@ void main(){
     uint i = gl_GlobalInvocationID.x;
     if (i >= partN) return;
 
-    vec3 gravityForce = vec3(0, -gravity, 0);
-
+    vec3 pos = partPos[i].xyz;
+    vec3 force = vec3(0,-gravity,0);
     vec3 oldVel = partVel[i].xyz;
-    vec3 newVel = oldVel + gravityForce * dt;
+    vec3 newVel = oldVel + force * dt;
 
     partVel[i].xyz = newVel;
-    partPos[i].xyz += newVel * dt;
+    partPos[i].xyz = pos + newVel * dt;
 }

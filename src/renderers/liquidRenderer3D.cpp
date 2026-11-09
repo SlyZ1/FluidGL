@@ -1,13 +1,13 @@
-#include "particleRenderer3D.hpp"
+#include "liquidRenderer3D.hpp"
 
 #include "helpers/utils.hpp"
 
 using namespace std;
 using namespace glm;
 
-string ParticleRenderer3D::s_shadersPath = "src/shaders/renderers/particle";
+string LiquidRenderer3D::s_shadersPath = "src/shaders/renderers/particle";
 
-ParticleRenderer3D::ParticleRenderer3D(weak_ptr<Camera> camera) 
+LiquidRenderer3D::LiquidRenderer3D(weak_ptr<Camera> camera) 
 : IRenderer("Particle Renderer"), m_camera(camera) {
 
     m_renderTimeStatIndex = m_stats->registerTimer("Render Time");
@@ -18,8 +18,8 @@ ParticleRenderer3D::ParticleRenderer3D(weak_ptr<Camera> camera)
     m_renderTimer.init();
 
     m_particleShader.create();
-    m_particleShader.load(GL_VERTEX_SHADER, Utils::joinPath(s_shadersPath, "/particleVert.glsl"));
-    m_particleShader.load(GL_FRAGMENT_SHADER, Utils::joinPath(s_shadersPath, "/particleFrag.glsl"));
+    m_particleShader.load(GL_VERTEX_SHADER, Utils::joinPath(s_shadersPath, "/liquidParticleVert.glsl"));
+    m_particleShader.load(GL_FRAGMENT_SHADER, Utils::joinPath(s_shadersPath, "/liquidParticleFrag.glsl"));
     m_particleShader.link();
 
     // cumulativeParticleShader.create();
@@ -50,7 +50,7 @@ ParticleRenderer3D::ParticleRenderer3D(weak_ptr<Camera> camera)
     initOpenGL();
 }
 
-ParticleRenderer3D::~ParticleRenderer3D(){
+LiquidRenderer3D::~LiquidRenderer3D(){
     glDeleteVertexArrays(1, &m_VAO);
     ShaderProgram::deleteBuffer(m_VBO);
     ShaderProgram::deleteBuffer(m_EBO);
@@ -78,7 +78,7 @@ ParticleRenderer3D::~ParticleRenderer3D(){
     // waterShader.destroy();
 }
 
-void ParticleRenderer3D::initOpenGL(){
+void LiquidRenderer3D::initOpenGL(){
     glDeleteVertexArrays(1, &m_VAO);
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
@@ -142,7 +142,7 @@ void ParticleRenderer3D::initOpenGL(){
     // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurredTex, 0);
 }
 
-void ParticleRenderer3D::renderLogic(bool clear) {
+void LiquidRenderer3D::renderLogic(bool clear) {
     if (!m_posBuffer || !m_velBuffer) return;
     m_particleShader.use();
 
@@ -156,9 +156,9 @@ void ParticleRenderer3D::renderLogic(bool clear) {
 
     glBindBuffer(GL_ARRAY_BUFFER, *m_velBuffer);
 
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
-    glVertexAttribDivisor(3, 1);
-    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
+    glVertexAttribDivisor(2, 1);
+    glEnableVertexAttribArray(2);
 
     glUniform1f(ShaderProgram::getVarLoc("particleRadius"), m_partRadius);
     if (auto camera = m_camera.lock()){
@@ -173,7 +173,7 @@ void ParticleRenderer3D::renderLogic(bool clear) {
     glEnable(GL_DEPTH_TEST);
 }
 
-void ParticleRenderer3D::render(bool clear){
+void LiquidRenderer3D::render(bool clear){
     m_renderTimer.beginFrame();
 
     renderLogic(clear);
@@ -284,7 +284,7 @@ void ParticleRenderer3D::render(bool clear){
     m_internalFrameCounter++;
 }
 
-void ParticleRenderer3D::reload(){
+void LiquidRenderer3D::reload(){
     m_particleShader.reload();
     // cumulativeParticleShader.reload();
     // gridShader.reload();

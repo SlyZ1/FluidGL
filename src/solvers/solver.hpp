@@ -11,13 +11,13 @@
 
 class ISolver : public IStatsProvider {
 protected:
-    std::unique_ptr<ISolverConfig> m_baseConfig;
-    std::unique_ptr<ISolverConfig> m_draftConfig;
+    std::shared_ptr<ISolverConfig> m_baseConfig;
+    std::shared_ptr<ISolverConfig> m_draftConfig;
     std::function<void()> m_configChangedCallback = {}; 
     std::function<void()> m_reloadCallback = {}; 
     bool m_isPaused = true;
 public:
-    ISolver(std::unique_ptr<ISolverConfig> config, const std::string& statsName) 
+    ISolver(std::shared_ptr<ISolverConfig> config, const std::string& statsName) 
     : IStatsProvider(statsName), m_baseConfig(std::move(config)) {};
     virtual ~ISolver() = default;
     virtual void accept(ISolverVisitor& visitor) = 0;

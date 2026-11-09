@@ -2,6 +2,8 @@
 
 using namespace glm;
 
+bool Wireframes::enableRender = true;
+
 Wireframes::Wireframes(std::weak_ptr<Camera> camera) : m_camera(camera) {
     m_lineProgram.create();
     m_lineProgram.load(GL_VERTEX_SHADER, "src/shaders/gizmos/lineVert.glsl");
@@ -120,6 +122,8 @@ void Wireframes::reset(){
 }
 
 void Wireframes::render() const {
+    if (!enableRender) return;
+
     m_lineProgram.use();
 
     if (auto camera = m_camera.lock()){

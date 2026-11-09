@@ -63,7 +63,7 @@ public:
     static bool BeginCustomHeader(const std::string& name);
     static void EndCustomHeader();
 
-    static void BeginTwoColumnLayout(float columnRatio = 0.4f);
+    static void BeginTwoColumnLayout(float columnRatio = 0.5f);
     static void EndTwoColumnLayout();
     static void Label(
         const char* label, 

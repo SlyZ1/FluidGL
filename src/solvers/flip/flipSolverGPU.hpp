@@ -9,17 +9,15 @@
 #include "helpers/stats.hpp"
 #include "cgs/cgs.hpp" 
 
-#include "configs/flipSolverGPUConfig.hpp"
-#include "particleSolver.hpp"
+#include "solvers/configs/flipSolverGPUConfig.hpp"
+#include "solvers/particleSolver.hpp"
 
 #include "objects/mesh.hpp"
 
 class FlipSolverGPU : public IParticleSolver {
 private:
     CGS m_cgs = {};
-    FlipSolverGPUConfig m_config;
-
-    static std::string s_shadersPath;
+    std::shared_ptr<FlipSolverGPUConfig> m_config;
 
     // FLIP Buffers
     GLuint m_partPosBuffer = 0;
@@ -64,7 +62,6 @@ private:
     GLuint m_firstCellParticleBuffer = 0;
     GLuint m_firstCellParticleBuffer2 = 0;
 
-    ShaderProgram m_integrateShader = {};
     ShaderProgram m_integrateGridShader = {};
 
     ShaderProgram m_collisionShader = {};
@@ -130,12 +127,8 @@ private:
     std::weak_ptr<Mesh> m_obstacle = {};
     
     std::vector<std::vector<int>> m_particlesInGrid = {};
-
-    glm::ivec3 cellToCoord(int cell, int nx, int ny);
-    glm::vec3 cellToPos(int cell, int nx, int ny, int nz);
-
-    static void loadCompute(ShaderProgram& prog, const std::string& relativePath);
  
+    
     void deleteBuffers();
     void createBuffers();
     void initCGS();
@@ -151,7 +144,6 @@ private:
     void prolongate(int l, glm::ivec3 dim, bool dispatch = true);
     void MGPrecond(GLuint zBuffer, GLuint rBuffer, bool dispatch = true);
 
-    void integrateParticles();
     void pushAppartParticles(int iterations);
     void particleCollisions(std::shared_ptr<Mesh> obstacle);
     void particlesToGrid();
@@ -159,24 +151,34 @@ private:
     void solveIncompressibility(int iterations, float tol, bool useCGS = true);
     void gridToParticles();
 
+protected:
+    bool m_isFull = false;
+
+    glm::ivec3 cellToCoord(int cell, int nx, int ny);
+    glm::vec3 cellToPos(int cell, int nx, int ny, int nz);
+    virtual void integrateParticles() {};
+    virtual void integrateGrid() {};
+    virtual void sortExtraAttributes(GLuint) {};
+
 public:
-    FlipSolverGPU(FlipSolverGPUConfig config);
+    FlipSolverGPU(std::shared_ptr<FlipSolverGPUConfig> config);
     ~FlipSolverGPU() override;
 
     FlipSolverGPU(const FlipSolverGPU&) = delete;
     FlipSolverGPU& operator=(const FlipSolverGPU&) = delete;
 
-    void accept(ISolverVisitor& visitor) override { visitor.visit(*this); }
+    virtual void accept(ISolverVisitor& visitor) override { visitor.visit(*this); }
     void update() override;
-    void reload() override;
+    virtual void reload() override;
     std::shared_ptr<GLuint> getPosBuffer() const override { return std::make_shared<GLuint>(m_partPosBuffer); };
     std::shared_ptr<GLuint> getVelBuffer() const override { return std::make_shared<GLuint>(m_partVelBuffer); };
     std::shared_ptr<GLuint> getPartNBuffer() const { return std::make_shared<GLuint>(m_aliveNBuffer); };
 
     void setObstacle(std::weak_ptr<Mesh> obstacle) { m_obstacle = obstacle; }
+    bool getIsFull() const { return m_isFull; }
 
     const FlipSolverGPUConfig& getConfig() const override {
-        return m_config; 
+        return *m_config; 
     }
 
     FlipSolverGPUConfig& getDraftConfig() override {

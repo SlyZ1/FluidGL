@@ -1,7 +1,5 @@
 #include "xpdbSolverCPU.hpp"
 
-#include "core/shader_program.hpp"
-
 using namespace std;
 using namespace glm;
 
@@ -11,7 +9,7 @@ void XpbdSolverCPU::genBuffers(){
 }
 
 XpbdSolverCPU::XpbdSolverCPU(XpbdSolverCPUConfig config) 
-: ISolver(make_unique<XpbdSolverCPUConfig>(move(config)), "FLIP GPU Solver"), m_config(static_cast<XpbdSolverCPUConfig&>(*m_baseConfig)) {
+: ISolver(make_shared<XpbdSolverCPUConfig>(move(config)), "FLIP GPU Solver"), m_config(static_cast<XpbdSolverCPUConfig&>(*m_baseConfig)) {
     genBuffers();
 }
 

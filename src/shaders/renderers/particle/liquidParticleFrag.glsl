@@ -21,5 +21,5 @@ void main()
     gl_FragDepth = ndcDepth * 0.5 + 0.5;
 
     FragColor = vec4(vec3(sphereDepth), 1);
-    FragColor = vec4(vColor.xyz, 1.0);
+    FragColor = vec4(vColor);
 }

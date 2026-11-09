@@ -25,7 +25,7 @@ void main(){
             data[i] = 0;
         }
     }
-    for(int i = 0; i < numScalars - 1; i++) {
+    for(int i = 0; i < numScalars - 2; i++) {
         if (i == rTrIndex || i == bTbIndex) continue;
         scalars[i] = 0;
     }

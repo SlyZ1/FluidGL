@@ -6,8 +6,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 
-#include "configs/flipSolverCPUConfig.hpp"
-#include "particleSolver.hpp"
+#include "solvers/configs/flipSolverCPUConfig.hpp"
+#include "solvers/particleSolver.hpp"
 
 class FlipSolverCPU : public IParticleSolver {
 private:

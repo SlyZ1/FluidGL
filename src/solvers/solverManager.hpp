@@ -1,8 +1,10 @@
 #ifndef SOLVER_MANAGER_HPP
 #define SOLVER_MANAGER_HPP
 
-#include "flipSolverCPU.hpp"
-#include "flipSolverGPU.hpp"
+#include "eulerSolverGPU.hpp"
+#include "flip/flipSolverCPU.hpp"
+#include "flip/liquidFlipSolverGPU.hpp"
+#include "flip/smokeFlipSolverGPU.hpp"
 #include "xpdbSolverCPU.hpp"
 #include "solverType.hpp"
 
@@ -24,8 +26,6 @@ private:
     std::function<void()> m_updateCallback = {};
     std::function<void()> m_renderCallback = {};
 
-    bool m_drawGizmos = true;
-
 public:
     SolverManager(std::weak_ptr<Camera> camera);
     ~SolverManager();
@@ -34,8 +34,10 @@ public:
     SolverManager& operator=(const SolverManager&) = delete;
 
     std::weak_ptr<ISolver> instantiate(SolverType type);
+    std::weak_ptr<EulerSolverGPU> instantiate(const EulerSolverGPUConfig& config);
     std::weak_ptr<FlipSolverCPU> instantiate(const FlipSolverCPUConfig& config);
-    std::weak_ptr<FlipSolverGPU> instantiate(const FlipSolverGPUConfig& config);
+    std::weak_ptr<LiquidFlipSolverGPU> instantiate(const LiquidFlipSolverGPUConfig& config);
+    std::weak_ptr<SmokeFlipSolverGPU> instantiate(const SmokeFlipSolverGPUConfig& config);
     std::weak_ptr<XpbdSolverCPU> instantiate(const XpbdSolverCPUConfig& config);
 
     std::weak_ptr<ISolver> getSolver() const { return m_solver; }
@@ -44,6 +46,7 @@ public:
     std::weak_ptr<IRenderer> getRenderer() const { return m_renderer; }
     std::weak_ptr<SolverGizmos> getSolverGizmos() const { return m_solverGizmos; }
     std::weak_ptr<Mesh> getObstacle() const { return m_obstacle; }
+    void setObstacle(std::shared_ptr<Mesh> obstacle) { m_obstacle = obstacle; }
 
     void update();
     void render(bool clear = false);
@@ -51,10 +54,6 @@ public:
     void reloadSolver();
     void reloadRenderer();
     void togglePause();
-
-    void toggleGizmos(bool drawGizmos) { m_drawGizmos = drawGizmos; if (m_solver) m_solver->accept(*m_solverGizmos); }
-    bool getGizmosToggled() const { return m_drawGizmos; }
-
 
     SolverType getCurrentType() const { return m_currentType; }
 };

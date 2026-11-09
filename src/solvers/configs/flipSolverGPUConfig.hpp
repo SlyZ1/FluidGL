@@ -13,22 +13,21 @@ protected:
     float m_densityMultiplier = 5;
     glm::vec3 m_domainSize = glm::vec3(900.0f, 400.0f, 300.0f);
     float m_sigma = 0;
-    float m_gravity = 9.81f;
     int m_cgMaxIter = 20;
     float m_cgTol = 1e-3f;
     int m_numPushAppart = 2;
     bool m_accuracyFirst = true;
+    
+protected:
     FluidInitializer m_fluidInitializer = FluidInitializer(
         glm::vec3(-450, -100, -150),
         glm::vec3(-150, 100, 150),
         1.5f
     );
+    
 
 public:
     FlipSolverGPUConfig() : IParticleSolverConfig() {}
-    FlipSolverGPUConfig(int partN, float partRadius, float dt, float flipRatio, float partPerH, float densityMultiplier, glm::vec3 domainSize) 
-    : IParticleSolverConfig(partN, partRadius, dt), m_flipRatio(flipRatio), m_partPerH(partPerH), m_densityMultiplier(densityMultiplier), m_domainSize(domainSize),
-    m_fluidInitializer({ glm::vec3(-450, -100, -150), glm::vec3(-150, 100, 150), m_partRadius }) {}
     ~FlipSolverGPUConfig() override = default;
 
     std::unique_ptr<ISolverConfig> clone() const override; 
@@ -37,16 +36,13 @@ public:
     float getDensity() const { return m_partPerH * m_partPerH * m_partPerH; }
     
     float getDensityMultiplier() const { return m_densityMultiplier; }
-    void setDensityMultiplier(float densityMultiplier) { m_densityMultiplier = std::max(densityMultiplier, 1.0f); }
+    void setDensityMultiplier(float densityMultiplier) { m_densityMultiplier = std::max(densityMultiplier, 0.0001f); }
     
     float getFlipRatio() const { return m_flipRatio; }
     void setFlipRatio(float flipRatio) { m_flipRatio = glm::clamp(flipRatio, 0.0f, 1.0f); }
 
     float getSigma() const { return m_sigma; }
     void setSigma(float sigma) { m_sigma = std::max(sigma, 0.0f); }
-
-    float getGravity() const { return m_gravity; }
-    void setGravity(float gravity) { m_gravity = std::max(gravity, 0.0f); }
 
     int getCgMaxIter() const { return m_cgMaxIter; }
     void setCgMaxIter(int cgMaxIter) { m_cgMaxIter = cgMaxIter; }
@@ -61,13 +57,13 @@ public:
     void setAccuracyFirst(bool accuracyFirst) { m_accuracyFirst = accuracyFirst; }
 
     FluidInitializer getFluidInitializer() const { return m_fluidInitializer; }
-    void setFluidInitializer(FluidInitializer fluidInitializer) { m_fluidInitializer = fluidInitializer; }
+    virtual void setFluidInitializer(FluidInitializer fluidInitializer) { m_fluidInitializer = fluidInitializer; }
 
     float getPartPerH() const { return m_partPerH; }
     void setPartPerH(float partPerH) { m_partPerH = std::max(partPerH, 1.0f); }
 
     glm::vec3 getDomainSize() const { return m_domainSize; }
-    void setDomainSize(glm::vec3 domainSize) { m_domainSize = glm::max(domainSize, 0.f); }
+    virtual void setDomainSize(glm::vec3 domainSize) { m_domainSize = glm::max(domainSize, 0.f); }
 
 
     glm::ivec3 getGridDim() const {

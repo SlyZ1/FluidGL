@@ -4,6 +4,8 @@
 
 using namespace std;
 
+bool UI::toggleRender = true;
+
 UI::UI(UIContext ctx) : m_ctx(std::move(ctx)) {}
 
 void UI::setStatsContext(const vector<weak_ptr<IStatsProvider>>& ctx){
@@ -174,6 +176,8 @@ void UI::renderParams(){
 // ----------------------------------------- MAIN -----------------------------------------
 
 void UI::render(){ 
+    if (!toggleRender) return;
+    
     float viewPortVerticalPos = ImGui::GetMainViewport()->WorkPos.y;
     float viewPortVerticalSize = ImGui::GetMainViewport()->WorkSize.y;
 

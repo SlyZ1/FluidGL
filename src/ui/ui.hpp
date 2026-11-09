@@ -56,6 +56,9 @@ private:
 public:
     UI(UIContext ctx);
     ~UI() = default;
+
+    static bool toggleRender;
+
     void setStatsContext(const std::vector<std::weak_ptr<IStatsProvider>>& ctx);
 
     void render();

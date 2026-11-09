@@ -18,6 +18,7 @@ uniform int gridX;
 uniform int gridY;
 uniform int gridZ;
 uniform float h;
+uniform uint isFull;
 
 #pragma include "../utils.glsl"
 
@@ -43,7 +44,7 @@ void main(){
     float currentVelX = 0;
     float currentVelY = 0;
     float currentVelZ = 0;
-    isAir[cell] = 1u;
+    isAir[cell] = 1u - isFull;
     bool hasSetIsAirToFalse = false;
 
     for(int offsetX = -1; offsetX <= 1; offsetX++) {
@@ -61,11 +62,11 @@ void main(){
 
                 for (int k = rangeStart; k < rangeEnd; k++)
                 {
-                    if (!hasSetIsAirToFalse && offsetX == 0 && offsetY == 0 && offsetZ == 0){
+                    if (isFull == 0u && !hasSetIsAirToFalse && offsetX == 0 && offsetY == 0 && offsetZ == 0){
                         isAir[cell] = 0u;
                         hasSetIsAirToFalse = true;
                     }
-                    int i = k;//int(cellParticleIds[k]);
+                    int i = k;
                     vec3 pos = partPos[i].xyz;
                     vec3 vel = partVel[i].xyz;
                     {

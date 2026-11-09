@@ -6,7 +6,7 @@
 
 class IParticleSolver : public ISolver {
 public:
-    IParticleSolver(std::unique_ptr<IParticleSolverConfig> config, const std::string& statsName) : ISolver(std::move(config), statsName) {};
+    IParticleSolver(std::shared_ptr<IParticleSolverConfig> config, const std::string& statsName) : ISolver(std::move(config), statsName) {};
     virtual ~IParticleSolver() = default;
 
     virtual const IParticleSolverConfig& getConfig() const override {

@@ -31,7 +31,7 @@ void FlipSolverCPU::genBuffers(){
 }
 
 FlipSolverCPU::FlipSolverCPU(FlipSolverCPUConfig config) 
-: IParticleSolver(make_unique<FlipSolverCPUConfig>(move(config)), "FLIP CPU Solver"), m_config(static_cast<FlipSolverCPUConfig&>(*m_baseConfig)) {
+: IParticleSolver(make_shared<FlipSolverCPUConfig>(move(config)), "FLIP CPU Solver"), m_config(static_cast<FlipSolverCPUConfig&>(*m_baseConfig)) {
     genBuffers();
 }
 

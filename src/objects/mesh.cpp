@@ -52,9 +52,9 @@ void Mesh::loadObj(string path) {
         nullptr
     );
 
-    if (!warn.empty()) cout << warn << endl;
+    if (!warn.empty()) Logger::logWarning(warn, __LOG_DATA__);
     if (!err.empty()){
-        cerr << err << endl;
+        Logger::logError(err, __LOG_DATA__);
         return;
     }
     

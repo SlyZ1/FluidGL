@@ -1,7 +1,8 @@
 #version 430 core
 layout (location = 0) in vec3 vPos;
 layout (location = 1) in vec3 cPos;
-layout (location = 3) in vec3 cVel;
+layout (location = 2) in vec3 cVel;
+layout (location = 3) in float density;
 out vec3 vClipPos;
 out vec4 vColor;
 out float depth;
@@ -27,9 +28,9 @@ void main()
     gl_Position = uProj * viewPos;
     depth = -viewPos.z;
 
-    vec4 blue = vec4(0.02, 0.04, 0.6, 1.0);
-    vec4 blue2 = vec4(0.07, 0.55, 0.87, 0.0);
-    vec4 white = vec4(0.51, 0.79, 1.0, 1.0);
+    vec4 blue = vec4(0.02, 0.04, 0.6, 0.1 * density);
+    vec4 blue2 = vec4(0.07, 0.55, 0.87, 0.1 * density);
+    vec4 white = vec4(0.51, 0.79, 1.0, 0.1 * density);
 
     float edge = 0.7;
 

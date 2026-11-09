@@ -5,6 +5,7 @@
 #include "solvers/configs/xpbdSolverCPUConfig.hpp"
 
 #include <vector>
+#include "core/shader_program.hpp"
 
 class XpbdSolverCPU : public ISolver {
 private:
