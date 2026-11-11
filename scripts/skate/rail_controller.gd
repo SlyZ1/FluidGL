@@ -94,7 +94,7 @@ func _rail_cote_interieur(rail: Path3D) -> float:
 	var tf: Transform3D = rail.global_transform
 	var debut: Vector3 = tf * pts[0]
 	var fin: Vector3 = tf * pts[-1]
-	var milieu: Vector3 = tf * pts[pts.size() / 2]
+	var milieu: Vector3 = tf * pts[pts.size() >> 1] # pts.size() / 2 sans warning
 	var bombe: float = milieu.z - (debut.z + fin.z) / 2.0
 	return -1.0 if bombe > 0.0 else 1.0
 

@@ -14,7 +14,7 @@ func _ready() -> void:
 	initial_rot_finger = doigts_idle.global_basis
 	initial_rot_finger_up = doigts_up.global_basis
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var fh := TrickManager.get_catch_pressed()
 	doigts_idle.visible = fh
 	doigts_up.visible = not fh

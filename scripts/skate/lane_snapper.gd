@@ -12,7 +12,7 @@ func _ready() -> void:
 	TrickManager.go_left.connect(_on_go_left)
 	TrickManager.go_right.connect(_on_go_right)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Snap To Lane
 	if (abs(skate_physics.global_position.z - lane_position) > 0.1 
 		and (_lane_tween == null or !_lane_tween.is_valid() or !_lane_tween.is_running())
