@@ -86,7 +86,7 @@ void init(){
     app->setClearColor(0, 0, 0, 1.0f);
     app->toggleCursor(true);
 
-    loadScene(Scene::smokeTestScene());
+    loadScene(Scene::suzanneCloseUpScene());
 
     vector<weak_ptr<IStatsProvider>> statsProviders = {};
     statsProviders.push_back(app);
@@ -114,7 +114,7 @@ void inputs(){
 
     if (app->keyPressedOnce(GLFW_KEY_R, frameCount)){
         solverManager->reloadRenderer();
-        triangleRenderer->reload();
+        if (triangleRenderer) triangleRenderer->reload();
         Logger::logInfo("Shaders reloaded.", __LOG_DATA__);
     }
     

@@ -23,6 +23,8 @@ uniform mat4 obstacleInverseMatrix;
 uniform float h;
 uniform ivec3 N;
 
+uniform uint collideWithObstacle;
+
 #pragma include "./utils.glsl" 
 
 void killParticle(int i){
@@ -51,9 +53,9 @@ void main(){
         if (cell < N.x * N.y * N.z){
             float sdfVal = obstacleSDF[cell] / s;
 
-            if (sdfVal <= 5 * radius) {
+            if (sdfVal <= radius) {
                 vec3 normal = normalize(obstacleSDFGrad[cell].xyz);
-                pos += normal * (5 * radius - sdfVal);
+                if (collideWithObstacle == 1u) pos += normal * (radius - sdfVal);
 
                 vec3 relativeVel = vel - obstacleVelocity;
                 relativeVel -= normal * dot(normal, relativeVel);

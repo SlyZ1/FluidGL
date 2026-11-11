@@ -16,9 +16,13 @@ protected:
     std::function<void()> m_configChangedCallback = {}; 
     std::function<void()> m_reloadCallback = {}; 
     bool m_isPaused = true;
+    int m_allocatedSSBOData = 0;
+    StatIndex m_allocatedDataStatIndex = 0;
 public:
     ISolver(std::shared_ptr<ISolverConfig> config, const std::string& statsName) 
-    : IStatsProvider(statsName), m_baseConfig(std::move(config)) {};
+    : IStatsProvider(statsName), m_baseConfig(std::move(config)) {
+        m_allocatedDataStatIndex = m_stats->registerStorage("Allocated SSBO Data");
+    };
     virtual ~ISolver() = default;
     virtual void accept(ISolverVisitor& visitor) = 0;
     virtual void update() = 0;

@@ -79,8 +79,8 @@ void TriangleRenderer::render(bool clear) {
 
 void TriangleRenderer::reload() {
     m_triangleShader.reload();
-    initOpenGL();
-    m_numIndicies = -1;
+    // initOpenGL();
+    // m_numIndicies = -1;
 }
 
 void TriangleRenderer::setIndicies(span<const unsigned int> indicies) {

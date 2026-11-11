@@ -11,8 +11,6 @@ layout(std430, binding = 6) writeonly buffer VelYBuffer { float[] velY; };
 layout(std430, binding = 7) writeonly buffer VelZBuffer { float[] velZ; };
 layout(std430, binding = 8) writeonly buffer IsAirBuffer { uint[] isAir; };
 layout(std430, binding = 9) readonly buffer FirstCellParticleBuffer { uint[] firstCellParticle; };
-layout(std430, binding = 10) readonly buffer CellParticleIdsBuffer { uint[] cellParticleIds; };
-layout(std430, binding = 11) readonly buffer PartNBuffer { int partN; };
 
 uniform int gridX;
 uniform int gridY;
@@ -60,15 +58,17 @@ void main(){
                 int rangeStart = int(firstCellParticle[newCell]);
                 int rangeEnd = int(firstCellParticle[newCell+1]);
 
-                for (int k = rangeStart; k < rangeEnd; k++)
-                {
-                    if (isFull == 0u && !hasSetIsAirToFalse && offsetX == 0 && offsetY == 0 && offsetZ == 0){
+                if (rangeStart != rangeEnd && offsetX == 0 && offsetY == 0 && offsetZ == 0){
+                    if (isFull == 0u && !hasSetIsAirToFalse) {
                         isAir[cell] = 0u;
                         hasSetIsAirToFalse = true;
                     }
-                    int i = k;
-                    vec3 pos = partPos[i].xyz;
-                    vec3 vel = partVel[i].xyz;
+                }
+
+                for (int k = rangeStart; k < rangeEnd; k++)
+                {
+                    vec3 pos = partPos[k].xyz;
+                    vec3 vel = partVel[k].xyz;
                     {
                         vec3 dp = min(abs(pos - cellCenterX) / h, 1.0);
                         float w = (1.0 - dp.x) * (1.0 - dp.y) * (1.0 - dp.z);

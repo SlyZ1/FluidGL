@@ -7,6 +7,8 @@
 #include "core/app.hpp"
 #include "core/camera.hpp"
 #include "solvers/solverManager.hpp"
+#include "renderers/smokeRayMarcher.hpp"
+#include "renderers/smokeRenderer3D.hpp"
 
 using SolverConfig = std::variant<EulerSolverGPUConfig, LiquidFlipSolverGPUConfig, SmokeFlipSolverGPUConfig, FlipSolverCPUConfig, XpbdSolverCPUConfig>;
 
@@ -24,6 +26,24 @@ struct SceneInfo {
 };
 
 namespace Scene {
+    inline SceneInfo defaultLiquidScene() {
+        SceneInfo scene;
+        LiquidFlipSolverGPUConfig flipConfig = LiquidFlipSolverGPUConfig();
+        flipConfig.setPartPerH(2);
+        flipConfig.setDensityMultiplier(1);
+        flipConfig.setCgMaxIter(5);
+        flipConfig.setCgTol(0.01f);
+        flipConfig.setDomainSize(glm::vec3(900.0f, 400.0f, 300.0f));
+        flipConfig.setPartRadius(1.5f);
+        FluidInitializer initializer = FluidInitializer();
+        initializer.setSizeAndPos(glm::vec3(300, 200, 300), glm::vec3(-300, 0, 0), flipConfig.getPartRadius());
+        flipConfig.setFluidInitializer(initializer);
+        flipConfig.setDt(0.03f);
+        scene.solverConfig = flipConfig;
+
+        return scene;
+    }
+
     inline SceneInfo suzanneCloseUpScene() {
         SceneInfo scene;
         LiquidFlipSolverGPUConfig flipConfig = LiquidFlipSolverGPUConfig();
@@ -60,20 +80,22 @@ namespace Scene {
         return scene;
     }
 
-    inline SceneInfo smokeTestScene() {
+    inline SceneInfo smokePlumeScene() {
         SceneInfo scene;
         SmokeFlipSolverGPUConfig smokeConfig = SmokeFlipSolverGPUConfig();
-        smokeConfig.setPartPerH(2);
+        smokeConfig.setPartPerH(1.5f);
         smokeConfig.setDensityMultiplier(1);
         smokeConfig.setCgMaxIter(5);
         smokeConfig.setCgTol(0.01f);
+        smokeConfig.setNumPushAppart(1);
+        smokeConfig.setFlipRatio(0.7f);
         smokeConfig.setPartRadius(0.8f);
         smokeConfig.setDomainSize(glm::vec3(175.0f, 250.0f, 175.0f));
         smokeConfig.setDt(0.07f);
         FluidInitializer densitySource = FluidInitializer();
         densitySource.setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -95.0f, 0.0f), smokeConfig.getPartRadius());
         smokeConfig.setDensitySource(densitySource);
-        smokeConfig.setDensityDecreaseRate(0.01f);
+        smokeConfig.setDensityDecreaseRate(0.02f);
         scene.solverConfig = smokeConfig;
 
         scene.obstacleInfo = std::make_shared<ObstacleInfo>();
@@ -93,6 +115,28 @@ namespace Scene {
             suzanne->setPos(pos);
         };
         scene.updateMethod = updateMethod;
+
+        return scene;
+    }
+
+    inline SceneInfo highResSmokePlumeScene() {
+        SceneInfo scene;
+        SmokeFlipSolverGPUConfig smokeConfig = SmokeFlipSolverGPUConfig();
+        smokeConfig.setPartPerH(1.5f);
+        smokeConfig.setDensityMultiplier(1);
+        smokeConfig.setNumPushAppart(1);
+        smokeConfig.setCgMaxIter(5);
+        smokeConfig.setCgTol(0.01f);
+        smokeConfig.setFlipRatio(0.8f);
+        smokeConfig.setPartRadius(0.4f);
+        smokeConfig.setDomainSize(glm::vec3(130.0f, 250.0f, 130.0f));
+        smokeConfig.setDt(0.07f);
+        FluidInitializer densitySource = FluidInitializer();
+        densitySource.setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -90.0f, 0.0f), smokeConfig.getPartRadius());
+        smokeConfig.setDensitySource(densitySource);
+        smokeConfig.setDensityDecreaseRate(0.05f);
+        smokeConfig.setTemperatureDecreaseRate(0.05f);
+        scene.solverConfig = smokeConfig;
 
         return scene;
     }

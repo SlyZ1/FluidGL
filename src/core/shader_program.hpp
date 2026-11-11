@@ -43,21 +43,41 @@ class ShaderProgram {
         static void SSBOBarrier();
 
         template<typename T>
-        static void genSSBO(GLuint& buffer, int size, T value, GLenum usage = GL_DYNAMIC_DRAW){
-            genDataSSBO(buffer, size, std::vector<T>(size, value).data(), usage);
+        static int genSSBO(GLuint& buffer, int size, T value, GLenum usage = GL_DYNAMIC_DRAW){
+            return genDataSSBO(buffer, size, std::vector<T>(size, value).data(), usage);
         }
 
         template<typename T>
-        static void genDataSSBO(GLuint& buffer, int size, const T* data, GLenum usage = GL_DYNAMIC_DRAW){
+        static int genDataSSBO(GLuint& buffer, int size, const T* data, GLenum usage = GL_DYNAMIC_DRAW){
             deleteBuffer(buffer);
             glGenBuffers(1, &buffer);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
             glBufferData(GL_SHADER_STORAGE_BUFFER, size * sizeof(T), data, usage);
+            return size * sizeof(T);
         }
 
         static void deleteBuffer(GLuint& buffer) {
             glDeleteBuffers(1, &buffer);
             buffer = 0;
+        }
+
+        static void deleteTexture(GLuint& tex) {
+            glDeleteTextures(1, &tex);
+            tex = 0;
+        }
+
+        static int genTexture(GLuint& tex, glm::ivec3 n){
+            deleteTexture(tex);
+            glGenTextures(1, &tex);
+            glBindTexture(GL_TEXTURE_3D, tex);
+            glTexStorage3D(GL_TEXTURE_3D, 1, GL_R32F, n.x, n.y, n.z);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+            return n.x * n.y * n.z * 4;
         }
 
         template<typename T>

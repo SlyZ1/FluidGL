@@ -80,6 +80,10 @@ private:
     ShaderProgram m_getCorrectionsShader = {};
     ShaderProgram m_applyCorrectionsShader = {};
 
+    // A2G
+    ShaderProgram m_a2gShader = {};
+    ShaderProgram m_applyWieghtsAttributesShader = {};
+
     // P2G
     ShaderProgram m_resetFloatBufferShader = {};
     ShaderProgram m_p2gShader = {};
@@ -153,6 +157,12 @@ private:
 
 protected:
     bool m_isFull = false;
+    bool m_collideWithObstacle = true;
+
+    GLuint getVelXBuffer() const { return m_velXBuffer; }
+    GLuint getVelYBuffer() const { return m_velYBuffer; }
+    GLuint getVelZBuffer() const { return m_velZBuffer; }
+    GLuint getIsAirBuffer() const { return m_isAirBuffer; }
 
     glm::ivec3 cellToCoord(int cell, int nx, int ny);
     glm::vec3 cellToPos(int cell, int nx, int ny, int nz);
@@ -173,6 +183,8 @@ public:
     std::shared_ptr<GLuint> getPosBuffer() const override { return std::make_shared<GLuint>(m_partPosBuffer); };
     std::shared_ptr<GLuint> getVelBuffer() const override { return std::make_shared<GLuint>(m_partVelBuffer); };
     std::shared_ptr<GLuint> getPartNBuffer() const { return std::make_shared<GLuint>(m_aliveNBuffer); };
+
+    void attributeToGrid(GLuint attributesBuffer, GLuint gridTex, GLuint weightsBuffer);
 
     void setObstacle(std::weak_ptr<Mesh> obstacle) { m_obstacle = obstacle; }
     bool getIsFull() const { return m_isFull; }

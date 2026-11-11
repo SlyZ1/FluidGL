@@ -45,17 +45,6 @@ private:
 
     unsigned int m_internalFrameCounter = 0;
 
-    static constexpr std::array<float, 12> s_quadVerts = {
-        1.f,  1.f, 0.f,
-        1.f, -1.f, 0.f,
-        -1.f, -1.f, 0.f,
-        -1.f,  1.f, 0.f,
-    };
-    static constexpr std::array<unsigned int, 6> s_quadIndices = {
-        0, 1, 2,
-        0, 2, 3
-    };
-
     void initOpenGL();
     void renderLogic(bool clear);
 

@@ -39,11 +39,19 @@ void LiquidFlipSolverGPU::integrateParticles() {
     m_integrateShader.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, *getPosBuffer());
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, *getVelBuffer());
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, *getPartNBuffer());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, getVelXBuffer());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, getVelYBuffer());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, getVelZBuffer());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, getIsAirBuffer());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, *getPartNBuffer());
     glUniform1f(ShaderProgram::getVarLoc("dt"), m_config.getDt());
     glUniform3f(ShaderProgram::getVarLoc("minPos"), minPos.x, minPos.y, minPos.z);
     glUniform3f(ShaderProgram::getVarLoc("maxPos"), maxPos.x, maxPos.y, maxPos.z);
     glUniform1f(ShaderProgram::getVarLoc("gravity"), m_config.getGravity());
+    glUniform1i(ShaderProgram::getVarLoc("gridX"), m_config.getGridX());
+    glUniform1i(ShaderProgram::getVarLoc("gridY"), m_config.getGridY());
+    glUniform1i(ShaderProgram::getVarLoc("gridZ"), m_config.getGridZ());
+    glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getH());
     m_integrateShader.dispatch((m_config.getPartN() + 255) / 256);
 }
 

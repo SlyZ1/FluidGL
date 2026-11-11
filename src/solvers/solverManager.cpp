@@ -2,6 +2,7 @@
 
 #include "renderers/liquidRenderer3D.hpp"
 #include "renderers/smokeRenderer3D.hpp"
+#include "renderers/smokeRayMarcher.hpp"
 
 using namespace std;
 using namespace glm;
@@ -130,14 +131,14 @@ weak_ptr<LiquidFlipSolverGPU> SolverManager::instantiate(const LiquidFlipSolverG
 
 weak_ptr<SmokeFlipSolverGPU> SolverManager::instantiate(const SmokeFlipSolverGPUConfig& config) {
     shared_ptr<SmokeFlipSolverGPU> solver = make_shared<SmokeFlipSolverGPU>(config);
-    shared_ptr<SmokeRenderer3D> renderer = make_shared<SmokeRenderer3D>(m_camera);
+    shared_ptr<SmokeRayMarcher> renderer = make_shared<SmokeRayMarcher>(m_camera);
     m_renderCallback = {};
     m_updateCallback = {};
 
     if (m_obstacle) solver->setObstacle(m_obstacle);
     
     auto onConfigChanged = [weakSolver   = weak_ptr<SmokeFlipSolverGPU>(solver),
-                            weakRenderer = weak_ptr<SmokeRenderer3D>(renderer),
+                            weakRenderer = weak_ptr<SmokeRayMarcher>(renderer),
                             weakObstacle = weak_ptr<Mesh>(m_obstacle)]() {
         auto s = weakSolver.lock();
         auto r = weakRenderer.lock();
@@ -145,23 +146,27 @@ weak_ptr<SmokeFlipSolverGPU> SolverManager::instantiate(const SmokeFlipSolverGPU
         if (!s || !r) return;
 
         const SmokeFlipSolverGPUConfig& newConfig = s->getConfig();
-        r->setNumParticles(newConfig.getPartN());
-        r->setPartRadius(newConfig.getPartRadius());
+        // r->setNumParticles(newConfig.getPartN());
+        // r->setPartRadius(newConfig.getPartRadius());
+        r->setDomainSize(newConfig.getDomainSize());
+        r->setH(newConfig.getH());
         
         if (o) o->constructSDF(newConfig.getPartRadius());
     };
 
     auto onReload = [weakSolver   = weak_ptr<SmokeFlipSolverGPU>(solver),
-                     weakRenderer = weak_ptr<SmokeRenderer3D>(renderer)]() {
+                     weakRenderer = weak_ptr<SmokeRayMarcher>(renderer)]() {
         auto s = weakSolver.lock();
         auto r = weakRenderer.lock();
         if (!s || !r) return;
 
-        r->setPosBuffer(s->getPosBuffer());
-        r->setVelBuffer(s->getVelBuffer());
-        r->setDensityBuffer(s->getDensityBuffer());
-        r->setNumParticlesBuffer(s->getPartNBuffer());
-        r->setRenderMode(true);
+        r->setSmokeGridDensityTexture(*s->getGridDensityTexture());
+
+        // r->setPosBuffer(s->getPosBuffer());
+        // r->setVelBuffer(s->getVelBuffer());
+        // r->setDensityBuffer(s->getDensityBuffer());
+        // r->setNumParticlesBuffer(s->getPartNBuffer());
+        // r->setRenderMode(true);
     };
 
     solver->setConfigChangedCallback(onConfigChanged);

@@ -13,8 +13,14 @@ private:
     GLuint m_oldDensityBuffer = 0;
     GLuint m_oldTemperatureBuffer = 0;
 
+    GLuint m_gridDensityTexture = 0;
+    GLuint m_gridDensityWeightsBuffer = 0;
+
     ShaderProgram m_integrateShader = {};
     ShaderProgram m_sortExtraAttributesShader = {};
+
+    int m_allocatedTextureData = 0;
+    StatIndex m_allocatedTextureDataStatIndex = 0;
 
     void deleteBuffers();
     void createBuffers();
@@ -35,6 +41,7 @@ public:
     void reload() override;
 
     std::shared_ptr<GLuint> getDensityBuffer() const { return std::make_shared<GLuint>(m_smokeDensityBuffer); };
+    std::shared_ptr<GLuint> getGridDensityTexture() const { return std::make_shared<GLuint>(m_gridDensityTexture); };
 
     const SmokeFlipSolverGPUConfig& getConfig() const override {
         return m_config; 

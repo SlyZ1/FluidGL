@@ -86,8 +86,10 @@ void UI::drawStorages(StatsPrimitive<int> storages, string statsName){
     {
         Stat<StorageValue> stat = storages.get(i);
         UtilsUI::Label(stat.label.c_str());
+
         string suffix = Metrics::storageSuffix(stat.value);
-        string text = to_string(stat.value) + suffix;
+        string text = to_string(stat.value) + " " + suffix;
+
         UtilsUI::AlignInputToRight(text.c_str());
         ImGui::Text("%s", text.c_str());
     }

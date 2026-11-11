@@ -10,7 +10,7 @@ uniform mat4 uProj;
 void main()
 {
     float dist2 = dot(vClipPos.xy, vClipPos.xy);
-    if (dist2 > 1 || vColor.a < 0.05)
+    if (dist2 > 1)
         discard;
 
     float z = sqrt(1.0 - dist2);
