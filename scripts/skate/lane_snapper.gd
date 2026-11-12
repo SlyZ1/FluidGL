@@ -23,6 +23,7 @@ func _process(_delta: float) -> void:
 		
 func toggle(snap: bool) -> void:
 	_snap = snap
+	if not snap: kill_tween()
 		
 func kill_tween() -> void:
 	if _lane_tween and _lane_tween.is_valid():

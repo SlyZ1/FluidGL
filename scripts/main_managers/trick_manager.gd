@@ -175,7 +175,6 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 
 func _trick_ended() -> void:
 	if not _started: return
-	print("trick ended")
 	trick_ended.emit()
 	_possible_tricks = []
 	

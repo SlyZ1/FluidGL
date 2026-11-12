@@ -1,0 +1,37 @@
+extends RailControllerState
+class_name RailFreeState
+
+# private
+var _touches_rail: Callable
+var _rail_found: Path3D
+var _previous_rail: Path3D
+
+# protected
+func exit(rail_controller: RailController) -> void:
+    rail_controller.current_rail = _rail_found
+
+func enter(rail_controller: RailController) -> void:
+    _touches_rail = rail_controller._touches_rail
+    _previous_rail = rail_controller.current_rail
+
+func state() -> RailController.RailState:
+    return RailController.RailState.FREE
+
+func _find_rail(pos: Vector3) -> Path3D:
+    for section in MapLoader.instance._spawned_sections:
+        for rail in section.rails:
+            if _touches_rail.call(rail, pos): return rail
+    return null
+
+
+func check_transitions(skate_physics: SkatePhysics, _dt: float) -> RailController.RailState:
+    if skate_physics.is_grounded(): return RailController.RailState.GROUNDED
+
+    _rail_found = _find_rail(skate_physics.global_position)  
+    if _rail_found == _previous_rail: return state()
+    _previous_rail = null
+
+    if _rail_found and TrickManager.get_catch_pressed(): return RailController.RailState.GRINDING
+    if _rail_found and not TrickManager.get_catch_pressed(): GameManager.instance.stop()
+
+    return state()

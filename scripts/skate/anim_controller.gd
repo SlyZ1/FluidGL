@@ -21,14 +21,16 @@ class BasicTrick:
 		trick_name = _trick_name
 		q = Quaternion.IDENTITY
 
-var active_tricks: Array[BasicTrick]
-var current_trick_duration: float = 0
-var current_anim_duration: float = 0
-var default_trick_rotation: Quaternion = Quaternion.IDENTITY
+var _active_tricks: Array[BasicTrick]
+var _current_trick_duration: float = 0
+var _current_anim_duration: float = 0
+var _default_trick_rotation: Quaternion = Quaternion.IDENTITY
 
-var trick_catched: bool = true
-var catch_pressed: bool = false
-var was_grounded_when_catched: bool = false
+var _trick_catched: bool = true
+var _catch_pressed: bool = false
+var _was_grounded_when_catched: bool = false
+
+var _toggled: bool = true
 
 var _mesh_instance_scale: Vector3
 
@@ -42,17 +44,20 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if ((skate_physics.is_grounded() or skate_physics.is_mesh_colliding()) and not trick_catched):
+	if ((skate_physics.is_grounded() or skate_physics.is_mesh_colliding()) and not _trick_catched):
 		GameManager.instance.stop()
 	
-	var current_rotation: Quaternion = default_trick_rotation
-	for trick in active_tricks:
+	var current_rotation: Quaternion = _default_trick_rotation
+	for trick in _active_tricks:
 		current_rotation *= trick.q
 		current_rotation = current_rotation.normalized()
 	skate_physics.set_rot(Basis(current_rotation))
+
+func toggle(value: bool) -> void:
+	_toggled = value
 	
 func set_default_trick_rotation(rot: Quaternion) -> void:
-	default_trick_rotation = rot
+	_default_trick_rotation = rot
 
 func tween_axis_angle(object: Object, property: String, axis: Vector3, target_angle: float, duration: float, curve: Curve = null) -> Tween:
 	var normalized_axis = axis.normalized()
@@ -72,11 +77,11 @@ func _confirm_trick():
 	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
 func _on_trick_performed(_name: String, _accuracy: float) -> void:
-	catch_pressed = false
+	_catch_pressed = false
 	var _anim: Anim = TrickManager.get_resource(_name)
 	var _duration: float = TrickManager.get_trick_duration(_name)
-	current_trick_duration = _duration
-	current_anim_duration = _anim.animation_duration
+	_current_trick_duration = _duration
+	_current_anim_duration = _anim.animation_duration
 	
 	if _anim.reset_velocities: skate_physics.reset_velocities()
 	skate_physics.apply_impulse(_anim.impulse, _anim.angular_impulse)
@@ -84,20 +89,20 @@ func _on_trick_performed(_name: String, _accuracy: float) -> void:
 	_confirm_trick()
 
 	if abs(_anim.rot_angle) > 0.001:
-		trick_catched = false
+		_trick_catched = false
 		var trick := BasicTrick.new(_name)
-		active_tricks.push_back(trick)
+		_active_tricks.push_back(trick)
 		trick.tween = tween_axis_angle(trick, "q", _anim.rot_axis, deg_to_rad(_anim.rot_angle), _anim.animation_duration, _anim.curve)
 
 func _on_trick_end() -> void:
-	active_tricks.clear()
+	_active_tricks.clear()
 	
 func _cancel_tricks() -> void:
-	if active_tricks.is_empty():
+	if _active_tricks.is_empty():
 		return
 
 	var tween := create_tween().set_parallel(true)
-	for trick in active_tricks:
+	for trick in _active_tricks:
 		if trick.tween and trick.tween.is_valid():
 			trick.tween.kill()
 
@@ -107,30 +112,33 @@ func _cancel_tricks() -> void:
 			0.0, 1.0, 0.05
 		)
 
-	var a_retirer: Array[BasicTrick] = active_tricks.duplicate()
+	var a_retirer: Array[BasicTrick] = _active_tricks.duplicate()
 	tween.chain().tween_callback(func() -> void:
 		for trick in a_retirer:
-			active_tricks.erase(trick)
+			_active_tricks.erase(trick)
 	)
 	
 func _successfully_catched(dt: float) -> void:
-	if not catch_pressed:
+	if not _catch_pressed:
 		skate_physics.apply_impulse(catch_start_speed)
 		#_confirm_trick()
 		AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.CATCH)
 		if skate_physics.just_impulsed(): 
 			TrickManager.validate_xp()
 		
-	if not was_grounded_when_catched: skate_physics.reset_orientation(dt)
+	if not _was_grounded_when_catched: skate_physics.reset_orientation(dt)
 	skate_physics.apply_impulse(-dt * catch_fall_speed)
-	trick_catched = true
-	catch_pressed = true
+	_trick_catched = true
+	_catch_pressed = true
 
 func can_catch() -> bool:
 	var prog := TrickManager.get_progression()
 	return prog >= trick_cancel_end and prog > trick_catchable_start and not skate_physics.is_grounded()
 	
 func _on_trick_catched(_progression: float, _dt: float) -> void:
+	if not _toggled:
+		return
+
 	# On Cancel
 	if _progression < trick_cancel_end:
 		_cancel_tricks()
@@ -139,9 +147,9 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 	#if (_progression > trick_catchable_start and skate_physics.is_grounded() and skate_physics.just_impulsed()):
 		#TrickManager.validate_xp()
 
-	if not catch_pressed:
-		was_grounded_when_catched = false
-	if skate_physics.is_grounded(): was_grounded_when_catched = true
+	if not _catch_pressed:
+		_was_grounded_when_catched = false
+	if skate_physics.is_grounded(): _was_grounded_when_catched = true
 		
 	# Successful Catch
 	if _progression > trick_catchable_start and not skate_physics.is_grounded():
@@ -150,6 +158,6 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		return
 		
 	# if already catched and grounded, nothing happens
-	if trick_catched: return
+	if _trick_catched: return
 		
 	GameManager.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)

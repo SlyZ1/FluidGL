@@ -8,7 +8,7 @@ extends Node
 @export_range(-180, 180) var orientation: float = -90
 
 var _orientation_rot: Basis
-const _rail_rot: Basis = Basis(Vector3.UP, PI / 2.0)
+const _rail_rot: Basis = Basis(Vector3.UP, -PI / 2.0)
 
 func _ready() -> void:
 	_orientation_rot = Basis.from_euler(Vector3(0.0, deg_to_rad(orientation), 0.0))
@@ -22,8 +22,8 @@ func _process(_delta: float) -> void:
 	
 	var rot: Basis = _rail_rot if rail_controller.is_on_rail else Basis.IDENTITY
 	
-	doigts_idle.basis = rot * parent.global_basis.inverse() * _orientation_rot
-	doigts_up.basis = rot * parent.global_basis.inverse() * _orientation_rot
+	doigts_idle.basis = parent.global_basis.inverse() * _orientation_rot * rot
+	doigts_up.basis = parent.global_basis.inverse() * _orientation_rot * rot
 	
 	if anim_controller.can_catch():
 		doigts_up.visual.material_overlay.stencil_color = Color.WHITE

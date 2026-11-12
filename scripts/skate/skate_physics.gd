@@ -39,9 +39,22 @@ var _centre_local: Vector3
 var _centre_xz: Vector2
 var _half_len: float
 
+var _process_physics: bool = true
+var _process_linear_physics: bool = true
+var _process_angular_physics: bool = true
+
 func _ready() -> void:
 	GameManager.instance.on_substep.connect(_step)
 	_init_state()
+
+func toggle(process: bool) -> void:
+	_process_physics = process
+	
+func toggle_linear(process: bool) -> void:
+	_process_linear_physics = process
+	
+func toggle_angular(process: bool) -> void:
+	_process_angular_physics = process
 
 func apply_impulse(impulse: float, angular_impulse: float = 0) -> void:
 	if not _is_grounded or not impulse < 0: _vy += impulse / mass
@@ -56,13 +69,13 @@ func _apply_wheel_impulse(side: float, j: float) -> void:
 func just_impulsed() -> bool:
 	return _impulsed_timer > 0
 	
-func reset_orientation(dt: float = 1) -> void:
+func reset_orientation(dt: float = 1, reset_strengh = 0.01) -> void:
 	#_theta = 0
-	_omega = -_theta * 0.01 / dt
+	_omega = -_theta * reset_strengh / dt
 
-func reset_velocities() -> void:
-	_vy = 0
-	_omega = 0
+func reset_velocities(reset_linear: bool = true, reset_angular: bool = true) -> void:
+	if reset_linear: _vy = 0
+	if reset_angular: _omega = 0
 		
 func set_rot(rot: Basis) -> void:
 	mesh_instance.basis = rot * Basis.from_scale(mesh_instance.basis.get_scale())
@@ -85,6 +98,9 @@ func get_normal() -> Vector3:
 		var n_front: Vector3 = capteur_front.get_collision_normal(0)
 		normal += n_front
 	return normal.normalized()
+
+func set_global_y(pos_y: float) -> void:
+	_y = pos_y + (global_basis * _centre_local).y 
 
 
 # ------------------ PHYSICS LOGIC ------------------
@@ -179,39 +195,37 @@ func _limite_pitch(_dt: float) -> void:
 
 func _grounded_logic() -> void:
 	if capteur_ground.is_colliding():
-		if !_is_grounded: 
-			print("Grounded")
+		if !_is_grounded:
 			on_grounded.emit()
 	elif _is_grounded:
 		if _impulsed_timer >= 0:
 			AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.JUMP)
-			print("Jump")
 			on_jump.emit()
 		else:
-			print("Fall")
 			on_fall.emit()
 	_is_grounded = capteur_ground.is_colliding()
 
 func _step(dt: float) -> void:
-	if !can_process():
+	if not can_process():
 		return 
 	var sol_back: Vector2 = _roue_snapped_position(capteur_back)
 	var sol_front: Vector2 = _roue_snapped_position(capteur_front)
 
-	_vy -= gravity * dt
-	_omega -= _omega * angular_drag * dt
+	if _process_physics:
+		if _process_linear_physics: _vy -= gravity * dt
+		if _process_angular_physics: _omega -= _omega * angular_drag * dt
 
-	for _i in range(10):
-		_contact_vitesse(-1, sol_back, dt)
-		_contact_vitesse(1, sol_front, dt)
+		for _i in range(10):
+			_contact_vitesse(-1, sol_back, dt)
+			_contact_vitesse(1, sol_front, dt)
 
-	_limite_pitch(dt)
-	_y += _vy * dt
-	_theta += _omega * dt
+		_limite_pitch(dt)
+		if _process_linear_physics: _y += _vy * dt
+		if _process_angular_physics: _theta += _omega * dt
 
-	for i in range(10):
-		_contact_position(-1, sol_back.x)
-		_contact_position(1, sol_front.x)
+		for i in range(10):
+			_contact_position(-1, sol_back.x)
+			_contact_position(1, sol_front.x)
 
 	_apply_transform()
 	_grounded_logic()

@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate/skate_physics.gd" id="1_sgunh"]
 [ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/skate/anim_controller.gd" id="2_2wimw"]
 [ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
-[ext_resource type="Script" uid="uid://c0lmnpo3d6tr6" path="res://scripts/skate/rail_controller.gd" id="4_v6g56"]
 [ext_resource type="PackedScene" uid="uid://bfds1rxiaxwa7" path="res://models/2_doigts.tscn" id="4_y7iwp"]
+[ext_resource type="Script" uid="uid://doxuh2a25glg4" path="res://scripts/skate/rail/rail_controller.gd" id="5_8vpdq"]
 [ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
 [ext_resource type="Script" uid="uid://ddk58r6f7rp7l" path="res://scripts/doigts/doigts_manager.gd" id="5_wfreb"]
 [ext_resource type="Script" uid="uid://yrq8e5mmwhcy" path="res://scripts/skate/lane_snapper.gd" id="5_xumek"]
@@ -80,15 +80,17 @@ trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
 catch_fall_speed = 35.0
 
-[node name="RailController" type="Node" parent="." unique_id=1946039828 node_paths=PackedStringArray("skate_physics", "lane_snapper", "anim_controller")]
-script = ExtResource("4_v6g56")
+[node name="RailController" type="Node" parent="." unique_id=2049435339 node_paths=PackedStringArray("skate_physics", "anim_controller", "lane_snapper")]
+script = ExtResource("5_8vpdq")
 skate_physics = NodePath("..")
-lane_snapper = NodePath("../LaneSnapper")
 anim_controller = NodePath("../AnimController")
+lane_snapper = NodePath("../LaneSnapper")
+rail_y_offset = 0.4
 
 [node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("skate_physics")]
 script = ExtResource("5_xumek")
 skate_physics = NodePath("..")
+lane_position = 4.25
 
 [node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller", "parent")]
 script = ExtResource("5_wfreb")
