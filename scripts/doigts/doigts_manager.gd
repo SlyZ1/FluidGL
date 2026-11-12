@@ -4,15 +4,14 @@ extends Node
 @export var doigts_up: Doigt
 @export var anim_controller: AnimController
 @export var rail_controller: RailController
+@export var parent: Node3D
+@export_range(-180, 180) var orientation: float = -90
 
-var initial_rot_finger: Basis
-var initial_rot_finger_up: Basis
-
-const ROT_RAIL := Basis(Vector3.UP, PI / 2.0)
+var _orientation_rot: Basis
+const _rail_rot: Basis = Basis(Vector3.UP, PI / 2.0)
 
 func _ready() -> void:
-	initial_rot_finger = doigts_idle.global_basis
-	initial_rot_finger_up = doigts_up.global_basis
+	_orientation_rot = Basis.from_euler(Vector3(0.0, deg_to_rad(orientation), 0.0))
 
 func _process(_delta: float) -> void:
 	var fh := TrickManager.get_catch_pressed()
@@ -21,9 +20,10 @@ func _process(_delta: float) -> void:
 	doigts_idle.visible = fh
 	doigts_up.visible = not fh
 	
-	var rot: Basis = ROT_RAIL if rail_controller.is_on_rail else Basis.IDENTITY
-	doigts_idle.global_basis = rot * initial_rot_finger
-	doigts_up.global_basis = rot * initial_rot_finger_up
+	var rot: Basis = _rail_rot if rail_controller.is_on_rail else Basis.IDENTITY
+	
+	doigts_idle.basis = rot * parent.global_basis.inverse() * _orientation_rot
+	doigts_up.basis = rot * parent.global_basis.inverse() * _orientation_rot
 	
 	if anim_controller.can_catch():
 		doigts_up.visual.material_overlay.stencil_color = Color.WHITE

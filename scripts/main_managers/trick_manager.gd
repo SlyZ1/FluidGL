@@ -106,13 +106,11 @@ func _process(delta: float) -> void:
 		
 	# If going left
 	if input_string == "fhYbRv":
-		print("Going Left")
 		go_left.emit()
 		return
 
 	# If going right
 	if input_string == "fhyBrV":
-		print("Going Right")
 		go_right.emit()
 		return
 		

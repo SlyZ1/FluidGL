@@ -28,6 +28,7 @@ var default_trick_rotation: Quaternion = Quaternion.IDENTITY
 
 var trick_catched: bool = true
 var catch_pressed: bool = false
+var was_grounded_when_catched: bool = false
 
 var _mesh_instance_scale: Vector3
 
@@ -72,13 +73,13 @@ func _confirm_trick():
 
 func _on_trick_performed(_name: String, _accuracy: float) -> void:
 	catch_pressed = false
-	var _anim :Anim = TrickManager.get_resource(_name)
-	var _duration :float = TrickManager.get_trick_duration(_name)
+	var _anim: Anim = TrickManager.get_resource(_name)
+	var _duration: float = TrickManager.get_trick_duration(_name)
 	current_trick_duration = _duration
 	current_anim_duration = _anim.animation_duration
 	
 	if _anim.reset_velocities: skate_physics.reset_velocities()
-	skate_physics.apply_impulse(_anim.impulse_back, _anim.impulse_front)
+	skate_physics.apply_impulse(_anim.impulse, _anim.angular_impulse)
 
 	_confirm_trick()
 
@@ -112,17 +113,16 @@ func _cancel_tricks() -> void:
 			active_tricks.erase(trick)
 	)
 	
-func _successfully_catched(_dt: float) -> void:
+func _successfully_catched(dt: float) -> void:
 	if not catch_pressed:
-		skate_physics.velocity_back = min(skate_physics.velocity_back, catch_start_speed)
-		skate_physics.velocity_front = min(skate_physics.velocity_front, catch_start_speed)
-		skate_physics.reset_orientation()
+		skate_physics.apply_impulse(catch_start_speed)
 		#_confirm_trick()
 		AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.CATCH)
-		if skate_physics.impulsed_timer <= 0: 
+		if skate_physics.just_impulsed(): 
 			TrickManager.validate_xp()
 		
-	skate_physics.apply_impulse(-_dt * catch_fall_speed, -_dt * catch_fall_speed)
+	if not was_grounded_when_catched: skate_physics.reset_orientation(dt)
+	skate_physics.apply_impulse(-dt * catch_fall_speed)
 	trick_catched = true
 	catch_pressed = true
 
@@ -136,8 +136,12 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		_cancel_tricks()
 		return
 		
-	#if (_progression > trick_catchable_start and skate_physics.is_grounded() and skate_physics.impulsed_timer <= 0):
+	#if (_progression > trick_catchable_start and skate_physics.is_grounded() and skate_physics.just_impulsed()):
 		#TrickManager.validate_xp()
+
+	if not catch_pressed:
+		was_grounded_when_catched = false
+	if skate_physics.is_grounded(): was_grounded_when_catched = true
 		
 	# Successful Catch
 	if _progression > trick_catchable_start and not skate_physics.is_grounded():

@@ -153,7 +153,7 @@ func _rail_logic(delta: float):
 				skate_physics.reset_velocities()
 				var impulse := _rail_vitesse_verticale(_current_rail, skate_physics.global_position.x)
 				impulse = min(impulse, 40)
-				skate_physics.apply_impulse(impulse, impulse)
+				skate_physics.apply_impulse(impulse)
 				_current_rail = null
 				_prev_rail = _current_rail
 				_exit_rail_timer = 0.1

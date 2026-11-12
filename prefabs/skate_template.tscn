@@ -12,14 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://dwjkmygjx26cl" path="res://icon.svg" id="7_oh2xr"]
 [ext_resource type="Script" uid="uid://3tok0mw57sx1" path="res://scripts/skate/skate_vfx.gd" id="11_5e2xk"]
 
-[sub_resource type="Curve" id="Curve_oh2xr"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_wfreb"]
-_data = [Vector2(0, 1), 0.0, 2.7990868, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
 [sub_resource type="SphereShape3D" id="SphereShape3D_tnd71"]
 radius = 0.45
 
@@ -54,8 +46,6 @@ capteur_front = NodePath("CapteurFront")
 capteur_mesh = NodePath("Skate/ShapeCast3D")
 capteur_ground = NodePath("Ground")
 mesh_instance = NodePath("Skate/skate")
-outline_appear_curve = SubResource("Curve_oh2xr")
-outline_disappear_curve = SubResource("Curve_wfreb")
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015574941, 0, 2.1507378)
@@ -88,6 +78,7 @@ trick_cancel_end = 0.0
 trick_catchable_start = 0.0
 trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
+catch_fall_speed = 35.0
 
 [node name="RailController" type="Node" parent="." unique_id=1946039828 node_paths=PackedStringArray("skate_physics", "lane_snapper", "anim_controller")]
 script = ExtResource("4_v6g56")
@@ -99,12 +90,13 @@ anim_controller = NodePath("../AnimController")
 script = ExtResource("5_xumek")
 skate_physics = NodePath("..")
 
-[node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller")]
+[node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller", "parent")]
 script = ExtResource("5_wfreb")
 doigts_idle = NodePath("DoigtsIdle")
 doigts_up = NodePath("DoigtsUp")
 anim_controller = NodePath("../AnimController")
 rail_controller = NodePath("../RailController")
+parent = NodePath("..")
 
 [node name="DoigtsIdle" parent="DoigtsManager" unique_id=50656219 instance=ExtResource("4_y7iwp")]
 process_priority = -2
