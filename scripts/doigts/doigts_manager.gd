@@ -4,6 +4,7 @@ extends Node
 @export var doigts_up: Doigt
 @export var anim_controller: AnimController
 @export var rail_controller: RailController
+@export var skate_physics: SkatePhysics
 @export var parent: Node3D
 @export_range(-180, 180) var orientation: float = -90
 
@@ -14,7 +15,7 @@ func _ready() -> void:
 	_orientation_rot = Basis.from_euler(Vector3(0.0, deg_to_rad(orientation), 0.0))
 
 func _process(_delta: float) -> void:
-	var fh := TrickManager.get_catch_pressed()
+	var fh: bool = TrickManager.get_catch_pressed() or skate_physics.is_grounded()
 	doigts_idle.visible = fh
 	doigts_up.visible = not fh
 	doigts_idle.visible = fh

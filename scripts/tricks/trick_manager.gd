@@ -9,6 +9,8 @@ signal trick_ended
 signal trick_catched(_progression: float, _dt: float)
 signal trick_validated(_num_combo: int)
 
+signal on_catch_released
+
 signal go_left
 signal go_right
 
@@ -30,6 +32,8 @@ var _xp := 0.0
 var _xp_buffer := 0.0
 var _points := 0
 var _tier := 0
+
+var _catch_pressed: bool = true
 
 const bullet_time_duration := 0.5
 var bullet_timer : Timer
@@ -61,17 +65,24 @@ func _compute_input() -> String:
 	return input_string
 
 func get_catch_pressed() -> bool:
-	var input := _compute_input()
-	return input == "FHybrv"
+	return _catch_pressed
+	
+func _set_catch_pressed(input: String) -> void:
+	_catch_pressed = input == "FHybrv"
+	if not _catch_pressed: on_catch_released.emit()
 
 func get_progression() -> float:
 	return (trick_timing_timer.wait_time - trick_timing_timer.time_left) / trick_timing_timer.wait_time
 
 func _process(delta: float) -> void:
 	var decrease := (_tier * _tier * _tier * 0.3 + 1) * 100 * delta
+	_update_xp(0, max(0, decrease))
+
 	_time_since_different_input += delta
 	
-	_update_xp(0, max(0, decrease))
+	var input_string := _compute_input()
+	_set_catch_pressed(input_string)
+
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	if GameManager.instance: if not GameManager.instance.game_started: return
 	
@@ -79,8 +90,6 @@ func _process(delta: float) -> void:
 		#Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
 	#else:
 		#Engine.time_scale = 1
-		
-	var input_string := _compute_input()
 	
 	# Start tricks
 	if get_catch_pressed() and not _started:

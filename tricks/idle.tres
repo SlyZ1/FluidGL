@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Anim" format=3 uid="uid://d0s3lfscvqkix"]
 
-[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/skate/anim_template.gd" id="1_s4feu"]
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/skate/anim/anim_template.gd" id="1_s4feu"]
 
 [resource]
 script = ExtResource("1_s4feu")

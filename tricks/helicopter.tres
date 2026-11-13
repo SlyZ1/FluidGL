@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Anim" format=3 uid="uid://crduq2ryplu8b"]
 
 [ext_resource type="Curve" uid="uid://bs6qtligyoqs0" path="res://curves/hard_ease_out.tres" id="1_iyfnv"]
-[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/skate/anim_template.gd" id="2_6vt4f"]
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/skate/anim/anim_template.gd" id="2_6vt4f"]
 
 [resource]
 script = ExtResource("2_6vt4f")
