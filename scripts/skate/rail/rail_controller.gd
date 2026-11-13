@@ -1,6 +1,7 @@
 extends Node
 class_name RailController
 
+@export var skate_point_per_second: float = 200
 @export_group("Components")
 @export var skate_physics: SkatePhysics
 @export var anim_controller: AnimController
@@ -31,6 +32,7 @@ var _rail_weight_tween: Tween
 enum RailState { GROUNDED, FREE, GRINDING };
 
 func _ready() -> void:
+	GameManager.instance.on_substep.connect(_step)
 	_current_state = _new_state(RailState.GROUNDED)
 
 func _new_state(state: RailState) -> RailControllerState:
@@ -40,13 +42,12 @@ func _new_state(state: RailState) -> RailControllerState:
 		RailState.GROUNDED: return RailGroundedState.new()
 	return RailGroundedState.new()
 
-func _process(dt: float) -> void:
+func _step(dt: float) -> void:
 	var state: RailState = _current_state.check_transitions(skate_physics, dt)
 	if state != _current_state.state():
 		_current_state.exit(self)
 		_current_state = _new_state(state)
 		_current_state.enter(self)
-		print(RailState.find_key(state))
 
 	anim_controller.set_default_trick_rotation(Quaternion.IDENTITY.slerp(_rail_pose_cible, _rail_pose_weight))
 

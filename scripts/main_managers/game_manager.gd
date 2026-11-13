@@ -50,6 +50,8 @@ func _exit_tree() -> void:
 		instance = null
 		
 func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -> void:
+	if not game_started: return
+
 	AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.DEATH)
 	on_stop.emit()
 	game_started = false
@@ -68,6 +70,8 @@ func stop(impulse_direction: Vector3 = Vector3.ZERO, no_ragdoll: bool = false) -
 		skate.process_mode = Node.PROCESS_MODE_DISABLED
 
 func start() -> void:
+	if game_started: return
+
 	on_start.emit()
 	game_started = true
 	set_active(skate, true)

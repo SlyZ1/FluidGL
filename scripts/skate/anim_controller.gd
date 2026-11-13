@@ -86,9 +86,8 @@ func _on_trick_performed(_name: String, _accuracy: float) -> void:
 	if _anim.reset_velocities: skate_physics.reset_velocities()
 	skate_physics.apply_impulse(_anim.impulse, _anim.angular_impulse)
 
-	_confirm_trick()
-
 	if abs(_anim.rot_angle) > 0.001:
+		_confirm_trick()
 		_trick_catched = false
 		var trick := BasicTrick.new(_name)
 		_active_tricks.push_back(trick)
@@ -121,11 +120,9 @@ func _cancel_tricks() -> void:
 func _successfully_catched(dt: float) -> void:
 	if not _catch_pressed:
 		skate_physics.apply_impulse(catch_start_speed)
-		#_confirm_trick()
 		AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.CATCH)
-		if skate_physics.just_impulsed(): 
-			TrickManager.validate_xp()
 		
+	TrickManager.validate_xp()
 	if not _was_grounded_when_catched: skate_physics.reset_orientation(dt)
 	skate_physics.apply_impulse(-dt * catch_fall_speed)
 	_trick_catched = true
@@ -144,9 +141,6 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		_cancel_tricks()
 		return
 		
-	#if (_progression > trick_catchable_start and skate_physics.is_grounded() and skate_physics.just_impulsed()):
-		#TrickManager.validate_xp()
-
 	if not _catch_pressed:
 		_was_grounded_when_catched = false
 	if skate_physics.is_grounded(): _was_grounded_when_catched = true

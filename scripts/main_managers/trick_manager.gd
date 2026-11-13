@@ -173,6 +173,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 	trick_performed.emit(_name, _accuracy)
 	trick_validated.emit(_nb_tricks_since_grounded)
 
+
 func _trick_ended() -> void:
 	if not _started: return
 	trick_ended.emit()
@@ -181,6 +182,15 @@ func _trick_ended() -> void:
 func set_possible_tricks(possible_tricks: Array[String]) -> void:
 	_possible_tricks = possible_tricks
 	trick_timing_timer.stop()
+
+func get_possible_tricks() -> Array[String]:
+	return _possible_tricks
+
+func get_neighbours_tricks(trick_name: String) -> Array[String]:
+	return _tricks.get_neighbours(trick_name)
+
+func add_xp(xp: float) -> void:
+	_xp_buffer += xp
 	
 func add_trick_count() -> void:
 	_nb_tricks_since_grounded += 1

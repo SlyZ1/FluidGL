@@ -9,6 +9,8 @@ var _touches_rail: Callable
 var _get_point_on_rail: Callable
 var _current_rail: Path3D
 
+var _skate_point_per_second: float
+
 var _last_rail_point: Vector3
 
 # protected
@@ -24,6 +26,9 @@ func exit(rail_controller: RailController) -> void:
 	var v_rail: float = _rail_vitesse_verticale.call(_current_rail, skate_physics.global_position.x)
 	skate_physics.apply_impulse(v_rail)
 
+	if TrickManager.get_catch_pressed():
+		TrickManager.on_airborne()
+
 	rail_controller._tween_rail_weight(0.0)
 
 func enter(rail_controller: RailController) -> void:
@@ -33,6 +38,7 @@ func enter(rail_controller: RailController) -> void:
 	_get_point_on_rail = rail_controller._get_point_on_rail
 	_current_rail = rail_controller.current_rail
 	_rail_vitesse_verticale = rail_controller._rail_vitesse_verticale
+	_skate_point_per_second = rail_controller.skate_point_per_second
 
 	rail_controller.lane_snapper.toggle(false)
 	rail_controller.anim_controller.toggle(false)
@@ -40,6 +46,7 @@ func enter(rail_controller: RailController) -> void:
 	rail_controller.skate_physics.reset_velocities()
 	rail_controller.is_on_rail = true
 	TrickManager.set_possible_tricks(["instable_saut"])
+	TrickManager.add_trick_count()
 	
 	rail_controller._init_rail_pose_cible()
 	rail_controller._tween_rail_weight(1.0)
@@ -70,10 +77,11 @@ func check_transitions(skate_physics: SkatePhysics, dt: float) -> RailController
 			_last_rail_point += MapLoader.instance.speed_vector * dt
 			return state()
 
-		print(abs(skate_physics.global_position.x - _last_rail_point.x))
 		return RailController.RailState.FREE
 
 	_last_rail_point = rail_point
+
+	TrickManager.add_xp(_skate_point_per_second * dt)
 
 	skate_physics.global_position = Vector3(skate_physics.global_position.x, rail_point.y, rail_point.z)
 	skate_physics.reset_velocities(true, false)
