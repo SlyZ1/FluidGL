@@ -46,16 +46,19 @@ capteur_front = NodePath("CapteurFront")
 capteur_mesh = NodePath("Skate/ShapeCast3D")
 capteur_ground = NodePath("Ground")
 mesh_instance = NodePath("Skate/skate")
+_dangerous_obstacle_layer = 2.0
 
 [node name="CapteurFront" type="ShapeCast3D" parent="." unique_id=251090142]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015574941, 0, 2.1507378)
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
+collision_mask = 3
 
 [node name="CapteurBack" type="ShapeCast3D" parent="." unique_id=491530469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1708295e-08, 0, -2.0729475)
 shape = SubResource("SphereShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
+collision_mask = 3
 
 [node name="Skate" type="Node3D" parent="." unique_id=54906917]
 

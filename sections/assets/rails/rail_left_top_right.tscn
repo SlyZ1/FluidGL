@@ -110,6 +110,7 @@ mesh = SubResource("ArrayMesh_7cm7i")
 curve = SubResource("Curve3D_n2fek")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=740859134]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=912728712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4115043, -4.7778063, -6.2453613)

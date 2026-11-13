@@ -112,6 +112,7 @@ curve = SubResource("Curve3D_tgsb3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=96157793]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5561358e-08, 0, 0.2781268)
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1351121374]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, -3.8406887, -6.2935905)

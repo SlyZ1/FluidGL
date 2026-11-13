@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Anim" format=3 uid="uid://boxk1tfv5h15b"]
 
-[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/animation_template.gd" id="1_n4hla"]
+[ext_resource type="Script" uid="uid://u4ge0gstrtnt" path="res://scripts/skate/anim_template.gd" id="1_n4hla"]
 
 [sub_resource type="Curve" id="Curve_n4hla"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
