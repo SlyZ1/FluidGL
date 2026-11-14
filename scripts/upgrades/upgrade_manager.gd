@@ -8,7 +8,7 @@ signal on_process(dt: float)
 func add_upgrade(upgrade: Upgrade) -> void:
     upgrade.initialize(self)
     current_upgrades.push_back(upgrade)
-    
+
 # remove by name
 func remove_upgrade(upgrade_name: String) -> void:
     for i in range(current_upgrades.size()):
@@ -21,15 +21,20 @@ func _exit_tree() -> void:
     for upgrade in current_upgrades:
         upgrade.reset(self)
 
-
 func add_hp(hp : int) -> void:
     set_hp(PlayerState._hp + hp)
 
 func set_hp(hp : int) -> void:
     PlayerState._hp = clamp(hp, 0, 60000)
 
+func add_points(points : int) -> void:
+    set_points(PlayerState._points + points)
+
 func set_points(points : int) -> void:
     PlayerState._points = points
+
+func add_pending_points(pending_points : int) -> void:
+    set_pending_points(PlayerState._pending_points + pending_points)
 
 func set_pending_points(pending_points : int) -> void:
     PlayerState._pending_points = pending_points

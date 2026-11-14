@@ -25,6 +25,12 @@ var _next_spawn: Section
 var waiting_for_restart := false
 var previous_spawn_index: int = -1
 
+signal finish_line_crossed
+const nb_sections_per_level := 5 
+var curr_nb_sections_spawned := 0
+@export var finish_line : PackedScene
+var finish_line_ref : Node3D = null
+
 static var instance: MapLoader
 
 func _enter_tree() -> void:
@@ -76,7 +82,20 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 	new_section.snap(snap_to, self)
 	add_child(new_section)
 	new_section.visible = false
+
+	if curr_nb_sections_spawned > nb_sections_per_level:
+		finish_line_ref = finish_line.instantiate() as Node3D
+		add_child(finish_line_ref)
+		finish_line_ref.visible = true
+		finish_line_ref.position = new_section.position
+		curr_nb_sections_spawned = -1
+	curr_nb_sections_spawned += 1
+
 	return new_section
+
+func _on_finish_line_crossed() -> void:
+
+	finish_line_crossed.emit()
 
 func _control_spawn(should_spawn_empty := false):
 	# Spawn le prochain fantome
@@ -106,6 +125,12 @@ func _control_speed(delta: float):
 		section.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
 	if _next_spawn: _next_spawn.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
 	if _spawned_sections.size() > 0: speed_vector = speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
+	if finish_line_ref:
+		finish_line_ref.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
+		if finish_line_ref.position.x < -20: # TODO : tweak this 20
+			_on_finish_line_crossed()
+			finish_line_ref.visible = false
+			finish_line_ref = null
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

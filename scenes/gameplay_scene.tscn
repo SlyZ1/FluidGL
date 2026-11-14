@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bwvau03vnk7bb"]
 
 [ext_resource type="Script" uid="uid://cbv8stkrtn8ru" path="res://scripts/main_managers/map_loader.gd" id="1_a47ne"]
+[ext_resource type="Script" uid="uid://bsbk3johb3xi4" path="res://scripts/main_managers/run_manager.gd" id="1_i3471"]
 [ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="2_qshxn"]
 [ext_resource type="Script" uid="uid://b67781cgo407u" path="res://scripts/upgrades/upgrade_manager.gd" id="2_uina8"]
 [ext_resource type="PackedScene" uid="uid://i8wl7n8qas82" path="res://sections/section_rail_2.tscn" id="3_0rqnr"]
@@ -14,6 +15,7 @@
 [ext_resource type="Script" uid="uid://vsj75ecd4be1" path="res://scripts/main_managers/game_manager.gd" id="9_js0h6"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate_template.tscn" id="10_vxw8k"]
 [ext_resource type="PackedScene" uid="uid://b66n7507tsgkp" path="res://prefabs/skate_ragdoll_template.tscn" id="11_54hnc"]
+[ext_resource type="PackedScene" uid="uid://bu87ruvqee5ip" path="res://prefabs/finish_line.tscn" id="14_jppma"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/skate/static_camera.gd" id="30_7oq1k"]
 [ext_resource type="Environment" uid="uid://cmks0nm0sqiqg" path="res://sky/main_environment.tres" id="31_blaph"]
 [ext_resource type="Script" uid="uid://v3s70tvc6v62" path="res://scripts/UI/skybox_ratio.gd" id="32_ri4in"]
@@ -59,6 +61,47 @@ shader_parameter/decalage_colonne = 1.745
 
 [node name="Node3D" type="Node3D" unique_id=611096490]
 
+[node name="RunManager" type="Node" parent="." unique_id=457552277 node_paths=PackedStringArray("choicePanels")]
+script = ExtResource("1_i3471")
+choicePanels = [NodePath("ChoiceLayer/Choice1"), NodePath("ChoiceLayer/Choice2"), NodePath("ChoiceLayer/Choice3")]
+
+[node name="ChoiceLayer" type="Control" parent="RunManager" unique_id=1498470348]
+z_index = 1
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1148.0
+offset_bottom = 642.0
+
+[node name="Choice1" type="ColorRect" parent="RunManager/ChoiceLayer" unique_id=1511740493]
+visible = false
+layout_mode = 0
+offset_left = 56.0
+offset_top = 32.32
+offset_right = 360.0
+offset_bottom = 610.91003
+pivot_offset_ratio = Vector2(0.5, 0.5)
+color = Color(0.9490196, 0.5058824, 0.57254905, 1)
+
+[node name="Choice2" type="ColorRect" parent="RunManager/ChoiceLayer" unique_id=2128027126]
+visible = false
+layout_mode = 0
+offset_left = 410.0
+offset_top = 32.32
+offset_right = 728.0
+offset_bottom = 610.91003
+pivot_offset_ratio = Vector2(0.5, 0.5)
+color = Color(0.9490196, 0.5058824, 0.57254905, 1)
+
+[node name="Choice3" type="ColorRect" parent="RunManager/ChoiceLayer" unique_id=885362408]
+visible = false
+layout_mode = 0
+offset_left = 784.0
+offset_top = 32.32
+offset_right = 1098.0
+offset_bottom = 610.91003
+pivot_offset_ratio = Vector2(0.5, 0.5)
+color = Color(0.9490196, 0.5058824, 0.57254905, 1)
+
 [node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("restart_lag_timer", "skate", "skate_ragdoll")]
 script = ExtResource("9_js0h6")
 restart_lag_timer = NodePath("RestartLag")
@@ -81,6 +124,7 @@ speed = 35.0
 speed_increase_rate = 0.005
 sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly")])
 empty_section = ExtResource("8_5k0m8")
+finish_line = ExtResource("14_jppma")
 
 [node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
 transform = Transform3D(-3.365777e-08, 0, 0.77, 0, 0.77, 0, -0.77, 0, -3.365777e-08, 0, 3.5, 0)
@@ -354,4 +398,5 @@ pivot_offset_ratio = Vector2(1, 1)
 
 [connection signal="timeout" from="GameManager/RestartLag" to="GameManager" method="_on_restart_lag_timeout"]
 [connection signal="timeout" from="GameManager/RestartLag" to="UI/EndScreen" method="_on_restart_lag_timeout"]
+[connection signal="finish_line_crossed" from="MapLoader" to="RunManager" method="_on_finish_line_crossed"]
 [connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]
