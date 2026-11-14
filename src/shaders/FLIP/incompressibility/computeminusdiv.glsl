@@ -38,17 +38,17 @@ void main(){
     if (s <= 0) 
         { minusDiv[cell] = 0.0; return; }
 
-    int bottom = coordToCell(ivec3(i, j, k), gridX, gridY+1, gridZ);
-    int top = coordToCell(ivec3(i, j+1, k), gridX, gridY+1, gridZ);
     int left = coordToCell(ivec3(i, j, k), gridX+1, gridY, gridZ);
     int right = coordToCell(ivec3(i+1, j, k), gridX+1, gridY, gridZ);
+    int bottom = coordToCell(ivec3(i, j, k), gridX, gridY+1, gridZ);
+    int top = coordToCell(ivec3(i, j+1, k), gridX, gridY+1, gridZ);
     int back = coordToCell(ivec3(i, j, k), gridX, gridY, gridZ+1);
     int front = coordToCell(ivec3(i, j, k+1), gridX, gridY, gridZ+1);
     
-    float velBottom = velY[bottom];
-    float velTop = velY[top];
     float velLeft = velX[left];
     float velRight = velX[right];
+    float velBottom = velY[bottom];
+    float velTop = velY[top];
     float velBack = velZ[back];
     float velFront = velZ[front];
 

@@ -455,6 +455,10 @@ void FlipSolverGPU::particleCollisions(shared_ptr<Mesh> obstacle){
     glUniform1f(ShaderProgram::getVarLoc("radius"), m_config->getPartRadius());
     glUniform1ui(ShaderProgram::getVarLoc("collideWithObstacle"), m_collideWithObstacle);
 
+    glUniform2i(ShaderProgram::getVarLoc("openBoundsX"), m_config->getOpenBoundsX().x ? 1 : 0, m_config->getOpenBoundsX().y ? 1 : 0);
+    glUniform2i(ShaderProgram::getVarLoc("openBoundsY"), m_config->getOpenBoundsY().x ? 1 : 0, m_config->getOpenBoundsY().y ? 1 : 0);
+    glUniform2i(ShaderProgram::getVarLoc("openBoundsZ"), m_config->getOpenBoundsZ().x ? 1 : 0, m_config->getOpenBoundsZ().y ? 1 : 0);
+
     if (obstacle){
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, obstacle->getSDF());
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, obstacle->getSDFGrad());
@@ -503,6 +507,10 @@ void FlipSolverGPU::particlesToGrid(){
     glUniform1i(ShaderProgram::getVarLoc("gridZ"), m_config->getGridZ());
     glUniform1f(ShaderProgram::getVarLoc("h"), m_config->getH());
     glUniform1ui(ShaderProgram::getVarLoc("isFull"), m_isFull ? 1u : 0u);
+
+    glUniform2i(ShaderProgram::getVarLoc("openBoundsX"), m_config->getOpenBoundsX().x ? 1 : 0, m_config->getOpenBoundsX().y ? 1 : 0);
+    glUniform2i(ShaderProgram::getVarLoc("openBoundsY"), m_config->getOpenBoundsY().x ? 1 : 0, m_config->getOpenBoundsY().y ? 1 : 0);
+    glUniform2i(ShaderProgram::getVarLoc("openBoundsZ"), m_config->getOpenBoundsZ().x ? 1 : 0, m_config->getOpenBoundsZ().y ? 1 : 0);
     m_p2gShader.dispatch((m_config->getGridDim() + 7) / 8);
     
     ShaderProgram::SSBOBarrier();

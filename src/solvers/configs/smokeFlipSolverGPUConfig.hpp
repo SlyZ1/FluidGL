@@ -9,6 +9,8 @@ private:
     float m_flotBeta = 4.0f;
     float m_densityDecreaseRate = 0.02f;
     float m_temperatureDecreaseRate = 0.1f;
+    float m_vorticityFactor = 0.5f;
+    float m_diffusionFactor = 4.f;
 
     FluidInitializer m_densitySource = FluidInitializer();
 
@@ -33,6 +35,12 @@ public:
 
     void setDensitySource(FluidInitializer densitySource) { m_densitySource = densitySource; }
     FluidInitializer getDensitySource() const { return m_densitySource; }
+
+    void setVorticityFactor(float vorticityFactor) { m_vorticityFactor = vorticityFactor; }
+    float getVorticityFactor() const { return m_vorticityFactor; }
+
+    void setDiffusionFactor(float diffusionFactor) { m_diffusionFactor = diffusionFactor; }
+    float getDiffusionFactor() const { return m_diffusionFactor; }
     
     std::unique_ptr<ISolverConfig> clone() const override; 
 };

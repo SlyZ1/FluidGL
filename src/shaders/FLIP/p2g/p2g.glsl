@@ -18,6 +18,10 @@ uniform int gridZ;
 uniform float h;
 uniform uint isFull;
 
+uniform bvec2 openBoundsX;
+uniform bvec2 openBoundsY;
+uniform bvec2 openBoundsZ;
+
 #pragma include "../utils.glsl"
 
 void main(){
@@ -94,6 +98,13 @@ void main(){
             }
         }
     }
+
+    bvec2 setAirX = openBoundsX && bvec2(x == 0, x == gridX-1);
+    bvec2 setAirY = openBoundsY && bvec2(y == 0, y == gridY-1);
+    bvec2 setAirZ = openBoundsZ && bvec2(z == 0, z == gridZ-1);
+
+    if (isFull == 0u && (any(setAirX) || any(setAirY) || any(setAirZ))) 
+        isAir[cell] = 1u;
 
     if (x == 0) currentVelX = 0.0;
     if (y == 0) currentVelY = 0.0;

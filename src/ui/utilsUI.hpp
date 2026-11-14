@@ -46,8 +46,30 @@ public:
         ImGui::DragFloat3(("##" + name).c_str(), &value.x, step, min, max, format);
     }
 
+    static inline void drawSlider(const std::string& name, int& value, int min, int max) {
+        ImGui::SliderInt(("##" + name).c_str(), &value, min, max);
+    }
+    static inline void drawSlider(const std::string& name, float& value, float min, float max, const char* format = "%.3f") {
+        ImGui::SliderFloat(("##" + name).c_str(), &value, min, max, format);
+    }
+    static inline void drawSlider(const std::string& name, glm::vec2& value, float min, float max, const char* format = "%.1f") {
+        ImGui::SliderFloat2(("##" + name).c_str(), &value.x, min, max, format);
+    }
+    static inline void drawSlider(const std::string& name, glm::vec3& value, float min, float max, const char* format = "%.1f") {
+        ImGui::SliderFloat3(("##" + name).c_str(), &value.x, min, max, format);
+    }
+
     static inline void drawCheckbox(const std::string& name, bool& value){
         ImGui::Checkbox(("##" + name).c_str(), &value);
+    }
+    static inline void drawCheckbox(const std::string& name, glm::bvec2& value){
+        if (ImGui::BeginTable(name.c_str(), 2, ImGuiTableFlags_SizingStretchSame)) {
+            ImGui::TableNextColumn();
+            drawCheckbox(name + "_1", value.x);
+            ImGui::TableNextColumn();
+            drawCheckbox(name + "_2", value.y);
+            ImGui::EndTable();
+        }
     }
 
     static void TextWithShadow(

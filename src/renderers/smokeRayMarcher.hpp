@@ -20,7 +20,7 @@ private:
     StatIndex m_renderTimeStatIndex = 0;
     GPUTimer m_renderTimer = {};
 
-    float m_absorption = 0.05f;
+    float m_absorption = 0.1f;
     float m_numStepSizeRatio = 10.f;
     uint m_smoothDensity = 1u;
 

@@ -25,6 +25,10 @@ uniform ivec3 N;
 
 uniform uint collideWithObstacle;
 
+uniform bvec2 openBoundsX;
+uniform bvec2 openBoundsY;
+uniform bvec2 openBoundsZ;
+
 #pragma include "./utils.glsl" 
 
 void killParticle(int i){
@@ -39,11 +43,15 @@ void main(){
 
     vec3 pos = partPos[i].xyz;
     vec3 vel = partVel[i].xyz;
-    // if (pos.y > maxPos.y - 4 * radius){
-    //     partPos[i].x = maxPos.x + 100;
-    //     killParticle(i);
-    //     return;
-    // }
+
+    bvec2 killX = openBoundsX && bvec2(pos.x < minPos.x + h, pos.x > maxPos.x - h);
+    bvec2 killY = openBoundsY && bvec2(pos.y < minPos.y + h, pos.y > maxPos.y - h);
+    bvec2 killZ = openBoundsZ && bvec2(pos.z < minPos.z + h, pos.z > maxPos.z - h);
+    if (any(killX) || any(killY) || any(killZ)){
+        partPos[i].x = maxPos.x + 100;
+        killParticle(i);
+        return;
+    }
 
     if (all(greaterThan(pos, obstacleMinBound)) && all(lessThan(pos, obstacleMaxBound))){
         float s = length(vec3(obstacleInverseMatrix[0]));

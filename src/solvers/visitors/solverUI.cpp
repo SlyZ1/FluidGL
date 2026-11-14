@@ -104,9 +104,22 @@ void SolverUI::visit(FlipSolverGPU& solver) {
     config.setFluidInitializer(newInitializer);
     ImGui::EndDisabled();
 
-    ImGui::Dummy(ImVec2(0, 10));
-    
     UtilsUI::EndTwoColumnLayout();
+    
+    ImGui::Dummy(ImVec2(0, 10));
+
+    if (UtilsUI::BeginCustomHeader("Boundaries")){
+        UtilsUI::BeginTwoColumnLayout();
+
+        DRAW_FIELD(CHECK_BOX_DRAWING_FUNCTION, "Open X-|X+", bvec2, OpenBoundsX, 0, 0)
+        DRAW_FIELD(CHECK_BOX_DRAWING_FUNCTION, "Open Y-|Y+", bvec2, OpenBoundsY, 0, 0)
+        DRAW_FIELD(CHECK_BOX_DRAWING_FUNCTION, "Open Z-|Z+", bvec2, OpenBoundsZ, 0, 0)
+
+        UtilsUI::EndTwoColumnLayout();
+        ImGui::TreePop();
+    } UtilsUI::EndCustomHeader();
+
+    ImGui::Dummy(ImVec2(0, 10));
 
     // CGS
     if (UtilsUI::BeginCustomHeader("CGS")) {
@@ -150,9 +163,11 @@ void SolverUI::visit(SmokeFlipSolverGPU& solver) {
 
         DRAW_FIELD(UtilsUI::drawDrag, "Buoyancy Alpha", float, FlotAlpha, 0, 100)
         DRAW_FIELD(UtilsUI::drawDrag, "Buoyancy Beta", float, FlotBeta, 0, 100)
-        ImGui::Dummy(ImVec2(0, 5));
         DRAW_FIELD(UtilsUI::drawDrag, "Density Decrease Rate", float, DensityDecreaseRate, 0, 100)
         DRAW_FIELD(UtilsUI::drawDrag, "Temperature Decrease Rate", float, TemperatureDecreaseRate, 0, 100)
+        ImGui::Dummy(ImVec2(0, 5));
+        DRAW_FIELD(UtilsUI::drawDrag, "Vorticity Factor", float, VorticityFactor, 0, 1.5)
+        DRAW_FIELD(UtilsUI::drawSlider, "Diffusion Factor", float, DiffusionFactor, 0, 10)
         
         ImGui::Dummy(ImVec2(0, 5));
 

@@ -88,7 +88,7 @@ namespace Scene {
         smokeConfig.setCgMaxIter(5);
         smokeConfig.setCgTol(0.01f);
         smokeConfig.setNumPushAppart(1);
-        smokeConfig.setFlipRatio(0.7f);
+        smokeConfig.setFlipRatio(0.9f);
         smokeConfig.setPartRadius(0.8f);
         smokeConfig.setDomainSize(glm::vec3(175.0f, 250.0f, 175.0f));
         smokeConfig.setDt(0.07f);
@@ -96,6 +96,8 @@ namespace Scene {
         densitySource.setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -95.0f, 0.0f), smokeConfig.getPartRadius());
         smokeConfig.setDensitySource(densitySource);
         smokeConfig.setDensityDecreaseRate(0.02f);
+        smokeConfig.setVorticityFactor(0.4f);
+        smokeConfig.setDiffusionFactor(4.f);
         scene.solverConfig = smokeConfig;
 
         scene.obstacleInfo = std::make_shared<ObstacleInfo>();
@@ -127,15 +129,17 @@ namespace Scene {
         smokeConfig.setNumPushAppart(1);
         smokeConfig.setCgMaxIter(5);
         smokeConfig.setCgTol(0.01f);
-        smokeConfig.setFlipRatio(0.8f);
+        smokeConfig.setFlipRatio(0.9f);
         smokeConfig.setPartRadius(0.4f);
         smokeConfig.setDomainSize(glm::vec3(130.0f, 250.0f, 130.0f));
         smokeConfig.setDt(0.07f);
         FluidInitializer densitySource = FluidInitializer();
         densitySource.setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -90.0f, 0.0f), smokeConfig.getPartRadius());
         smokeConfig.setDensitySource(densitySource);
-        smokeConfig.setDensityDecreaseRate(0.05f);
+        smokeConfig.setDensityDecreaseRate(0.07f);
         smokeConfig.setTemperatureDecreaseRate(0.05f);
+        smokeConfig.setVorticityFactor(0.2f);
+        smokeConfig.setDiffusionFactor(4.f);
         scene.solverConfig = smokeConfig;
 
         return scene;

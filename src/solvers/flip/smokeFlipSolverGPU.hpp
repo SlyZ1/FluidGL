@@ -16,7 +16,19 @@ private:
     GLuint m_gridDensityTexture = 0;
     GLuint m_gridDensityWeightsBuffer = 0;
 
+    GLuint m_vorticityBuffer = 0;
+    GLuint m_vorticityForceBuffer = 0;
+
+    unsigned int m_integrationFrame = 0;
+
+    ShaderProgram m_computeVorticityShader = {};
+    ShaderProgram m_computeVorticityForceShader = {};
+
+    ShaderProgram m_compensateNumPartShader = {};
+    ShaderProgram m_diffuseFieldsShader = {};
+
     ShaderProgram m_integrateShader = {};
+    ShaderProgram m_integrateGridShader = {};
     ShaderProgram m_sortExtraAttributesShader = {};
 
     int m_allocatedTextureData = 0;

@@ -24,6 +24,9 @@ protected:
         glm::vec3(-150, 100, 150),
         1.5f
     );
+    glm::bvec2 m_openBoundsX = glm::bvec2(false);
+    glm::bvec2 m_openBoundsY = glm::bvec2(false);
+    glm::bvec2 m_openBoundsZ = glm::bvec2(false);
     
 
 public:
@@ -77,6 +80,15 @@ public:
     int getGridX() const { return getGridDim().x; } 
     int getGridY() const { return getGridDim().y; }
     int getGridZ() const { return getGridDim().z; }
+
+    glm::bvec2 getOpenBoundsX() const { return m_openBoundsX; }
+    void setOpenBoundsX(glm::bvec2 openBoundsX) { m_openBoundsX = openBoundsX; }
+
+    glm::bvec2 getOpenBoundsY() const { return m_openBoundsY; }
+    void setOpenBoundsY(glm::bvec2 openBoundsY) { m_openBoundsY = openBoundsY; }
+
+    glm::bvec2 getOpenBoundsZ() const { return m_openBoundsZ; }
+    void setOpenBoundsZ(glm::bvec2 openBoundsZ) { m_openBoundsZ = openBoundsZ; }
 };
 
 #endif

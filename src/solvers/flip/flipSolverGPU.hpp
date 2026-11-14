@@ -159,10 +159,12 @@ protected:
     bool m_isFull = false;
     bool m_collideWithObstacle = true;
 
+    GLuint getIsDeadBuffer() const { return m_isDeadBuffer; }
     GLuint getVelXBuffer() const { return m_velXBuffer; }
     GLuint getVelYBuffer() const { return m_velYBuffer; }
     GLuint getVelZBuffer() const { return m_velZBuffer; }
     GLuint getIsAirBuffer() const { return m_isAirBuffer; }
+    GLuint getFirstCellParticleBuffer() const { return m_firstCellParticleBuffer; }
 
     glm::ivec3 cellToCoord(int cell, int nx, int ny);
     glm::vec3 cellToPos(int cell, int nx, int ny, int nz);

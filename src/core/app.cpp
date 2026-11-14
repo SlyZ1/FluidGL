@@ -35,7 +35,7 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height)
 
 void App::init(int width, int height, const char *name){
 #ifdef __linux__
-    // Prevent from mouse hidding issues 
+    // Prevent from mouse hidding issues
     glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 #endif
     if (!glfwInit())
