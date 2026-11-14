@@ -1,94 +1,39 @@
-
-<img src="public/FluidGL_Circle.png" width=100>
+<img src="public/FluidGL_Circle.png" width="100" alt="FluidGL logo">
 
 # FluidGL
 
-> [!WARNING]
-> The project is in a very early state, please be understanding for all the missing features.
+Real-time 3D fluid and smoke simulation, written from scratch in C++ and OpenGL compute shaders. The whole simulation pipeline runs on the GPU.
 
-## Overview
+## Features
 
-GPU fluid simulation, built from scratch in C++ and OpenGL compute shaders. Implements a PIC/FLIP solver running entirely on the GPU, with a custom conjugate gradient solver for the pressure projection step.
+- [x] **PIC/FLIP solver** with RK2 particle advection
 
-### App showcase
+- [x] **Pressure projection** with a hand-written MGPCG
+- [x] Particles are **sorted every frame** with a counting sort built on a parallel prefix sum, so neighbour lookup is constant time for P2G (particle to grid), particle separation and diffusion.
+- [x] **Liquids**: Collisions against SDF
+- [x] **Smoke**: Temperature and density carried by the particles, buoyancy, cooling, vorticity confinement, and diffusion between neighbouring particles
+- [x] **Open or closed** domain boundaries, with particle recycling and reseeding
+- [x] **Live editing** of scenes and solver parameters through a Dear ImGui interface
+- [x] **Profiling**: a GPU timer per stage (sort, P2G, pressure solve, G2P) is displayed in the app.
 
-**PIC-FLIP Simulation**
-
-
-https://github.com/user-attachments/assets/7273a69d-89ad-41b8-8772-fd34758d17e1
+## Perfs
 
 
 
-600.000 particles on Laptop RTX 4060 ~ 60fps
+## Build and run
 
-### Build
+You need CMake 3.30+, a C++20 compiler, OpenMP, and a GPU and driver with OpenGL 4.3+. Dependencies are fetched by CMake.
 
 ```bash
-git clone https://github.com/SlyZ1/Fluid-Sim.git
-cd Fluid-Sim
+git clone https://github.com/SlyZ1/fluidgl.git
+cd fluidgl
 cmake -B build
-cmake --build build
-```
-
-The executable (`myprogram`) is placed at the root of the project.
-
-Convenience scripts are included for Linux:
-
-```bash
-./resetBuild.sh   # removes build/, reconfigures from scratch with default arguments
-./start.sh        # builds (tests disabled) and runs the program
-./test.sh         # builds (tests enabled) and runs the test suite via ctest
-```
-
-## Building
-
-### Prerequisites
-
-- CMake 3.30+
-- A C++17 compiler (MSVC, GCC, or Clang)
-- A GPU and driver supporting OpenGL 4.3+ (compute shaders)
-- OpenMP support
-
-Dependencies (GLFW, nativefiledialog-extended, and Catch2 for tests) are fetched automatically via CMake's `FetchContent`
-
-### Run
-
-```bash
+cmake --build build -j
 ./myprogram
 ```
 
-of with the following command to recompile and run if you are on Linux
+On Linux, `./start.sh` rebuilds and runs through `prime-run`, which forces the discrete GPU on hybrid NVIDIA laptops. On a single-GPU machine, run `./myprogram` directly.
 
-```bash
-./start.sh
-```
+## Built with
 
-`start.sh` runs the program through [`prime-run`](https://wiki.archlinux.org/title/PRIME). If you're on a laptop with hybrid NVIDIA/integrated graphics, this forces execution on the discrete GPU, which compute shaders require for reasonable performance. If you don't have `prime-run` installed or don't need it (desktop GPU, or a single-GPU laptop), run `./myprogram` directly instead.
-
-### Tests
-
-Unit tests (Catch2) are really basic. Only the GPU matrix/vector operations and the conjugate gradient solver are tested. Enable them at configure time:
-
-```bash
-cmake -B build -DBUILD_TEST=ON
-cmake --build build
-ctest --test-dir build --output-on-failure
-```
-
-or with the following command if you are on Linux
-
-```bash
-./test.sh
-```
-
-## Tech stack
-
-| Library | Purpose |
-|---|---|
-| [GLFW](https://www.glfw.org/) | Window and input handling |
-| [glad](https://glad.dav1d.de/) | OpenGL function loading |
-| [GLM](https://github.com/g-truc/glm) | Math (vectors, matrices) |
-| [Dear ImGui](https://github.com/ocornut/imgui) | Debug/control UI |
-| [nativefiledialog-extended](https://github.com/btzy/nativefiledialog-extended) | Native file dialogs |
-| [Catch2](https://github.com/catchorg/Catch2) | Unit testing |
-| OpenMP | CPU-side parallelism |
+[GLFW](https://www.glfw.org/), [glad](https://glad.dav1d.de/), [GLM](https://github.com/g-truc/glm), [Dear ImGui](https://github.com/ocornut/imgui) and [nativefiledialog-extended](https://github.com/btzy/nativefiledialog-extended). Licensed under Apache 2.0, see [LICENSE](LICENSE).
