@@ -9,6 +9,7 @@
 class TriangleRenderer : public IRenderer {
 private:
     std::weak_ptr<Camera> m_camera;
+    std::weak_ptr<App> m_app;
 
     //SolverGizmos m_solverGizmos;
     bool m_drawGizmos = true;
@@ -48,7 +49,7 @@ private:
     void initOpenGL();
 
 public:
-    TriangleRenderer(std::weak_ptr<Camera> camera);
+    TriangleRenderer(std::weak_ptr<App> app, std::weak_ptr<Camera> camera);
     ~TriangleRenderer() override;
 
     TriangleRenderer(const TriangleRenderer&) = delete;

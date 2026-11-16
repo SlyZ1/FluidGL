@@ -54,6 +54,7 @@ private:
     GLuint m_indirectBuffer = 0;
     GLuint m_minusDivBuffer = 0;
     GLuint m_pressureBuffer = 0;
+    GLuint m_divergenceBuffer = 0;
 
     // Particle Sort
     GLuint m_cellOfBuffer = 0;
@@ -165,6 +166,7 @@ protected:
     GLuint getVelZBuffer() const { return m_velZBuffer; }
     GLuint getIsAirBuffer() const { return m_isAirBuffer; }
     GLuint getFirstCellParticleBuffer() const { return m_firstCellParticleBuffer; }
+    GLuint getDivergenceBuffer() const { return m_divergenceBuffer; }
 
     glm::ivec3 cellToCoord(int cell, int nx, int ny);
     glm::vec3 cellToPos(int cell, int nx, int ny, int nz);

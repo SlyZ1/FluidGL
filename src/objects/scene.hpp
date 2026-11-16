@@ -10,6 +10,9 @@
 #include "renderers/smokeRayMarcher.hpp"
 #include "renderers/smokeRenderer3D.hpp"
 
+#include "solvers/initializers/cubeInitializer.hpp"
+#include "solvers/initializers/sphereInitializer.hpp"
+
 using SolverConfig = std::variant<EulerSolverGPUConfig, LiquidFlipSolverGPUConfig, SmokeFlipSolverGPUConfig, FlipSolverCPUConfig, XpbdSolverCPUConfig>;
 
 struct ObstacleInfo {
@@ -35,10 +38,12 @@ namespace Scene {
         flipConfig.setCgTol(0.01f);
         flipConfig.setDomainSize(glm::vec3(900.0f, 400.0f, 300.0f));
         flipConfig.setPartRadius(1.5f);
-        FluidInitializer initializer = FluidInitializer();
-        initializer.setSizeAndPos(glm::vec3(300, 200, 300), glm::vec3(-300, 0, 0), flipConfig.getPartRadius());
-        flipConfig.setFluidInitializer(initializer);
+        std::shared_ptr<CubeInitializer> initializer = std::make_shared<CubeInitializer>();
+        initializer->setSizeAndPos(glm::vec3(300, 200, 300), glm::vec3(-300, 0, 0), flipConfig.getPartRadius());
+        flipConfig.setInitializer(initializer);
         flipConfig.setDt(0.03f);
+
+        flipConfig.loadOpenGl();
         scene.solverConfig = flipConfig;
 
         return scene;
@@ -53,10 +58,12 @@ namespace Scene {
         flipConfig.setCgTol(0.01f);
         flipConfig.setDomainSize(glm::vec3(226.0f, 158.0f, 218.5f));
         flipConfig.setPartRadius(0.5f);
-        FluidInitializer initializer = FluidInitializer();
-        initializer.setSizeAndPos(glm::vec3(120, 76, 96), glm::vec3(0, 29.5f, 0), flipConfig.getPartRadius());
-        flipConfig.setFluidInitializer(initializer);
+        std::shared_ptr<CubeInitializer> initializer = std::make_shared<CubeInitializer>();
+        initializer->setSizeAndPos(glm::vec3(120, 76, 96), glm::vec3(0, 29.5f, 0), flipConfig.getPartRadius());
+        flipConfig.setInitializer(initializer);
         flipConfig.setDt(0.07f);
+
+        flipConfig.loadOpenGl();
         scene.solverConfig = flipConfig;
 
         scene.obstacleInfo = std::make_shared<ObstacleInfo>();
@@ -92,31 +99,36 @@ namespace Scene {
         smokeConfig.setPartRadius(0.8f);
         smokeConfig.setDomainSize(glm::vec3(175.0f, 250.0f, 175.0f));
         smokeConfig.setDt(0.07f);
-        FluidInitializer densitySource = FluidInitializer();
-        densitySource.setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -95.0f, 0.0f), smokeConfig.getPartRadius());
+        std::shared_ptr<SphereInitializer> densitySource = std::make_shared<SphereInitializer>();
+        densitySource->setRadiusAndPos(20.0f, glm::vec3(0.0f, -95.0f, 0.0f), smokeConfig.getPartRadius());
         smokeConfig.setDensitySource(densitySource);
         smokeConfig.setDensityDecreaseRate(0.02f);
         smokeConfig.setVorticityFactor(0.4f);
         smokeConfig.setDiffusionFactor(4.f);
+        smokeConfig.setOpenBoundsX(glm::bvec2(true, true));
+        smokeConfig.setOpenBoundsY(glm::bvec2(false, true));
+        smokeConfig.setOpenBoundsZ(glm::bvec2(true, true));
+
+        smokeConfig.loadOpenGl();
         scene.solverConfig = smokeConfig;
 
-        scene.obstacleInfo = std::make_shared<ObstacleInfo>();
-        scene.obstacleInfo->path = "models/suzanne.obj";
-        scene.obstacleInfo->pos = glm::vec3(0.0f, -100.0f, -10.0f);
-        scene.obstacleInfo->scale = glm::vec3(50.0f);
-        scene.obstacleInfo->is_static = false;
+        // scene.obstacleInfo = std::make_shared<ObstacleInfo>();
+        // scene.obstacleInfo->path = "models/suzanne.obj";
+        // scene.obstacleInfo->pos = glm::vec3(0.0f, -100.0f, -10.0f);
+        // scene.obstacleInfo->scale = glm::vec3(50.0f);
+        // scene.obstacleInfo->is_static = false;
 
-        auto updateMethod = [dt = smokeConfig.getDt()](std::shared_ptr<Mesh> suzanne, std::shared_ptr<App> app, std::shared_ptr<Camera> camera) {
-            std::vector<float> ray = camera->rayFromMouse(app->mouseX(), app->mouseY(), app->width(), app->height());
-            glm::vec3 rayOrigin = glm::vec3(ray[0], ray[1], ray[2]);
-            glm::vec3 rayDir = glm::vec3(ray[3], ray[4], ray[5]);
-            glm::vec3 pos = rayOrigin + glm::abs(rayOrigin.z) * rayDir / glm::max(glm::abs(rayDir.z), 1e-3f);
+        // auto updateMethod = [dt = smokeConfig.getDt()](std::shared_ptr<Mesh> suzanne, std::shared_ptr<App> app, std::shared_ptr<Camera> camera) {
+        //     std::vector<float> ray = camera->rayFromMouse(app->mouseX(), app->mouseY(), app->width(), app->height());
+        //     glm::vec3 rayOrigin = glm::vec3(ray[0], ray[1], ray[2]);
+        //     glm::vec3 rayDir = glm::vec3(ray[3], ray[4], ray[5]);
+        //     glm::vec3 pos = rayOrigin + glm::abs(rayOrigin.z) * rayDir / glm::max(glm::abs(rayDir.z), 1e-3f);
 
-            glm::vec3 oldPos = suzanne->getPos();
-            suzanne->setVel((pos - oldPos) / dt);
-            suzanne->setPos(pos);
-        };
-        scene.updateMethod = updateMethod;
+        //     glm::vec3 oldPos = suzanne->getPos();
+        //     suzanne->setVel((pos - oldPos) / dt);
+        //     suzanne->setPos(pos);
+        // };
+        // scene.updateMethod = updateMethod;
 
         return scene;
     }
@@ -133,13 +145,15 @@ namespace Scene {
         smokeConfig.setPartRadius(0.4f);
         smokeConfig.setDomainSize(glm::vec3(130.0f, 250.0f, 130.0f));
         smokeConfig.setDt(0.07f);
-        FluidInitializer densitySource = FluidInitializer();
-        densitySource.setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -90.0f, 0.0f), smokeConfig.getPartRadius());
+        std::shared_ptr<CubeInitializer> densitySource = std::make_shared<CubeInitializer>();
+        densitySource->setSizeAndPos(glm::vec3(40.0f), glm::vec3(0.0f, -90.0f, 0.0f), smokeConfig.getPartRadius());
         smokeConfig.setDensitySource(densitySource);
         smokeConfig.setDensityDecreaseRate(0.07f);
         smokeConfig.setTemperatureDecreaseRate(0.05f);
         smokeConfig.setVorticityFactor(0.2f);
         smokeConfig.setDiffusionFactor(4.f);
+
+        smokeConfig.loadOpenGl();
         scene.solverConfig = smokeConfig;
 
         return scene;

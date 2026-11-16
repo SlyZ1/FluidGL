@@ -12,13 +12,12 @@ private:
     float m_vorticityFactor = 0.5f;
     float m_diffusionFactor = 4.f;
 
-    FluidInitializer m_densitySource = FluidInitializer();
+    std::shared_ptr<FluidInitializer> m_densitySource;
 
 public:
-    SmokeFlipSolverGPUConfig() : FlipSolverGPUConfig() {}
+    SmokeFlipSolverGPUConfig();
     ~SmokeFlipSolverGPUConfig() override = default;
 
-    void setFluidInitializer(FluidInitializer) override {}
     void setDomainSize(glm::vec3 domainSize) override;
 
     void setFlotAlpha(float flotAlpha) { m_flotAlpha = flotAlpha; }
@@ -33,8 +32,12 @@ public:
     void setTemperatureDecreaseRate(float temperatureDecreaseRate) { m_temperatureDecreaseRate = temperatureDecreaseRate; }
     float getTemperatureDecreaseRate() const { return m_temperatureDecreaseRate; }
 
-    void setDensitySource(FluidInitializer densitySource) { m_densitySource = densitySource; }
-    FluidInitializer getDensitySource() const { return m_densitySource; }
+    std::shared_ptr<FluidInitializer> getDensitySource() const { return m_densitySource; }
+    void setDensitySource(std::shared_ptr<FluidInitializer> densitySource) { m_densitySource = densitySource; }
+
+    void setInitializer(std::shared_ptr<FluidInitializer>) override {}
+
+    void loadOpenGl() override;
 
     void setVorticityFactor(float vorticityFactor) { m_vorticityFactor = vorticityFactor; }
     float getVorticityFactor() const { return m_vorticityFactor; }

@@ -40,6 +40,8 @@ SmokeFlipSolverGPU::SmokeFlipSolverGPU(SmokeFlipSolverGPUConfig config)
 
     m_allocatedTextureDataStatIndex = m_stats->registerStorage("Allocated Texture Data");
 
+    ShaderProgram::loadCompute(m_setDivergenceShader, "src/shaders/FLIP/statesmoke/setdivergence.glsl");
+
     ShaderProgram::loadCompute(m_integrateShader, "src/shaders/FLIP/statesmoke/integrateparticles.glsl");
     ShaderProgram::loadCompute(m_integrateGridShader, "src/shaders/FLIP/statesmoke/integrategrid.glsl");
     ShaderProgram::loadCompute(m_sortExtraAttributesShader, "src/shaders/FLIP/pushappart/sortextraattributes.glsl");
@@ -61,8 +63,10 @@ void SmokeFlipSolverGPU::reload(){
     FlipSolverGPU::reload();
 
     m_integrationFrame = 0;
+    m_divergenceVal = 25.0f;
 
     m_config = static_cast<SmokeFlipSolverGPUConfig&>(*m_baseConfig);
+    m_config.loadOpenGl();
 
     m_isFull = !(any(m_config.getOpenBoundsX()) || any(m_config.getOpenBoundsY()) || any(m_config.getOpenBoundsZ()));
     
@@ -73,6 +77,7 @@ void SmokeFlipSolverGPU::reload(){
     m_diffuseFieldsShader.reload();
     m_computeVorticityShader.reload();
     m_computeVorticityForceShader.reload();
+    m_setDivergenceShader.reload();
 
     createBuffers();
 }
@@ -147,28 +152,32 @@ void SmokeFlipSolverGPU::integrateParticles() {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, *getPartNBuffer());
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, m_smokeDensityBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, m_temperatureBuffer);
-    glUniform1f(ShaderProgram::getVarLoc("dt"), m_config.getDt());
-
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 9, m_config.getDensitySource()->getGridBuffer());
+    
     vec3 minPos = cellToPos(0, m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
     vec3 maxPos = cellToPos(m_config.getGridX() * m_config.getGridY() * m_config.getGridZ() - 1, m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
-
+    
     glUniform3f(ShaderProgram::getVarLoc("minPos"), minPos.x, minPos.y, minPos.z);
     glUniform3f(ShaderProgram::getVarLoc("maxPos"), maxPos.x, maxPos.y, maxPos.z);
-    vec3 minSource = m_config.getDensitySource().min(m_config.getPartRadius());
-    vec3 maxSource = m_config.getDensitySource().max(m_config.getPartRadius());
+    
+    vec3 minSource = m_config.getDensitySource()->min(m_config.getPartRadius());
+    vec3 maxSource = m_config.getDensitySource()->max(m_config.getPartRadius());
+    ivec3 sourceGridDim = m_config.getDensitySource()->getGridDim();
     glUniform3f(ShaderProgram::getVarLoc("minDensitySourcePos"), minSource.x, minSource.y, minSource.z);
     glUniform3f(ShaderProgram::getVarLoc("maxDensitySourcePos"), maxSource.x, maxSource.y, maxSource.z);
-
+    glUniform3i(ShaderProgram::getVarLoc("sourceGridDim"), sourceGridDim.x, sourceGridDim.y, sourceGridDim.z);
+    
     glUniform1f(ShaderProgram::getVarLoc("flotAlpha"), m_config.getFlotAlpha());
     glUniform1f(ShaderProgram::getVarLoc("flotBeta"), m_config.getFlotBeta());
     glUniform1f(ShaderProgram::getVarLoc("densityDecreaseRate"), m_config.getDensityDecreaseRate());
     glUniform1f(ShaderProgram::getVarLoc("temperatureDecreaseRate"), m_config.getTemperatureDecreaseRate());
-
+    
     glUniform1i(ShaderProgram::getVarLoc("gridX"), m_config.getGridX());
     glUniform1i(ShaderProgram::getVarLoc("gridY"), m_config.getGridY());
     glUniform1i(ShaderProgram::getVarLoc("gridZ"), m_config.getGridZ());
     glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getH());
-
+    glUniform1f(ShaderProgram::getVarLoc("dt"), m_config.getDt());
+    
     m_integrateShader.dispatch((m_config.getPartN() + 255) / 256);
 }
 
@@ -214,6 +223,27 @@ void SmokeFlipSolverGPU::integrateGrid() {
     glUniform1f(ShaderProgram::getVarLoc("dt"), m_config.getDt());
 
     m_integrateGridShader.dispatch((m_config.getGridDim() + 7) / 8);
+
+    ShaderProgram::SSBOBarrier();
+
+    m_setDivergenceShader.use();
+    shared_ptr<FluidInitializer> densitySource = m_config.getDensitySource();
+    vec3 minBounds = densitySource->min(m_config.getPartRadius());
+    vec3 maxBounds = densitySource->max(m_config.getPartRadius());
+    ivec3 sourceGridDim = densitySource->getGridDim();
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, getDivergenceBuffer());
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, densitySource->getGridBuffer());
+
+    glUniform3f(ShaderProgram::getVarLoc("minSourceBounds"), minBounds.x, minBounds.y, minBounds.z);
+    glUniform3f(ShaderProgram::getVarLoc("maxSourceBounds"), maxBounds.x, maxBounds.y, maxBounds.z);
+    glUniform3i(ShaderProgram::getVarLoc("sourceGridDim"), sourceGridDim.x, sourceGridDim.y, sourceGridDim.z);
+    glUniform3i(ShaderProgram::getVarLoc("gridDim"), m_config.getGridDim().x, m_config.getGridDim().y, m_config.getGridDim().z);
+    glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getH());
+    glUniform1f(ShaderProgram::getVarLoc("divergenceMag"), m_divergenceVal);
+    m_divergenceVal *= exp(-m_config.getDt() / 0.25f);
+    if (m_divergenceVal < 1e-4f) m_divergenceVal = 0.0f;
+
+    m_setDivergenceShader.dispatch((m_config.getGridDim() + 7) / 8);
 }
 
 void SmokeFlipSolverGPU::sortAttribute(GLuint cellParticleIdsBuffer, GLuint attributeBuffer, GLuint sortedAttributeBuffer){

@@ -10,6 +10,8 @@ uniform float absorption;
 uniform float numStepSizeRatio;
 uniform uint smoothDensity;
 
+uniform vec3 backgroundColor;
+
 struct Ray {
     vec3 dir;
     vec3 pos;
@@ -25,25 +27,30 @@ bool isInside(vec3 p){
 
 float sampleDensity(vec3 p){
     vec3 pCenter = p / domainSize + 0.5;
-    vec3 pLeft = (p + vec3(-h, 0, 0)) / domainSize + 0.5;
-    vec3 pRight = (p + vec3(h, 0, 0)) / domainSize + 0.5;
-    vec3 pDown = (p + vec3(0, -h, 0)) / domainSize + 0.5;
-    vec3 pUp = (p + vec3(0, h, 0)) / domainSize + 0.5;
-    vec3 pBack = (p + vec3(0, 0, -h)) / domainSize + 0.5;
-    vec3 pFront = (p + vec3(0, 0, h)) / domainSize + 0.5;
     float dCenter = texture(densityTexture, pCenter).r;
-    if (smoothDensity == 1u) return dCenter;
-    float dLeft = texture(densityTexture, pLeft).r;
-    float dRight = texture(densityTexture, pRight).r;
-    float dDown = texture(densityTexture, pDown).r;
-    float dUp = texture(densityTexture, pUp).r;
-    float dBack = texture(densityTexture, pBack).r;
-    float dFront = texture(densityTexture, pFront).r;
-    return (dCenter * 2 + dLeft + dRight + dDown + dUp + dBack + dFront) / 8;
+    return dCenter;
 }
 
 float beersLaw(float x, float absorption){
     return exp(-x*absorption);
+}
+
+float lightContrib(Ray ray){
+    float dx = h * 2;
+    float totalTransmittance = 1.0;
+    vec3 lightDir = normalize(vec3(1,2,0));
+
+    while(isInside(ray.pos)){
+        ray.pos += lightDir * dx;
+        float d = sampleDensity(ray.pos);
+
+        if (d > 0.001){
+            float a = beersLaw(d * dx, absorption * 0.5);
+            totalTransmittance *= a;
+        }
+    }
+
+    return totalTransmittance;
 }
 
 void main(){
@@ -56,7 +63,7 @@ void main(){
     float dx = h / numStepSizeRatio;
 
     float totalTransmittance = 1.0;
-    float energy = 0.0;
+    vec3 energy = vec3(0.0);
 
     while(isInside(ray.pos)){
         ray.pos += ray.dir * dx;
@@ -65,11 +72,12 @@ void main(){
         if (d > 0.001){
             float a = beersLaw(d * dx, absorption);
 
-            energy += totalTransmittance * (1 - a);
+            energy += totalTransmittance * (1 - a) * mix(backgroundColor * 0.7, vec3(1), lightContrib(ray));
             totalTransmittance *= a;
         }
 
     }
 
-    FragColor = vec4(vec3(1), energy);
+    vec3 finalColor = energy; //+ totalTransmittance * vec3(0.4,0.7,1.0);
+    FragColor = vec4(energy, 1.0 - totalTransmittance);
 }

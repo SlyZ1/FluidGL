@@ -2,7 +2,7 @@
 #define EULER_SOLVER_GPU_CONFIG
 
 #include "particleSolverConfig.hpp"
-#include "solvers/fluidInitializer.hpp"
+#include "solvers/initializers/fluidInitializer.hpp"
 
 #include <glm/glm.hpp>
 
@@ -17,17 +17,10 @@ protected:
     int m_cgMaxIter = 20;
     float m_cgTol = 1e-3f;
     bool m_accuracyFirst = true;
-    FluidInitializer m_fluidInitializer = FluidInitializer(
-        glm::vec3(-450, -100, -150),
-        glm::vec3(-150, 100, 150),
-        1.5f
-    );
+    std::shared_ptr<FluidInitializer> m_fluidInitializer;
 
 public:
     EulerSolverGPUConfig() : ISolverConfig() {}
-    EulerSolverGPUConfig(float dt, float h, float densityMultiplier, glm::vec3 domainSize) 
-    : ISolverConfig(), m_dt(dt), m_h(h), m_densityMultiplier(densityMultiplier), m_domainSize(domainSize),
-    m_fluidInitializer({ glm::vec3(-450, -100, -150), glm::vec3(-150, 100, 150), m_h }) {}
     ~EulerSolverGPUConfig() override = default;
 
     std::unique_ptr<ISolverConfig> clone() const override; 
@@ -56,8 +49,8 @@ public:
     bool getAccuracyFirst() const { return m_accuracyFirst; }
     void setAccuracyFirst(bool accuracyFirst) { m_accuracyFirst = accuracyFirst; }
 
-    FluidInitializer getFluidInitializer() const { return m_fluidInitializer; }
-    void setFluidInitializer(FluidInitializer fluidInitializer) { m_fluidInitializer = fluidInitializer; }
+    std::shared_ptr<FluidInitializer> getFluidInitializer() const { return m_fluidInitializer; }
+    void setFluidInitializer(std::shared_ptr<FluidInitializer> fluidInitializer) { m_fluidInitializer = fluidInitializer; }
 
     glm::vec3 getDomainSize() const { return m_domainSize; }
     void setDomainSize(glm::vec3 domainSize) { m_domainSize = glm::max(domainSize, 0.f); }

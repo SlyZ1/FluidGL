@@ -3,6 +3,7 @@
 #include <format>
 
 using namespace std;
+using namespace glm;
 
 bool UI::toggleRender = true;
 
@@ -138,31 +139,44 @@ void UI::renderParams(){
     ImGui::BeginChild("Scrollable Parameters", ImVec2(-FLT_MIN, -padding), ImGuiChildFlags_None, ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
     auto solverManagerLocked = m_ctx.solverManager.lock();
-    if (UtilsUI::BeginCustomHeader("Solver") && solverManagerLocked){
-
-        UtilsUI::BeginTwoColumnLayout();
-
-        static int selectedItem = solverManagerLocked->getCurrentType();
-        UtilsUI::Label("Solver Used");
-        vector<const char*> names = SolverUI::solverNames();
-        if (ImGui::Combo("##Solver Used", &selectedItem, names.data(), names.size())){
-            solverManagerLocked->instantiate((SolverType)selectedItem);
-        }
-
-        UtilsUI::EndTwoColumnLayout();
-        ImGui::Dummy(ImVec2(0, 10));
-
-        if (auto solver = solverManagerLocked->getSolver().lock()){
-            solver->accept(solverUI);
-            ImGui::Dummy(ImVec2(0, 5));
-            if (ImGui::Button("Apply Changes", ImVec2(-FLT_MIN, 20)))
-                solver->applyDraftConfig();
+    if (UtilsUI::BeginCustomHeader("Solver")){
+        if (solverManagerLocked){
+            UtilsUI::BeginTwoColumnLayout();
+    
+            static int selectedItem = solverManagerLocked->getCurrentType();
+            UtilsUI::Label("Solver Used");
+            vector<const char*> names = SolverUI::solverNames();
+            if (ImGui::Combo("##Solver Used", &selectedItem, names.data(), names.size())){
+                solverManagerLocked->instantiate((SolverType)selectedItem);
+            }
+    
+            UtilsUI::EndTwoColumnLayout();
+            ImGui::Dummy(ImVec2(0, 10));
+    
+            if (auto solver = solverManagerLocked->getSolver().lock()){
+                solver->accept(solverUI);
+                ImGui::Dummy(ImVec2(0, 5));
+                if (ImGui::Button("Apply Changes", ImVec2(-FLT_MIN, 20)))
+                    solver->applyDraftConfig();
+            }
         }
         ImGui::TreePop();
     } UtilsUI::EndCustomHeader();
 
     if (UtilsUI::BeginCustomHeader("Renderer")){
         UtilsUI::BeginTwoColumnLayout();
+
+        UtilsUI::EndTwoColumnLayout();
+        ImGui::TreePop();
+    } UtilsUI::EndCustomHeader();
+
+    if (UtilsUI::BeginCustomHeader("Other")) {
+        UtilsUI::BeginTwoColumnLayout();
+        
+        glm::vec4 clearColor = m_ctx.app->getClearColor();
+        UtilsUI::Label("Clear Color");
+        ImGui::ColorEdit4("##Clear Color", &clearColor.r, ImGuiColorEditFlags_NoInputs);
+        m_ctx.app->setClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
         UtilsUI::EndTwoColumnLayout();
         ImGui::TreePop();

@@ -7,8 +7,8 @@
 using namespace std;
 using namespace glm;
 
-SolverManager::SolverManager(weak_ptr<Camera> camera) 
-: m_camera(camera), m_solverGizmos(make_shared<SolverGizmos>(camera)) {}
+SolverManager::SolverManager(weak_ptr<App> app, weak_ptr<Camera> camera) 
+: m_app(app), m_camera(camera), m_solverGizmos(make_shared<SolverGizmos>(camera)) {}
 
 SolverManager::~SolverManager() {}
 
@@ -131,7 +131,7 @@ weak_ptr<LiquidFlipSolverGPU> SolverManager::instantiate(const LiquidFlipSolverG
 
 weak_ptr<SmokeFlipSolverGPU> SolverManager::instantiate(const SmokeFlipSolverGPUConfig& config) {
     shared_ptr<SmokeFlipSolverGPU> solver = make_shared<SmokeFlipSolverGPU>(config);
-    shared_ptr<SmokeRayMarcher> renderer = make_shared<SmokeRayMarcher>(m_camera);
+    shared_ptr<SmokeRayMarcher> renderer = make_shared<SmokeRayMarcher>(m_app, m_camera);
     m_renderCallback = {};
     m_updateCallback = {};
 

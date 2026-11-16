@@ -28,6 +28,8 @@ class App : public IStatsProvider {
 
         int m_wasPressed[GLFW_KEY_LAST + 1];
 
+        glm::vec4 m_clearColor = glm::vec4(0.0f);
+
         static void callScrollCallbacks(GLFWwindow*, double offsetX, double offsetY);
 
     public:
@@ -39,7 +41,8 @@ class App : public IStatsProvider {
 
         void init(int width, int height, const char *name);
         void setIcon(const char* path);
-        void setClearColor(float r, float g, float b, float a) const ;
+        void setClearColor(float r, float g, float b, float a);
+        glm::vec4 getClearColor() const { return m_clearColor; }
         void startFrame(int frameCount);
         void endFrame() const;
         bool shouldClose() const;

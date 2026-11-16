@@ -56,7 +56,7 @@ void loadScene(SceneInfo scene){
     camera = make_shared<Camera>(app, 60.0f, 1200.f, 0.75f);
     camera->toggleFreeView(false);
 
-    solverManager = make_shared<SolverManager>(camera);
+    solverManager = make_shared<SolverManager>(app, camera);
     if (scene.obstacleInfo){
 
         shared_ptr<Mesh> obstacle = make_shared<Mesh>();
@@ -65,7 +65,7 @@ void loadScene(SceneInfo scene){
         obstacle->setScale(scene.obstacleInfo->scale);
         solverManager->setObstacle(obstacle);
 
-        triangleRenderer = make_shared<TriangleRenderer>(camera);
+        triangleRenderer = make_shared<TriangleRenderer>(app, camera);
         triangleRenderer->setModelMatrix(obstacle->getModelMatrix());
         triangleRenderer->setPosBuffer(obstacle->getPosBuffer());
         triangleRenderer->setNormalBuffer(obstacle->getNormalBuffer());
@@ -86,7 +86,8 @@ void init(){
     app->setClearColor(0, 0, 0, 1.0f);
     app->toggleCursor(true);
 
-    loadScene(Scene::suzanneCloseUpScene());
+    loadScene(Scene::smokePlumeScene());
+    app->setClearColor(0.61f, 0.72f, 0.84f, 1.0f);
 
     vector<weak_ptr<IStatsProvider>> statsProviders = {};
     statsProviders.push_back(app);

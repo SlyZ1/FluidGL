@@ -8,9 +8,6 @@ void EulerSolverGPU::deleteBuffers(){
 
 void EulerSolverGPU::createBuffers(){
     deleteBuffers();
-
-    FluidInitializer initializer = m_config.getFluidInitializer();
-
     
 }
 

@@ -21,7 +21,8 @@ void SmokeRayMarcher::initOpenGL(){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, s_cubeIndices.size() * sizeof(GLuint), s_cubeIndices.data(), GL_STATIC_DRAW);
 }
 
-SmokeRayMarcher::SmokeRayMarcher(weak_ptr<Camera> camera) : IRenderer("Smoke Ray Marcher"), m_camera(camera) {
+SmokeRayMarcher::SmokeRayMarcher(weak_ptr<App> app, weak_ptr<Camera> camera) 
+: IRenderer("Smoke Ray Marcher"), m_app(app), m_camera(camera) {
     m_renderTimeStatIndex = m_stats->registerTimer("Render Time");
 
     m_renderTimer.init();
@@ -45,7 +46,7 @@ void SmokeRayMarcher::render(bool clear){
     glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
     glBindVertexArray(m_VAO);
@@ -65,6 +66,10 @@ void SmokeRayMarcher::render(bool clear){
     glUniform1f(ShaderProgram::getVarLoc("numStepSizeRatio"), m_numStepSizeRatio);
     glUniform1ui(ShaderProgram::getVarLoc("smoothDensity"), m_smoothDensity);
 
+    if (auto app = m_app.lock()){
+        glUniform3f(ShaderProgram::getVarLoc("backgroundColor"), app->getClearColor().r, app->getClearColor().g, app->getClearColor().b);
+    }
+
     if (auto camera = m_camera.lock()){
         glUniformMatrix4fv(ShaderProgram::getVarLoc("uView"), 1, GL_FALSE, &camera->viewMatrix()[0][0]);
         glUniformMatrix4fv(ShaderProgram::getVarLoc("uProj"), 1, GL_FALSE, &camera->projectionMatrix()[0][0]);
@@ -73,6 +78,7 @@ void SmokeRayMarcher::render(bool clear){
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
     m_renderTimer.endFrame();

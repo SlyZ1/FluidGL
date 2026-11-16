@@ -1,5 +1,7 @@
 #include "wireframes.hpp"
 
+#include <glm/gtc/constants.hpp>
+
 using namespace glm;
 
 bool Wireframes::enableRender = true;
@@ -72,6 +74,38 @@ WireframeIndex Wireframes::addTriangle(vec3 v1, vec3 v2, vec3 v3, vec4 color){
     return result;
 }
 
+WireframeIndex Wireframes::addCircle(vec3 pos, vec3 normal, float radius, vec4 color) {
+    WireframeIndex result = 0;
+
+    vec3 right = normal.y < 0.99 ? normalize(cross(vec3(0, 1, 0), normal)) : normalize(cross(vec3(1, 0, 0), normal));
+    vec3 up = normalize(cross(normal, right));
+    for (int i = 0; i < s_circle_resolution; i++)
+    {
+        float t = (float)i / s_circle_resolution;
+        float t_next = t + 1.0f / s_circle_resolution;
+        float theta = t * 2 * pi<float>();
+        float theta_next = t_next * 2 * pi<float>();
+        vec3 start = cos(theta) * right + sin(theta) * up;
+        vec3 end = cos(theta_next) * right + sin(theta_next) * up;
+        start = pos + radius * start;
+        end = pos + radius * end;
+
+        WireframeIndex index = addLine(start, end, color);
+        if (i == 0) result = index;
+    }
+
+    return result;
+}
+
+WireframeIndex Wireframes::addSphere(glm::vec3 pos, float radius, glm::vec4 color){
+    WireframeIndex result = addCircle(pos, vec3(1,0,0), radius, color);
+    addCircle(pos, vec3(0,1,0), radius, color);
+    addCircle(pos, vec3(0,0,1), radius, color);
+    
+    return result;
+}
+
+
 void Wireframes::updateLine(WireframeIndex index, vec3 start, vec3 end, vec4 color) {
     m_lines[index] = { start, end };
     m_colors[index] = color;
@@ -107,6 +141,30 @@ void Wireframes::updateTriangle(WireframeIndex index, glm::vec3 v1, glm::vec3 v2
     updateLine(index + 0, v1, v2, color);
     updateLine(index + 1, v2, v3, color);
     updateLine(index + 2, v3, v1, color);
+}
+
+void Wireframes::updateCircle(WireframeIndex index, vec3 pos, vec3 normal, float radius, vec4 color) {
+    vec3 right = normal.y < 0.99 ? normalize(cross(vec3(0, 1, 0), normal)) : normalize(cross(vec3(1, 0, 0), normal));
+    vec3 up = normalize(cross(normal, right));
+    for (int i = 0; i < s_circle_resolution; i++)
+    {
+        float t = (float)i / s_circle_resolution;
+        float t_next = t + 1.0f / s_circle_resolution;
+        float theta = t * 2 * pi<float>();
+        float theta_next = t_next * 2 * pi<float>();
+        vec3 start = cos(theta) * right + sin(theta) * up;
+        vec3 end = cos(theta_next) * right + sin(theta_next) * up;
+        start = pos + radius * start;
+        end = pos + radius * end;
+
+        updateLine(index + i, start, end, color);
+    }
+}
+
+void Wireframes::updateSphere(WireframeIndex index, glm::vec3 pos, float radius, glm::vec4 color){
+    updateCircle(index + 0 * s_circle_resolution, pos, vec3(1,0,0), radius, color);
+    updateCircle(index + 1 * s_circle_resolution, pos, vec3(0,1,0), radius, color);
+    updateCircle(index + 2 * s_circle_resolution, pos, vec3(0,0,1), radius, color);
 }
 
 void Wireframes::uploadData(){

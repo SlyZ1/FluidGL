@@ -10,6 +10,7 @@ layout(std430, binding = 5) readonly buffer IsAirBuffer { uint[] isAir; };
 layout(std430, binding = 6) readonly buffer PartNBuffer { uint partN; };
 layout(std430, binding = 7) buffer DensityBuffer { float density[]; };
 layout(std430, binding = 8) buffer TemperatureBuffer { float temperature[]; };
+layout(std430, binding = 9) readonly buffer SourceBuffer { uint source[]; };
 
 uniform float dt;
 
@@ -18,6 +19,7 @@ uniform vec3 maxPos;
 
 uniform vec3 minDensitySourcePos;
 uniform vec3 maxDensitySourcePos;
+uniform ivec3 sourceGridDim;
 
 uniform float flotAlpha;
 uniform float flotBeta;
@@ -42,9 +44,14 @@ void main(){
     float t = temperature[i];
     d = max(0.0, d * (1.0 - densityDecreaseRate * dt));
     t = max(0.0, t * (1.0 - temperatureDecreaseRate * t * dt));
+
     if (all(greaterThan(pos, minDensitySourcePos)) && all(lessThan(pos, maxDensitySourcePos))){
-        d = 1;
-        t = 1;
+        ivec3 sourceCoord = ivec3(floor((pos - minDensitySourcePos) / h));
+        int sourceCell = sourceCoord.x + sourceCoord.y * sourceGridDim.x + sourceCoord.z * sourceGridDim.x * sourceGridDim.y;
+        if (source[sourceCell] == 1u){
+            d = 1;
+            t = 1;
+        }
     }
     density[i] = d;
     temperature[i] = t;

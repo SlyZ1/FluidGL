@@ -17,8 +17,8 @@ void TriangleRenderer::initOpenGL() {
     glGenBuffers(1, &m_EBO);
 }
 
-TriangleRenderer::TriangleRenderer(std::weak_ptr<Camera> camera) 
-: IRenderer("Triangle Renderer"), m_camera(camera) {
+TriangleRenderer::TriangleRenderer(std::weak_ptr<App> app, std::weak_ptr<Camera> camera) 
+: IRenderer("Triangle Renderer"), m_app(app), m_camera(camera) {
     
     m_renderTimeStatIndex = m_stats->registerTimer("Render Time");
     m_numTriStatIndex = m_stats->registerCounter("Num Triangles");
@@ -58,6 +58,10 @@ void TriangleRenderer::render(bool clear) {
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
     glVertexAttribDivisor(2, 0);
     glEnableVertexAttribArray(2);
+
+    if (auto app = m_app.lock()){
+        glUniform3f(ShaderProgram::getVarLoc("backgroundColor"), app->getClearColor().r, app->getClearColor().g, app->getClearColor().b);
+    }
 
     if (auto camera = m_camera.lock()){
         glUniformMatrix4fv(ShaderProgram::getVarLoc("uView"), 1, GL_FALSE, &camera->viewMatrix()[0][0]);

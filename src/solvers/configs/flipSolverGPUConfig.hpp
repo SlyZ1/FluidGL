@@ -2,9 +2,7 @@
 #define FLIP_SOLVER_GPU_CONFIG
 
 #include "particleSolverConfig.hpp"
-#include "solvers/fluidInitializer.hpp"
-
-#include <glm/glm.hpp>
+#include "solvers/initializers/fluidInitializer.hpp"
 
 class FlipSolverGPUConfig : public IParticleSolverConfig {
 protected:
@@ -19,11 +17,7 @@ protected:
     bool m_accuracyFirst = true;
     
 protected:
-    FluidInitializer m_fluidInitializer = FluidInitializer(
-        glm::vec3(-450, -100, -150),
-        glm::vec3(-150, 100, 150),
-        1.5f
-    );
+    std::shared_ptr<FluidInitializer> m_initializer;
     glm::bvec2 m_openBoundsX = glm::bvec2(false);
     glm::bvec2 m_openBoundsY = glm::bvec2(false);
     glm::bvec2 m_openBoundsZ = glm::bvec2(false);
@@ -59,8 +53,10 @@ public:
     bool getAccuracyFirst() const { return m_accuracyFirst; }
     void setAccuracyFirst(bool accuracyFirst) { m_accuracyFirst = accuracyFirst; }
 
-    FluidInitializer getFluidInitializer() const { return m_fluidInitializer; }
-    virtual void setFluidInitializer(FluidInitializer fluidInitializer) { m_fluidInitializer = fluidInitializer; }
+    std::shared_ptr<FluidInitializer> getInitializer() const { return m_initializer; }
+    virtual void setInitializer(std::shared_ptr<FluidInitializer> initializer) { m_initializer = initializer; }
+
+    virtual void loadOpenGl() { if (m_initializer) m_initializer->loadOpenGl(getH()); }
 
     float getPartPerH() const { return m_partPerH; }
     void setPartPerH(float partPerH) { m_partPerH = std::max(partPerH, 1.0f); }

@@ -3,11 +3,13 @@
 
 #include "renderer.hpp"
 #include "core/camera.hpp"
+#include "core/app.hpp"
 #include "core/shader_program.hpp"
 
 class SmokeRayMarcher : public IRenderer {
 private:
     std::weak_ptr<Camera> m_camera;
+    std::weak_ptr<App> m_app;
 
     GLuint m_VBO = 0;
     GLuint m_VAO = 0;
@@ -20,8 +22,8 @@ private:
     StatIndex m_renderTimeStatIndex = 0;
     GPUTimer m_renderTimer = {};
 
-    float m_absorption = 0.1f;
-    float m_numStepSizeRatio = 10.f;
+    float m_absorption = 0.3f;
+    float m_numStepSizeRatio = 2.f;
     uint m_smoothDensity = 1u;
 
     glm::vec3 m_domainSize = glm::vec3(0.0f);
@@ -30,7 +32,7 @@ private:
     void initOpenGL();
 
 public:
-    SmokeRayMarcher(std::weak_ptr<Camera> camera);
+    SmokeRayMarcher(std::weak_ptr<App> app, std::weak_ptr<Camera> camera);
     ~SmokeRayMarcher() override;
 
     SmokeRayMarcher(const SmokeRayMarcher&) = delete;

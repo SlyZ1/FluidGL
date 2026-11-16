@@ -69,6 +69,7 @@ void App::init(int width, int height, const char *name){
 
     glViewport(0, 0, width, height);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+    glfwSetScrollCallback(m_window, callScrollCallbacks);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -85,11 +86,10 @@ void App::init(int width, int height, const char *name){
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glfwSetScrollCallback(m_window, callScrollCallbacks);
 }
 
 void App::callScrollCallbacks(GLFWwindow*, double offsetX, double offsetY) {
+    if (ImGui::GetIO().WantCaptureMouse) return;
     for (const auto& callback : s_scrollCallbacks)
         callback(offsetX, offsetY);
 }
@@ -105,8 +105,9 @@ void App::setIcon(const char* path) {
     stbi_image_free((void*)image[0].pixels);
 }
 
-void App::setClearColor(float r, float g, float b, float a) const {
+void App::setClearColor(float r, float g, float b, float a) {
     glClearColor(r, g, b, a);
+    m_clearColor = glm::vec4(r, g, b, a);
 }
 
 void App::startFrame(int frame) {

@@ -1,9 +1,11 @@
-#include "solverUI.hpp"
+#include "solverUI.hpp" 
 
 #include "ui/utilsUI.hpp"
 #include "solvers/flip/flipSolverCPU.hpp"
 #include "solvers/flip/liquidFlipSolverGPU.hpp"
 #include "solvers/flip/smokeFlipSolverGPU.hpp"
+#include "solvers/initializers/cubeInitializer.hpp"
+#include "solvers/initializers/sphereInitializer.hpp"
 
 using namespace glm;
 using namespace std;
@@ -33,23 +35,10 @@ const char* SolverUI::solverName(SolverType type){
 
 #define CHECK_BOX_DRAWING_FUNCTION(label, name, min, max) UtilsUI::drawCheckbox(label, name)
 
-FluidInitializer SolverUI::drawFluidInitializer(FluidInitializer initializer, vec3 dim, float scale){
-    vec3 initPos = (initializer.min(scale) + initializer.max(scale)) / 2.0f;
-    vec3 initSize = initializer.max(scale) - initializer.min(scale);
-
-    initSize = glm::clamp(initSize, vec3(0), dim);
-    UtilsUI::Label("Particle init Size");
-    UtilsUI::drawDrag("Particle init Size", initSize, -1000, 1000);
-    initSize = glm::clamp(initSize, vec3(0), dim);
-
-    initPos = glm::clamp(initPos, (initSize-dim) * 0.5f, -(initSize-dim) * 0.5f);
-    UtilsUI::Label("Particle Init Position");
-    UtilsUI::drawDrag("Particle Position", initPos, -1000, 1000);
-    initPos = glm::clamp(initPos, (initSize-dim) * 0.5f, -(initSize-dim) * 0.5f);
-
-    initSize = glm::clamp(initSize, vec3(0), dim - 2.f * abs(initPos));
-
-    return { initPos - initSize*0.5f, initPos + initSize*0.5f, scale };
+void SolverUI::drawInitializer(shared_ptr<FluidInitializer> initializer, vec3 dim, float scale){
+    m_maxInitializerSize = dim;
+    m_currentInitializerScale = scale;
+    initializer->accept(*this);
 }
 
 void SolverUI::visit(IParticleSolver& solver) {
@@ -100,8 +89,10 @@ void SolverUI::visit(FlipSolverGPU& solver) {
 
     // INITIALIZER
     ImGui::BeginDisabled(solver.getIsFull());
-    FluidInitializer newInitializer = drawFluidInitializer(config.getFluidInitializer(), config.getDomainSize(), config.getPartRadius());
-    config.setFluidInitializer(newInitializer);
+    UtilsUI::EndTwoColumnLayout();
+    UtilsUI::TextWithShadow("Particles Initializer");
+    UtilsUI::BeginTwoColumnLayout();
+    drawInitializer(config.getInitializer(), config.getDomainSize(), config.getPartRadius());
     ImGui::EndDisabled();
 
     UtilsUI::EndTwoColumnLayout();
@@ -171,8 +162,10 @@ void SolverUI::visit(SmokeFlipSolverGPU& solver) {
         
         ImGui::Dummy(ImVec2(0, 5));
 
-        FluidInitializer newInitializer = drawFluidInitializer(config.getDensitySource(), config.getDomainSize(), config.getPartRadius());
-        config.setDensitySource(newInitializer);
+        UtilsUI::EndTwoColumnLayout();
+        UtilsUI::TextWithShadow("Smoke Source");
+        UtilsUI::BeginTwoColumnLayout();
+        drawInitializer(config.getDensitySource(), config.getDomainSize(), config.getPartRadius());
         
         UtilsUI::EndTwoColumnLayout();
         ImGui::TreePop();
@@ -198,6 +191,49 @@ void SolverUI::visit(XpbdSolverCPU& solver) {
         UtilsUI::EndTwoColumnLayout();
         ImGui::TreePop();
     } UtilsUI::EndCustomHeader();
+}
+
+
+
+void SolverUI::visit(CubeInitializer& initializer) {
+    vec3 initPos = (initializer.min(m_currentInitializerScale) + initializer.max(m_currentInitializerScale)) / 2.0f;
+    vec3 initSize = initializer.max(m_currentInitializerScale) - initializer.min(m_currentInitializerScale);
+
+    initSize = glm::clamp(initSize, vec3(0), m_maxInitializerSize);
+    UtilsUI::Label("Size");
+    UtilsUI::drawDrag("Size", initSize, -1000, 1000);
+    initSize = glm::clamp(initSize, vec3(0), m_maxInitializerSize);
+
+    initPos = glm::clamp(initPos, (initSize - m_maxInitializerSize) * 0.5f, -(initSize - m_maxInitializerSize) * 0.5f);
+    UtilsUI::Label("Position");
+    UtilsUI::drawDrag("Position", initPos, -1000, 1000);
+    initPos = glm::clamp(initPos, (initSize - m_maxInitializerSize) * 0.5f, -(initSize - m_maxInitializerSize) * 0.5f);
+
+    initSize = glm::clamp(initSize, vec3(0), m_maxInitializerSize - 2.f * abs(initPos));
+
+    initializer.setSizeAndPos(initSize, initPos, m_currentInitializerScale);
+}
+
+void SolverUI::visit(SphereInitializer& initializer) {
+    vec3 initPos = (initializer.min(m_currentInitializerScale) + initializer.max(m_currentInitializerScale)) / 2.0f;
+    float initRadius = (initializer.max(m_currentInitializerScale).x - initializer.min(m_currentInitializerScale).x) * 0.5f;
+    float maxInitRadius = glm::min(m_maxInitializerSize.x, glm::min(m_maxInitializerSize.y, m_maxInitializerSize.z));
+    
+    initRadius = glm::clamp(initRadius, 0.0f, maxInitRadius);
+    UtilsUI::Label("Radius");
+    UtilsUI::drawDrag("Radius", initRadius, 0, 1000);
+    initRadius = glm::clamp(initRadius, 0.0f, maxInitRadius);
+    vec3 initSize = vec3(initRadius * 2.0f);
+    
+    initPos = glm::clamp(initPos, (initSize - m_maxInitializerSize) * 0.5f, -(initSize - m_maxInitializerSize) * 0.5f);
+    UtilsUI::Label("Position");
+    UtilsUI::drawDrag("Position", initPos, -1000, 1000);
+    initPos = glm::clamp(initPos, (initSize - m_maxInitializerSize) * 0.5f, -(initSize - m_maxInitializerSize) * 0.5f);
+
+    initSize = glm::clamp(initSize, vec3(0), m_maxInitializerSize - 2.f * abs(initPos));
+    initRadius = glm::min(initSize.x, glm::min(initSize.y, initSize.z)) * 0.5f;
+
+    initializer.setRadiusAndPos(initRadius, initPos, m_currentInitializerScale);
 }
 
 #undef DRAW_FIELD

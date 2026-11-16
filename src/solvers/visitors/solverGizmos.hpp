@@ -4,13 +4,25 @@
 #include <glm/glm.hpp>
 
 #include "solvers/solverType.hpp"
-#include "solvers/fluidInitializer.hpp"
+#include "solvers/initializers/fluidInitializer.hpp"
 #include "solvers/visitors/solverVisitor.hpp"
 #include "gizmos/wireframes.hpp"
 #include "core/camera.hpp"
 
-class SolverGizmos : public ISolverVisitor, public IStatsProvider {
+class SolverGizmos : public ISolverVisitor, public IInitializerVisitor, public IStatsProvider {
 private:
+    struct InitializerBounds {
+        glm::vec3 min;
+        glm::vec3 max;
+        bool operator==(const InitializerBounds&) const = default;
+
+        InitializerBounds() = default;
+        InitializerBounds(const FluidInitializer& initializer){
+            min = initializer.min(1.0f);
+            max = initializer.max(1.0f);
+        }
+    };
+
     template<typename T>
     struct WireframeData {
         WireframeIndex index;
@@ -23,12 +35,15 @@ private:
     };
 
     std::unique_ptr<Wireframes> m_wireframes;
-    const glm::vec4 m_domainColor = glm::vec4(0.29f, 0.769f, 0.282f, 1.0f);
+    const glm::vec4 m_domainColor = glm::vec4(1.0f);
     const glm::vec4 m_initializerColor = glm::vec4(0.859f, 0.529f, 0.318f, 1.0f);
 
+    float m_currentPartRadius = 1.0f;
+    WireframeData<InitializerBounds>* m_currentInitializerData = nullptr;
+
     WireframeData<glm::vec3> m_solverDomainData = {};
-    WireframeData<FluidInitializer> m_solverInitializerData = {};
-    WireframeData<FluidInitializer> m_smokeDensitySourceData = {};
+    WireframeData<InitializerBounds> m_solverInitializerData = {};
+    WireframeData<InitializerBounds> m_smokeDensitySourceData = {};
 
     SolverType m_solverType = SolverType::MaxType;
 
@@ -36,6 +51,7 @@ private:
     GPUTimer m_renderTimer = {};
 
     void resetWireframes();
+    void drawInitializerWireframes(std::shared_ptr<FluidInitializer> initializer, WireframeData<InitializerBounds>& initializerData, float partRadius);
 
 public:
     SolverGizmos(std::weak_ptr<Camera> camera);
@@ -53,6 +69,9 @@ public:
     void visit(LiquidFlipSolverGPU& solver) override;
     void visit(SmokeFlipSolverGPU& solver) override;
     void visit(XpbdSolverCPU& solver) override;
+
+    void visit(CubeInitializer& initializer) override;
+    void visit(SphereInitializer& initializer) override;
 
     void render() const;
 };

@@ -56,7 +56,12 @@ void UtilsUI::EndTwoColumnLayout()
 bool UtilsUI::BeginCustomHeader(const string& name) {
     ImGui::PushStyleColor(ImGuiCol_ChildBg, s_isHeaderLight ? ColorsUI::fgColor : ColorsUI::mgColor);
     ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
-    ImGui::BeginChild((name + "_group").c_str(), ImVec2(-FLT_MIN, 0), ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding);
+    ImGui::BeginChild(
+        (name + "_group").c_str(), 
+        ImVec2(-FLT_MIN, 0), 
+        ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding,
+        ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar
+    );
     bool open = ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth);
     if (open){
         ImGui::Spacing();

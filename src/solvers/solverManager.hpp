@@ -18,6 +18,7 @@ private:
     std::weak_ptr<IParticleSolver> m_particleSolver = {};
     std::shared_ptr<IRenderer> m_renderer = {};
     std::weak_ptr<Camera> m_camera = {};
+    std::weak_ptr<App> m_app = {};
     std::shared_ptr<SolverGizmos> m_solverGizmos = {};
     SolverType m_currentType = SolverType::MaxType;
 
@@ -27,7 +28,7 @@ private:
     std::function<void()> m_renderCallback = {};
 
 public:
-    SolverManager(std::weak_ptr<Camera> camera);
+    SolverManager(std::weak_ptr<App> app, std::weak_ptr<Camera> camera);
     ~SolverManager();
 
     SolverManager(const SolverManager&) = delete;

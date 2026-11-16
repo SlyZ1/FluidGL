@@ -7,6 +7,7 @@ layout(std430, binding = 2) readonly buffer VelZBuffer { float[] velZ; };
 layout(std430, binding = 3) readonly buffer RhoBuffer { float[] rho; };
 layout(std430, binding = 4) readonly buffer IsAirBuffer { uint[] isAir; };
 layout(std430, binding = 5) writeonly buffer MinusDivBuffer { float[] minusDiv; };
+layout(std430, binding = 6) readonly buffer DivergenceBuffer { float[] divergence; };
 
 uniform int gridX;
 uniform int gridY;
@@ -57,6 +58,7 @@ void main(){
     d += s5 * velFront - s4 * velBack;
     
     d -= max(rho[cell] - density * densityMultiplier, 0);
+    d -= divergence[cell];
 
     minusDiv[cell] = -d;
 }
