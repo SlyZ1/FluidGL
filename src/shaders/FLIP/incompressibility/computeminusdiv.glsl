@@ -57,7 +57,7 @@ void main(){
     d += s3 * velRight - s2 * velLeft;
     d += s5 * velFront - s4 * velBack;
     
-    d -= max(rho[cell] - density * densityMultiplier, 0);
+    //d -= max(rho[cell] - density * densityMultiplier, 0);
     d -= divergence[cell];
 
     minusDiv[cell] = -d;

@@ -158,6 +158,7 @@ private:
 
 protected:
     bool m_isFull = false;
+    bool m_isSingular = false;
     bool m_collideWithObstacle = true;
 
     GLuint getIsDeadBuffer() const { return m_isDeadBuffer; }

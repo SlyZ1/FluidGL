@@ -159,6 +159,7 @@ void SolverUI::visit(SmokeFlipSolverGPU& solver) {
         ImGui::Dummy(ImVec2(0, 5));
         DRAW_FIELD(UtilsUI::drawDrag, "Vorticity Factor", float, VorticityFactor, 0, 1.5)
         DRAW_FIELD(UtilsUI::drawSlider, "Diffusion Factor", float, DiffusionFactor, 0, 10)
+        DRAW_FIELD(UtilsUI::drawDrag, "Divergence Factor", float, DivergenceFactor, 0, 1)
         
         ImGui::Dummy(ImVec2(0, 5));
 

@@ -7,8 +7,12 @@ uniform vec3 domainSize;
 uniform float h;
 
 uniform float absorption;
+uniform float lightAbsorption;
 uniform float numStepSizeRatio;
-uniform uint smoothDensity;
+uniform float numLightStepSizeRatio;
+uniform float shadowMultiplier;
+
+uniform vec3 lightDir;
 
 uniform vec3 backgroundColor;
 
@@ -36,16 +40,15 @@ float beersLaw(float x, float absorption){
 }
 
 float lightContrib(Ray ray){
-    float dx = h * 2;
+    float dx = h / numLightStepSizeRatio;
     float totalTransmittance = 1.0;
-    vec3 lightDir = normalize(vec3(1,2,0));
 
     while(isInside(ray.pos)){
         ray.pos += lightDir * dx;
         float d = sampleDensity(ray.pos);
 
         if (d > 0.001){
-            float a = beersLaw(d * dx, absorption * 0.5);
+            float a = beersLaw(d * dx, lightAbsorption);
             totalTransmittance *= a;
         }
     }
@@ -72,7 +75,7 @@ void main(){
         if (d > 0.001){
             float a = beersLaw(d * dx, absorption);
 
-            energy += totalTransmittance * (1 - a) * mix(backgroundColor * 0.7, vec3(1), lightContrib(ray));
+            energy += totalTransmittance * (1 - a) * mix(backgroundColor * shadowMultiplier, vec3(1), lightContrib(ray));
             totalTransmittance *= a;
         }
 

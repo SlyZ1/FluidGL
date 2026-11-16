@@ -29,5 +29,5 @@ void main() {
     uint s = source[coordToCell(sourceCoord, sourceGridDim.x, sourceGridDim.y, sourceGridDim.z)];
     if (s == 0u) return;
 
-    divergence[coordToCell(coord, gridDim.x, gridDim.y, gridDim.z)] = divergenceMag;
+    divergence[coordToCell(coord, gridDim.x, gridDim.y, gridDim.z)] = divergenceMag * h;
 }

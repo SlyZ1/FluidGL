@@ -92,7 +92,7 @@ namespace Scene {
         SmokeFlipSolverGPUConfig smokeConfig = SmokeFlipSolverGPUConfig();
         smokeConfig.setPartPerH(1.5f);
         smokeConfig.setDensityMultiplier(1);
-        smokeConfig.setCgMaxIter(5);
+        smokeConfig.setCgMaxIter(100);
         smokeConfig.setCgTol(0.01f);
         smokeConfig.setNumPushAppart(1);
         smokeConfig.setFlipRatio(0.9f);

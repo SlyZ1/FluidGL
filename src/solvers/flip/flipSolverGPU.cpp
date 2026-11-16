@@ -823,7 +823,7 @@ void FlipSolverGPU::solveIncompressibility(int iterations, float tol, bool useCG
             (uint)(m_config->getGridY() + 7) / 8, 
             (uint)(m_config->getGridZ() + 7) / 8 
         };
-        m_cgs.solve(iterations, tol, sparseMatVecParams, true, m_isFull);
+        m_cgs.solve(iterations, tol, sparseMatVecParams, true, m_isSingular);
     
         ShaderProgram::SSBOBarrier();
     
@@ -961,6 +961,7 @@ void FlipSolverGPU::attributeToGrid(GLuint attributesBuffer, GLuint gridTex, GLu
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, attributesBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_isAirBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_firstCellParticleBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_aliveNBuffer);
     glBindImageTexture(0, gridTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32F);
     glUniform1i(ShaderProgram::getVarLoc("gridX"), m_config->getGridX());
     glUniform1i(ShaderProgram::getVarLoc("gridY"), m_config->getGridY());

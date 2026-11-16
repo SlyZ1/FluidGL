@@ -103,7 +103,7 @@ void main(){
     bvec2 setAirY = openBoundsY && bvec2(y == 0, y == gridY-1);
     bvec2 setAirZ = openBoundsZ && bvec2(z == 0, z == gridZ-1);
 
-    if (isFull == 0u && (any(setAirX) || any(setAirY) || any(setAirZ))) 
+    if ((any(setAirX) || any(setAirY) || any(setAirZ))) 
         isAir[cell] = 1u;
 
     if (x == 0) currentVelX = 0.0;

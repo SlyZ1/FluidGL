@@ -63,8 +63,13 @@ void SmokeRayMarcher::render(bool clear){
     glUniform1f(ShaderProgram::getVarLoc("h"), m_h);
 
     glUniform1f(ShaderProgram::getVarLoc("absorption"), m_absorption);
+    glUniform1f(ShaderProgram::getVarLoc("lightAbsorption"), m_lightAbsorption);
+
     glUniform1f(ShaderProgram::getVarLoc("numStepSizeRatio"), m_numStepSizeRatio);
-    glUniform1ui(ShaderProgram::getVarLoc("smoothDensity"), m_smoothDensity);
+    glUniform1f(ShaderProgram::getVarLoc("numLightStepSizeRatio"), m_numLightStepSizeRatio);
+
+    glUniform1f(ShaderProgram::getVarLoc("shadowMultiplier"), m_shadowMultiplier);
+    glUniform3f(ShaderProgram::getVarLoc("lightDir"), m_lightDir.x, m_lightDir.y, m_lightDir.z);
 
     if (auto app = m_app.lock()){
         glUniform3f(ShaderProgram::getVarLoc("backgroundColor"), app->getClearColor().r, app->getClearColor().g, app->getClearColor().b);

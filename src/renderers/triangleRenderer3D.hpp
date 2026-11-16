@@ -64,6 +64,8 @@ public:
     void setVelBuffer(GLuint velBuffer) { m_velBuffer = velBuffer; }
     void setNormalBuffer(GLuint normalBuffer) { m_normalBuffer = normalBuffer; }
     void setModelMatrix(glm::mat4 modelMatrix) { m_modelMatrix = modelMatrix; }
+
+    void accept(IRendererVisitor& visitor) override { visitor.visit(*this); };
 };
 
 #endif

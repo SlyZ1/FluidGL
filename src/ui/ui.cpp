@@ -154,7 +154,7 @@ void UI::renderParams(){
             ImGui::Dummy(ImVec2(0, 10));
     
             if (auto solver = solverManagerLocked->getSolver().lock()){
-                solver->accept(solverUI);
+                solver->accept(m_solverUI);
                 ImGui::Dummy(ImVec2(0, 5));
                 if (ImGui::Button("Apply Changes", ImVec2(-FLT_MIN, 20)))
                     solver->applyDraftConfig();
@@ -163,10 +163,17 @@ void UI::renderParams(){
         ImGui::TreePop();
     } UtilsUI::EndCustomHeader();
 
-    if (UtilsUI::BeginCustomHeader("Renderer")){
-        UtilsUI::BeginTwoColumnLayout();
+    if (UtilsUI::BeginCustomHeader("Renderers")){
+        if (solverManagerLocked){
+            if (UtilsUI::BeginCustomHeader("Solver Renderer")) {
+                if (auto renderer = solverManagerLocked->getRenderer().lock()) renderer->accept(m_rendererUI);
+                ImGui::TreePop();
+            } UtilsUI::EndCustomHeader();
 
-        UtilsUI::EndTwoColumnLayout();
+            if (UtilsUI::BeginCustomHeader("Obstacle Renderer")) {
+                ImGui::TreePop();
+            } UtilsUI::EndCustomHeader();
+        }
         ImGui::TreePop();
     } UtilsUI::EndCustomHeader();
 

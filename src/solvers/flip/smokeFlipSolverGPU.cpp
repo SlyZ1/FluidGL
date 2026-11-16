@@ -35,8 +35,10 @@ void SmokeFlipSolverGPU::createBuffers(){
 
 SmokeFlipSolverGPU::SmokeFlipSolverGPU(SmokeFlipSolverGPUConfig config) 
 : FlipSolverGPU(make_shared<SmokeFlipSolverGPUConfig>(move(config))), m_config(static_cast<SmokeFlipSolverGPUConfig&>(*m_baseConfig)) {
-    m_isFull = !(any(m_config.getOpenBoundsX()) || any(m_config.getOpenBoundsY()) || any(m_config.getOpenBoundsZ()));
+    m_isSingular = !(any(m_config.getOpenBoundsX()) || any(m_config.getOpenBoundsY()) || any(m_config.getOpenBoundsZ()));
+    m_isFull = true;
     m_collideWithObstacle = false;
+    m_divergenceVal = m_config.getDivergenceFactor();
 
     m_allocatedTextureDataStatIndex = m_stats->registerStorage("Allocated Texture Data");
 
@@ -63,12 +65,12 @@ void SmokeFlipSolverGPU::reload(){
     FlipSolverGPU::reload();
 
     m_integrationFrame = 0;
-    m_divergenceVal = 25.0f;
-
+    
     m_config = static_cast<SmokeFlipSolverGPUConfig&>(*m_baseConfig);
     m_config.loadOpenGl();
-
-    m_isFull = !(any(m_config.getOpenBoundsX()) || any(m_config.getOpenBoundsY()) || any(m_config.getOpenBoundsZ()));
+    
+    m_divergenceVal = m_config.getDivergenceFactor();
+    m_isSingular = !(any(m_config.getOpenBoundsX()) || any(m_config.getOpenBoundsY()) || any(m_config.getOpenBoundsZ()));
     
     m_integrateShader.reload();
     m_integrateGridShader.reload();
@@ -241,7 +243,7 @@ void SmokeFlipSolverGPU::integrateGrid() {
     glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getH());
     glUniform1f(ShaderProgram::getVarLoc("divergenceMag"), m_divergenceVal);
     m_divergenceVal *= exp(-m_config.getDt() / 0.25f);
-    if (m_divergenceVal < 1e-4f) m_divergenceVal = 0.0f;
+    if (m_divergenceVal * m_config.getH() < 1e-4f) m_divergenceVal = 0.0f;
 
     m_setDivergenceShader.dispatch((m_config.getGridDim() + 7) / 8);
 }

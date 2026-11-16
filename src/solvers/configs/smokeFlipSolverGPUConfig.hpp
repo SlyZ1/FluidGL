@@ -11,6 +11,7 @@ private:
     float m_temperatureDecreaseRate = 0.1f;
     float m_vorticityFactor = 0.5f;
     float m_diffusionFactor = 4.f;
+    float m_divergenceFactor = 1.0f;
 
     std::shared_ptr<FluidInitializer> m_densitySource;
 
@@ -44,6 +45,9 @@ public:
 
     void setDiffusionFactor(float diffusionFactor) { m_diffusionFactor = diffusionFactor; }
     float getDiffusionFactor() const { return m_diffusionFactor; }
+
+    void setDivergenceFactor(float divergenceFactor) { m_divergenceFactor = divergenceFactor; }
+    float getDivergenceFactor() const { return m_divergenceFactor; }
     
     std::unique_ptr<ISolverConfig> clone() const override; 
 };

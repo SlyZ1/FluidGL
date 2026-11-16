@@ -23,8 +23,11 @@ private:
     GPUTimer m_renderTimer = {};
 
     float m_absorption = 0.3f;
+    float m_lightAbsorption = 0.15f;
     float m_numStepSizeRatio = 2.f;
-    uint m_smoothDensity = 1u;
+    float m_numLightStepSizeRatio = 0.5f;
+    float m_shadowMultiplier = 0.7f;
+    glm::vec3 m_lightDir = glm::normalize(glm::vec3(1, 2, 0));
 
     glm::vec3 m_domainSize = glm::vec3(0.0f);
     float m_h = 0.0f;
@@ -44,13 +47,24 @@ public:
 
     void setAbsorption(float absorption) { m_absorption = absorption; }
     float getAbsorption() { return m_absorption; }
+    void setLightAbsorption(float lightAbsorption) { m_lightAbsorption = lightAbsorption; }
+    float getLightAbsorption() { return m_lightAbsorption; }
+
     void setNumStepSizeRatio(float numStepSizeRatio) { m_numStepSizeRatio = numStepSizeRatio; }
     float getNumStepSizeRatio() { return m_numStepSizeRatio; }
-    void setSmoothDensity(uint smoothDensity) { m_smoothDensity = smoothDensity; }
-    uint getSmoothDensity() { return m_smoothDensity; }
+    void setNumLightStepSizeRatio(float numLightStepSizeRatio) { m_numLightStepSizeRatio = numLightStepSizeRatio; }
+    float getNumLightStepSizeRatio() { return m_numLightStepSizeRatio; }
+
+    void setShadowMultiplier(float shadowMultiplier) { m_shadowMultiplier = shadowMultiplier; }
+    float getShadowMultiplier() { return m_shadowMultiplier; }
+
+    void setLightDir(glm::vec3 lightDir) { m_lightDir = normalize(lightDir); }
+    glm::vec3 getLightDir() { return m_lightDir; }
 
     void render(bool clear = false) override;
     void reload() override;
+
+    void accept(IRendererVisitor& visitor) override { visitor.visit(*this); };
 };
 
 #endif

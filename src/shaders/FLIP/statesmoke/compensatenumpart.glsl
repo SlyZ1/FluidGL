@@ -1,10 +1,10 @@
 #version 430 core
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-layout(std430, binding = 0) writeonly buffer PartPosBuffer { vec4 partPos[]; };
+layout(std430, binding = 0) buffer PartPosBuffer { vec4 partPos[]; };
 layout(std430, binding = 1) writeonly buffer PartVelBuffer { vec4 partVel[]; };
-layout(std430, binding = 2) writeonly buffer DensityBuffer { float density[]; };
-layout(std430, binding = 3) writeonly buffer TemperatureBuffer { float temperature[]; };
+layout(std430, binding = 2) buffer DensityBuffer { float density[]; };
+layout(std430, binding = 3) buffer TemperatureBuffer { float temperature[]; };
 layout(std430, binding = 4) readonly buffer FirstCellParticleBuffer { uint firstCellParticle[]; };
 layout(std430, binding = 5) buffer PartNBuffer { uint partN; };
 layout(std430, binding = 6) writeonly buffer IsDeadBuffer { uint isDead[]; };
@@ -53,6 +53,35 @@ vec3 randomInCell(ivec3 coord, uint id){
     return minPos + (vec3(coord) + r) * h;
 }
 
+void sampleNeighbors(vec3 pos, ivec3 coord, out float d, out float t) {
+    float h2 = h * h;
+    float wSum = 0.0, densitySum = 0.0, tempSum = 0.0;
+
+    for (int dx = -1; dx <= 1; dx++)
+    for (int dy = -1; dy <= 1; dy++)
+    for (int dz = -1; dz <= 1; dz++) {
+        ivec3 currentCoord = coord + ivec3(dx, dy, dz);
+        if (any(lessThan(currentCoord, ivec3(0))) || any(greaterThanEqual(currentCoord, ivec3(gridX, gridY, gridZ)))) continue;
+
+        int cell = coordToCell(currentCoord, gridX, gridY, gridZ);
+        uint start = firstCellParticle[cell];
+        uint end = firstCellParticle[cell + 1];
+
+        for (uint j = start; j < end; j++) {
+            vec3 diff = pos - partPos[j].xyz;
+            float diff2 = dot(diff, diff);
+            if (diff2 >= h2) continue;
+            float w = h2 - diff2;
+            w *= w;
+            wSum += w;
+            densitySum += w * density[j];
+            tempSum += w * temperature[j];
+        }
+    }
+    d = wSum > 0.0 ? densitySum / wSum : 0.0;
+    t = wSum > 0.0 ? tempSum / wSum : 0.0;
+}
+
 void main(){
     int x = int(gl_GlobalInvocationID.x);
     int y = int(gl_GlobalInvocationID.y);
@@ -67,9 +96,9 @@ void main(){
 
     uint numParticlesInCell = firstCellParticle[cell+1] - firstCellParticle[cell];
     uint targetPerCell = uint(floor(pph * pph * pph));
-    if (numParticlesInCell >= 1) return;
+    if (numParticlesInCell >= 2) return;
 
-    uint k = targetPerCell - numParticlesInCell;
+    uint k = targetPerCell - numParticlesInCell + 1;
     uint base = atomicAdd(partN, k);
     
     for(uint i = 0; i < k; i++){
@@ -79,8 +108,10 @@ void main(){
         vec3 newPos = randomInCell(coord, index);
         partPos[index] = vec4(newPos, 1.0);
         partVel[index] = vec4(gridVel(newPos, vec3(0.0)), 0.0);
-        density[index] = 0.0;
-        temperature[index] = 0.0;
+        float d, t;
+        sampleNeighbors(newPos, coord, d, t);
+        density[index] = d;
+        temperature[index] = t;
     }
 
     atomicMin(partN, uint(configPartN));

@@ -65,6 +65,8 @@ public:
 
     void render(bool clear = false) override;
     void reload() override;
+
+    void accept(IRendererVisitor& visitor) override { visitor.visit(*this); };
 };
 
 #endif 

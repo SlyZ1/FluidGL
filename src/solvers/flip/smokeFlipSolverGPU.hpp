@@ -22,7 +22,7 @@ private:
     unsigned int m_integrationFrame = 0;
 
     ShaderProgram m_setDivergenceShader = {};
-    float m_divergenceVal = 25.0f;
+    float m_divergenceVal = 1.0f;
 
     ShaderProgram m_computeVorticityShader = {};
     ShaderProgram m_computeVorticityForceShader = {};

@@ -2,6 +2,7 @@
 #define RENDERER_TEMPLATE_HPP
 
 #include "helpers/stats.hpp"
+#include "rendererVisitor.hpp"
 
 class IRenderer : public IStatsProvider {
 protected:
@@ -40,6 +41,7 @@ public:
     virtual ~IRenderer() = default;
     virtual void render(bool clear = false) = 0;
     virtual void reload() = 0;
+    virtual void accept(IRendererVisitor& visitor) = 0;
 };
 
 #endif

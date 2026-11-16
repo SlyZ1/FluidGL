@@ -7,6 +7,7 @@
 #include "helpers/stats.hpp"
 #include "renderers/renderer.hpp" 
 #include "solvers/visitors/solverUI.hpp" 
+#include "renderers/visitors/rendererUI.hpp" 
 #include "utilsUI.hpp" 
 #include "solvers/solverManager.hpp"
 
@@ -19,7 +20,8 @@ class UI {
 private:
     UIContext m_ctx = {};
     std::vector<std::weak_ptr<Stats>> m_statsCtx = {};
-    SolverUI solverUI = {};
+    SolverUI m_solverUI = {};
+    RendererUI m_rendererUI = {};
 
     // Useful functions
     static void TextWithShadow(

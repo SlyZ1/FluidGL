@@ -5,6 +5,7 @@ layout(std430, binding = 0) readonly buffer PartPosBuffer { vec4[] partPos; };
 layout(std430, binding = 1) readonly buffer AttributesBuffer { float[] attributes; };
 layout(std430, binding = 2) readonly buffer IsAirBuffer { uint[] isAir; };
 layout(std430, binding = 3) readonly buffer FirstCellParticleBuffer { uint[] firstCellParticle; };
+layout(std430, binding = 4) readonly buffer PartNBuffer { uint partN; };
 
 layout(r32f, binding = 0) uniform writeonly image3D gridAttributes;
 
@@ -44,7 +45,7 @@ void main() {
                 if (currentIsAir && isAir[newCell] == 1u) continue;
 
                 int rangeStart = int(firstCellParticle[newCell]);
-                int rangeEnd = int(firstCellParticle[newCell+1]);
+                int rangeEnd = min(int(firstCellParticle[newCell+1]), int(partN));
 
                 for (int k = rangeStart; k < rangeEnd; k++)
                 {
