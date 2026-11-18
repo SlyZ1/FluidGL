@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bpqf8mlvl285x"]
+
+[ext_resource type="Script" uid="uid://duoq5y54jowwj" path="res://scripts/main_managers/time_manager.gd" id="1_3hpic"]
+
+[node name="TimeManager" type="Node" unique_id=1192397001]
+script = ExtResource("1_3hpic")
+bullet_time_strength = 0.0

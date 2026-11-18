@@ -11,7 +11,7 @@ func initialize_logic(_upgrade_manager: UpgradeManager) -> void:
 func reset_logic(_upgrade_manager: UpgradeManager) -> void:
 	TrickManager.trick_performed.disconnect(_trick_performed)
 
-func _trick_performed(name: String, _accuracy: float):
+func _trick_performed(name: String):
 	if name == trick:
 		_enter() 
 

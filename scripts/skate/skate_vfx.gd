@@ -7,9 +7,10 @@ func _ready() -> void:
 func set_trick_vfx(t : float) -> void:
 	material_override.set_shader_parameter("imp", t)
 
-func _on_trick_performed(_name: String, _accuracy: float) -> void:
-	if _name in ["catch", "instable_saut"]: return
-	var tw:Tween = create_tween()
+func _on_trick_performed(_name: String) -> void:
+	if _name == TrickManager.jump_trick_name: return
+	
+	var tw: Tween = create_tween()
 	visible = true
 	tw.tween_method(set_trick_vfx, 0., 1., 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await tw.finished

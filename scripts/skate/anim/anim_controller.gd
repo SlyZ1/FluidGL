@@ -56,7 +56,7 @@ func _confirm_trick():
 	mesh_instance.scale = _mesh_instance_scale * 1.3
 	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
-func _on_trick_performed(_name: String, _accuracy: float) -> void:
+func _on_trick_performed(_name: String) -> void:
 	_catch_pressed = false
 	var _anim: Anim = TrickManager.get_resource(_name)
 	var _duration: float = TrickManager.get_trick_duration(_name)

@@ -45,7 +45,7 @@ func enter(rail_controller: RailController) -> void:
 	rail_controller.skate_physics.toggle_linear(false)
 	rail_controller.skate_physics.reset_velocities()
 	rail_controller.is_on_rail = true
-	TrickManager.set_possible_tricks(["instable_saut"])
+	TrickManager.set_possible_tricks([TrickManager.jump_trick_name])
 	TrickManager.add_trick_count()
 	
 	rail_controller._init_rail_pose_cible()

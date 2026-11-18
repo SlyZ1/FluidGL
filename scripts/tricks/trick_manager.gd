@@ -1,15 +1,21 @@
 extends Node
 
-@export var bullet_time_curve: Curve
 @export var input_lag_timer: Timer
 @export var trick_timing_timer: Timer
+@export var jump_trick_name: String
+# @export_group("Bullet time")
+# @export var bullet_time_duration: float = 0.5
+# @export_range(0, 1) var bullet_time_strength: float = 0.2
+# @export var bullet_time_curve: Curve
+# @export var bullet_timer : Timer
 
-signal trick_performed(_name: String, _accuracy: float)
+signal trick_performed(_name: String)
 signal trick_ended
 signal trick_catched(_progression: float, _dt: float)
 signal trick_validated(_num_combo: int)
+signal on_reset
 
-signal on_catch_released
+signal on_catch_pressed
 
 signal go_left
 signal go_right
@@ -35,8 +41,6 @@ var _tier := 0
 
 var _catch_pressed: bool = true
 
-const bullet_time_duration := 0.5
-var bullet_timer : Timer
 
 func reset() -> void:
 	_current_trick = ""
@@ -46,13 +50,10 @@ func reset() -> void:
 	if not trick_timing_timer.is_stopped():
 		trick_timing_timer.start()
 		trick_timing_timer.stop()
+	on_reset.emit()
 
 func _ready() -> void:
 	_tricks = TrickGraph.new("res://combo_graph.json")
-	bullet_timer = Timer.new()
-	bullet_timer.one_shot = true
-	bullet_timer.ignore_time_scale = true
-	add_child(bullet_timer)
 	reset()
 	
 func _compute_input() -> String:
@@ -68,8 +69,9 @@ func get_catch_pressed() -> bool:
 	return _catch_pressed
 	
 func _set_catch_pressed(input: String) -> void:
+	if not _catch_pressed and input == "FHybrv":
+		on_catch_pressed.emit()
 	_catch_pressed = input == "FHybrv"
-	if not _catch_pressed: on_catch_released.emit()
 
 func get_progression() -> float:
 	return (trick_timing_timer.wait_time - trick_timing_timer.time_left) / trick_timing_timer.wait_time
@@ -86,10 +88,13 @@ func _process(delta: float) -> void:
 	if MapLoader.instance: if not MapLoader.instance.is_running: return
 	if GameManager.instance: if not GameManager.instance.game_started: return
 	
-	#if not bullet_timer.is_stopped() and not _current_trick in ["instable_saut", "debut_saut"] and MapLoader.instance.is_running:
-		#Engine.time_scale = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
-	#else:
-		#Engine.time_scale = 1
+	# print(not bullet_timer.is_stopped(), " ", not _current_trick in [jump_trick_name])
+	# if not bullet_timer.is_stopped() and not _current_trick in [jump_trick_name]:
+	# 	print("aaaaaaaaaaaaaaa")
+	# 	var bullet_curve_value: float = bullet_time_curve.sample((bullet_timer.wait_time - bullet_timer.time_left) / bullet_timer.wait_time)
+	# 	Engine.time_scale = 1 - bullet_time_strength * (1 - bullet_curve_value)
+	# else:
+	# 	Engine.time_scale = 1
 	
 	# Start tricks
 	if get_catch_pressed() and not _started:
@@ -129,13 +134,7 @@ func _process(delta: float) -> void:
 			if trick.input == _last_input_executed:
 				break
 			_last_input_executed = trick.input
-			var tot: float = trick_timing_timer.wait_time
-			var t: float = trick_timing_timer.time_left
-			
-			var good_timing: float = (t - tot / 2) / tot # between [-0.5, 0.5]
-			good_timing *= 5
-			good_timing = exp(-good_timing * good_timing)
-			_trick_performed(trick_name, good_timing)
+			_trick_performed(trick_name)
 			break
 
 func get_time_left(stopped_val: float = -INF) -> float:
@@ -165,10 +164,10 @@ func _update_xp(increased_by: float, decreased_by: float):
 	xp_changed.emit(_xp / _xp_per_tier[_tier], _tier, _nb_tricks_since_grounded, sum, _points, sum > 0)
 
 
-func _trick_performed(_name: String, _accuracy: float) -> void:
+func _trick_performed(_name: String) -> void:
 	input_lag_timer.start()
-	bullet_timer.stop()
-	bullet_timer.start(bullet_time_duration)
+	# bullet_timer.stop()
+	# bullet_timer.start(bullet_time_duration)
 	_nb_tricks_since_grounded += 1
 
 	var increased_by: float = 50 * _nb_tricks_since_grounded * (_tier + 1)
@@ -179,7 +178,7 @@ func _trick_performed(_name: String, _accuracy: float) -> void:
 
 	trick_timing_timer.start(get_trick_duration(_name))
 
-	trick_performed.emit(_name, _accuracy)
+	trick_performed.emit(_name)
 	trick_validated.emit(_nb_tricks_since_grounded)
 
 
@@ -211,7 +210,7 @@ func get_resource(_name : String) -> Anim:
 	return load("res://tricks/" + _name + ".tres") as Anim
 	
 func on_airborne() -> void:
-	_possible_tricks = _tricks.get_neighbours("instable_saut")
+	_possible_tricks = _tricks.get_neighbours(jump_trick_name)
 	_started = true
 	
 func on_ground() -> void:

@@ -5,22 +5,15 @@ class_name GameManager
 @export_group("Skate")
 @export var skate: SkatePhysics
 @export var skate_ragdoll: RigidBody3D
-@export_group("Physics")
-@export var substep: float = 1.0 / 300.0
-@export var max_steps_par_frame: int = 30
 
 signal on_stop
 signal on_start
 signal on_pause(paused: bool)
-signal on_substep(dt: float)
 
 static var auto_start: bool = false
 
 var game_started: bool = false
 var game_paused: bool = false
-
-# physics
-var _physics_step_accumulateur: float = 0
 
 # run state
 var _ready_to_restart: bool = false
@@ -82,14 +75,6 @@ func _handle_pause() -> void:
 		game_paused = !game_paused
 		on_pause.emit(game_paused)
 		Engine.time_scale = 1 if game_paused else 0
-			
-func _run_physics_substeps(dt: float) -> void:
-	_physics_step_accumulateur += dt
-	var steps: int = 0
-	while _physics_step_accumulateur >= substep and steps < max_steps_par_frame:
-		on_substep.emit(substep)
-		_physics_step_accumulateur -= substep
-		steps += 1
 
 func _restart_logic() -> void:
 	if _ready_to_restart and TrickManager.get_catch_pressed():
@@ -110,5 +95,4 @@ func _on_restart_lag_timeout() -> void:
 
 func _process(dt: float) -> void:
 	_handle_pause()
-	_run_physics_substeps(dt)
 	_restart_logic()

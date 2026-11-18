@@ -44,7 +44,7 @@ func _ready() -> void:
 	TrickManager.xp_changed.connect(_on_xp_changed)
 	GameManager.instance.on_stop.connect(_on_stop)
 	GameManager.instance.on_start.connect(_on_start)
-	GameManager.instance.on_substep.connect(_control_speed)
+	TimeManager.on_substep.connect(_control_speed)
 
 func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate

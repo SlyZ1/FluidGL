@@ -3,24 +3,22 @@
 [ext_resource type="Script" uid="uid://cu1wgsgwwsfrk" path="res://scripts/upgrades/effects/upgrade_effect.gd" id="1_63f6u"]
 [ext_resource type="Script" uid="uid://djhyin3m7la6j" path="res://scripts/upgrades/upgrade.gd" id="1_ns2de"]
 [ext_resource type="Script" uid="uid://beahu4xnd1q0r" path="res://scripts/upgrades/effects/upgrade_effect_health.gd" id="2_mredx"]
-[ext_resource type="Script" uid="uid://c1tps0kx01lpf" path="res://scripts/upgrades/triggers/upgade_trigger_time.gd" id="4_fw310"]
+[ext_resource type="Script" uid="uid://dp5uep1ywj7b8" path="res://scripts/upgrades/triggers/upgade_trigger_trick.gd" id="4_63f6u"]
 
 [sub_resource type="Resource" id="Resource_tsjmv"]
 script = ExtResource("2_mredx")
 hp_added = 1
 
-[sub_resource type="Resource" id="Resource_y8g63"]
-script = ExtResource("4_fw310")
-frequency = 1.0
-duration = 0.095
+[sub_resource type="Resource" id="Resource_ntdd0"]
+script = ExtResource("4_63f6u")
 exit_immediately = true
-metadata/_custom_type_script = "uid://c1tps0kx01lpf"
+metadata/_custom_type_script = "uid://dp5uep1ywj7b8"
 
 [resource]
 script = ExtResource("1_ns2de")
 upgrade_name = "Continuous Healing"
 description = "+1 HP every second"
 rarity = 0.79
-trigger = SubResource("Resource_y8g63")
+trigger = SubResource("Resource_ntdd0")
 effects = Array[ExtResource("1_63f6u")]([SubResource("Resource_tsjmv")])
 metadata/_custom_type_script = "uid://djhyin3m7la6j"

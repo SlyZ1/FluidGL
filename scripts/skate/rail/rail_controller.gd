@@ -32,7 +32,7 @@ var _rail_weight_tween: Tween
 enum RailState { GROUNDED, FREE, GRINDING };
 
 func _ready() -> void:
-	GameManager.instance.on_substep.connect(_step)
+	TimeManager.on_substep.connect(_step)
 	_current_state = _new_state(RailState.GROUNDED)
 
 func _new_state(state: RailState) -> RailControllerState:

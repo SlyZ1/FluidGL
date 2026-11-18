@@ -21,7 +21,7 @@ func _on_quest_end_timeout() -> void:
 	_quest_progression = 0
 	$NewQuest.start()
 
-func _on_trick(_name: String, _accuracy: float) -> void:
+func _on_trick(_name: String) -> void:
 	if not GameManager.instance.game_started: return
 	if not _current_quest: return
 

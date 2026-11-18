@@ -48,7 +48,7 @@ var _process_linear_physics: bool = true
 var _process_angular_physics: bool = true
 
 func _ready() -> void:
-	GameManager.instance.on_substep.connect(_step)
+	TimeManager.on_substep.connect(_step)
 	_init_state()
 
 func toggle(process: bool) -> void:
