@@ -158,8 +158,9 @@ void SolverUI::visit(SmokeFlipSolverGPU& solver) {
         DRAW_FIELD(UtilsUI::drawDrag, "Temperature Decrease Rate", float, TemperatureDecreaseRate, 0, 100)
         ImGui::Dummy(ImVec2(0, 5));
         DRAW_FIELD(UtilsUI::drawDrag, "Vorticity Factor", float, VorticityFactor, 0, 1.5)
-        DRAW_FIELD(UtilsUI::drawSlider, "Diffusion Factor", float, DiffusionFactor, 0, 10)
         DRAW_FIELD(UtilsUI::drawDrag, "Divergence Factor", float, DivergenceFactor, 0, 1)
+        DRAW_FIELD(UtilsUI::drawSlider, "Density Diffusion Factor", float, DensityDiffusionFactor, 0, 10)
+        DRAW_FIELD(UtilsUI::drawSlider, "Temperature Diffusion Factor", float, TemperatureDiffusionFactor, 0, 10)
         
         ImGui::Dummy(ImVec2(0, 5));
 

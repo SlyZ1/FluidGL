@@ -173,6 +173,7 @@ protected:
     glm::vec3 cellToPos(int cell, int nx, int ny, int nz);
     virtual void integrateParticles() {};
     virtual void integrateGrid() {};
+    virtual void preP2G() {};
     virtual void sortExtraAttributes(GLuint) {};
 
 public:

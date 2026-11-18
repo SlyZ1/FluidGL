@@ -19,6 +19,6 @@ void SmokeFlipSolverGPUConfig::setDomainSize(vec3 domainSize) {
 }
 
 void SmokeFlipSolverGPUConfig::loadOpenGl() {
-    if (m_densitySource) m_densitySource->loadOpenGl(getH());
+    if (m_densitySource) m_densitySource->loadOpenGl(getH(), getPartRadius());
     FlipSolverGPUConfig::loadOpenGl();
 }

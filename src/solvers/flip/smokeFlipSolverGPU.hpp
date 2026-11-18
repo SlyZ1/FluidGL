@@ -42,6 +42,7 @@ private:
 
     void integrateParticles() override;
     void integrateGrid() override;
+    void preP2G() override;
     void sortAttribute(GLuint cellParticleIdsBuffer, GLuint attributeBuffer, GLuint sortedAttributeBuffer);
     void sortExtraAttributes(GLuint cellParticleIdsBuffer) override;
 

@@ -181,7 +181,7 @@ void FlipSolverGPU::initCGS(){
 FlipSolverGPU::FlipSolverGPU(shared_ptr<FlipSolverGPUConfig> config) 
 : IParticleSolver(move(config), "FLIP GPU Solver"), m_config(static_pointer_cast<FlipSolverGPUConfig>(m_baseConfig)) {
     m_integrationStatIndex        = m_stats->registerTimer("Integration");
-    m_pushAppartStatIndex         = m_stats->registerTimer("Push Appart");
+    m_pushAppartStatIndex         = m_stats->registerTimer("Push Apart");
     m_collisionStatIndex          = m_stats->registerTimer("Collision");
     m_p2gStatIndex                = m_stats->registerTimer("P2G");
     m_surfaceTensionStatIndex     = m_stats->registerTimer("Surface Tension");
@@ -421,8 +421,6 @@ void FlipSolverGPU::pushAppartParticles(int iterations){
     const float minDist = 2.0f * m_config->getPartRadius();
     for (int i = 0; i < iterations; i++)
     {
-        countingSort();
-        
         ShaderProgram::SSBOBarrier();
 
         m_getCorrectionsShader.use();
@@ -915,6 +913,10 @@ void FlipSolverGPU::update(){
     m_integrateTimer.endFrame();
 
     particleCollisions(lockedObstacle);
+
+    countingSort();
+
+    preP2G();
     
     m_pushAppartTimer.beginFrame();
     pushAppartParticles(m_config->getNumPushAppart());
@@ -928,6 +930,7 @@ void FlipSolverGPU::update(){
     countingSort();
     ShaderProgram::SSBOBarrier();
     m_scanTimer.endFrame();
+
     
     m_p2gTimer.beginFrame();
     particlesToGrid();

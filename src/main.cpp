@@ -86,7 +86,7 @@ void init(){
     app->setClearColor(0, 0, 0, 1.0f);
     app->toggleCursor(true);
 
-    loadScene(Scene::smokePlumeScene());
+    loadScene(Scene::highResSmokePlumeScene());
     app->setClearColor(0.61f, 0.72f, 0.84f, 1.0f);
 
     vector<weak_ptr<IStatsProvider>> statsProviders = {};

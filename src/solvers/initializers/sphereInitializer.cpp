@@ -18,5 +18,5 @@ void SphereInitializer::setRadiusAndPos(float radius, vec3 pos, float scale){
 bool SphereInitializer::isInInitializer(glm::vec3 position, float scale) {
     scale = std::max(scale, 1e-5f);
     position /= scale;
-    return length(position - pos(1.0f)) <= (m_max - m_min).x * 0.5f;
+    return length(position - pos(1.0f)) <= getRadius(1.0f);
 }

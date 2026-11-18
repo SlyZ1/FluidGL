@@ -63,4 +63,5 @@ void main() {
     }
     
     if (currentW > 0) imageStore(gridAttributes, cellCoord, vec4(currentGridAttributes / currentW));
+    else imageStore(gridAttributes, cellCoord, vec4(0));
 }

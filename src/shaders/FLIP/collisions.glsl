@@ -44,9 +44,9 @@ void main(){
     vec3 pos = partPos[i].xyz;
     vec3 vel = partVel[i].xyz;
 
-    bvec2 killX = openBoundsX && bvec2(pos.x < minPos.x + h, pos.x > maxPos.x - h);
-    bvec2 killY = openBoundsY && bvec2(pos.y < minPos.y + h, pos.y > maxPos.y - h);
-    bvec2 killZ = openBoundsZ && bvec2(pos.z < minPos.z + h, pos.z > maxPos.z - h);
+    bvec2 killX = openBoundsX && bvec2(pos.x < minPos.x + 0.5 * h, pos.x > maxPos.x - 0.5 * h);
+    bvec2 killY = openBoundsY && bvec2(pos.y < minPos.y + 0.5 * h, pos.y > maxPos.y - 0.5 * h);
+    bvec2 killZ = openBoundsZ && bvec2(pos.z < minPos.z + 0.5 * h, pos.z > maxPos.z - 0.5 * h);
     if (any(killX) || any(killY) || any(killZ)){
         partPos[i].x = maxPos.x + 100;
         killParticle(i);

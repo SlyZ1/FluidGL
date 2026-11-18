@@ -87,9 +87,9 @@ void SmokeFlipSolverGPU::reload(){
 void SmokeFlipSolverGPU::integrateParticles() {
     m_integrationFrame++;
 
-    ShaderProgram::SSBOBarrier();
-
-    if (m_config.getDiffusionFactor() > 0){
+    if (m_config.getDensityDiffusionFactor() > 0 || m_config.getTemperatureDiffusionFactor() > 0){
+        ShaderProgram::SSBOBarrier();
+    
         m_diffuseFieldsShader.use();
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, *getPosBuffer());
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, getFirstCellParticleBuffer());
@@ -105,13 +105,15 @@ void SmokeFlipSolverGPU::integrateParticles() {
         glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getH());
         glUniform1f(ShaderProgram::getVarLoc("pph"), m_config.getPartPerH());
         glUniform1f(ShaderProgram::getVarLoc("dt"), m_config.getDt());
-        glUniform1f(ShaderProgram::getVarLoc("kappa"), m_config.getDiffusionFactor() * 0.001f);
+        glUniform1f(ShaderProgram::getVarLoc("kappaD"), m_config.getDensityDiffusionFactor() * 0.001f);
+        glUniform1f(ShaderProgram::getVarLoc("kappaT"), m_config.getTemperatureDiffusionFactor() * 0.001f);
         m_diffuseFieldsShader.dispatch((m_config.getPartN() + 255) / 256);
-    
-        ShaderProgram::SSBOBarrier();
     }
 
+    // Apply AFTER diffusion because of fake "diffusion" of density on newly spawned particles
     if (any(m_config.getOpenBoundsX()) || any(m_config.getOpenBoundsY()) || any(m_config.getOpenBoundsZ())) {
+        ShaderProgram::SSBOBarrier();
+    
         m_compensateNumPartShader.use();
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, *getPosBuffer());
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, *getVelBuffer());
@@ -133,16 +135,16 @@ void SmokeFlipSolverGPU::integrateParticles() {
         glUniform1f(ShaderProgram::getVarLoc("h"), m_config.getH());
         glUniform1f(ShaderProgram::getVarLoc("pph"), m_config.getPartPerH());
     
-        glUniform2i(ShaderProgram::getVarLoc("openBoundsX"), m_config.getOpenBoundsX().x ? 1 : 0, m_config.getOpenBoundsX().y ? 1 : 0);
-        glUniform2i(ShaderProgram::getVarLoc("openBoundsY"), m_config.getOpenBoundsY().x ? 1 : 0, m_config.getOpenBoundsY().y ? 1 : 0);
-        glUniform2i(ShaderProgram::getVarLoc("openBoundsZ"), m_config.getOpenBoundsZ().x ? 1 : 0, m_config.getOpenBoundsZ().y ? 1 : 0);
+        glUniform2i(ShaderProgram::getVarLoc("openBoundsX"), m_config.getOpenBoundsX().x ? 1u : 0u, m_config.getOpenBoundsX().y ? 1u : 0u);
+        glUniform2i(ShaderProgram::getVarLoc("openBoundsY"), m_config.getOpenBoundsY().x ? 1u : 0u, m_config.getOpenBoundsY().y ? 1u : 0u);
+        glUniform2i(ShaderProgram::getVarLoc("openBoundsZ"), m_config.getOpenBoundsZ().x ? 1u : 0u, m_config.getOpenBoundsZ().y ? 1u : 0u);
     
         vec3 minPos = cellToPos(0, m_config.getGridX(), m_config.getGridY(), m_config.getGridZ());
         glUniform3f(ShaderProgram::getVarLoc("minPos"), minPos.x, minPos.y, minPos.z);
         m_compensateNumPartShader.dispatch((m_config.getGridDim() + 7) / 8);
-    
-        ShaderProgram::SSBOBarrier();
     }
+
+    ShaderProgram::SSBOBarrier();
 
     m_integrateShader.use();
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, *getPosBuffer());
@@ -181,6 +183,10 @@ void SmokeFlipSolverGPU::integrateParticles() {
     glUniform1f(ShaderProgram::getVarLoc("dt"), m_config.getDt());
     
     m_integrateShader.dispatch((m_config.getPartN() + 255) / 256);
+}
+
+void SmokeFlipSolverGPU::preP2G() {
+    
 }
 
 void SmokeFlipSolverGPU::integrateGrid() {

@@ -17,7 +17,8 @@ uniform float pph;
 
 uniform float dt;
 
-uniform float kappa;
+uniform float kappaD;
+uniform float kappaT;
 
 #pragma include "../utils.glsl"
 
@@ -67,10 +68,14 @@ void main() {
     }
 
     float sigma = 1.566681471 / pow(kernel, 9);
-    float D = kappa * kernel2;
     float V = pow(h * pph, 3);
-    float factor = 12 * D * sigma * V;
+    
+    float densityD = kappaD * kernel2;
+    float densityFactor = 12 * densityD * sigma * V;
 
-    density[i] = currentDensity + factor * dDdt * dt;
-    temperature[i] = currentTemperature + factor * dTdt * dt;
+    float temperatureD = kappaT * kernel2;
+    float temperatureFactor = 12 * temperatureD * sigma * V;
+
+    density[i] = currentDensity + densityFactor * dDdt * dt;
+    temperature[i] = currentTemperature + temperatureFactor * dTdt * dt;
 }

@@ -12,8 +12,8 @@ void main() {
     ivec3 coord = ivec3(i, j, k);
     if (any(greaterThanEqual(coord, gridDim))) return;
 
-    vec3 center = (vec3(gridDim) - 4) * 0.5;
-    float radius = (gridDim.x - 4) * 0.5 - 1.0;
+    vec3 center = (vec3(gridDim) - 2) * 0.5;
+    float radius = gridDim.x * 0.5 - 1.0;
 
     grid[i + j * gridDim.x + k * gridDim.x * gridDim.y] = length(center - vec3(coord)) <= radius ? 1u : 0u;
 }

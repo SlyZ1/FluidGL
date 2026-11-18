@@ -56,7 +56,7 @@ public:
     std::shared_ptr<FluidInitializer> getInitializer() const { return m_initializer; }
     virtual void setInitializer(std::shared_ptr<FluidInitializer> initializer) { m_initializer = initializer; }
 
-    virtual void loadOpenGl() { if (m_initializer) m_initializer->loadOpenGl(getH()); }
+    virtual void loadOpenGl() { if (m_initializer) m_initializer->loadOpenGl(getH(), getPartRadius()); }
 
     float getPartPerH() const { return m_partPerH; }
     void setPartPerH(float partPerH) { m_partPerH = std::max(partPerH, 1.0f); }

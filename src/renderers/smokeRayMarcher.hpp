@@ -25,7 +25,7 @@ private:
     float m_absorption = 0.3f;
     float m_lightAbsorption = 0.15f;
     float m_numStepSizeRatio = 2.f;
-    float m_numLightStepSizeRatio = 0.5f;
+    float m_numLightStepSizeRatio = 1.0f;
     float m_shadowMultiplier = 0.7f;
     glm::vec3 m_lightDir = glm::normalize(glm::vec3(1, 2, 0));
 

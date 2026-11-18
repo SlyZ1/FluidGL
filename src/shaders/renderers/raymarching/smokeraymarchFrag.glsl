@@ -39,12 +39,12 @@ float beersLaw(float x, float absorption){
     return exp(-x*absorption);
 }
 
-float lightContrib(Ray ray){
+float lightContrib(Ray ray, vec3 dir){
     float dx = h / numLightStepSizeRatio;
     float totalTransmittance = 1.0;
 
     while(isInside(ray.pos)){
-        ray.pos += lightDir * dx;
+        ray.pos += dir * dx;
         float d = sampleDensity(ray.pos);
 
         if (d > 0.001){
@@ -75,7 +75,8 @@ void main(){
         if (d > 0.001){
             float a = beersLaw(d * dx, absorption);
 
-            energy += totalTransmittance * (1 - a) * mix(backgroundColor * shadowMultiplier, vec3(1), lightContrib(ray));
+            vec3 light = vec3(0.7) * mix(backgroundColor * shadowMultiplier, vec3(1), lightContrib(ray, lightDir));
+            energy += totalTransmittance * (1 - a) * light;
             totalTransmittance *= a;
         }
 

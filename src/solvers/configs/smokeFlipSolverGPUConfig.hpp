@@ -10,7 +10,8 @@ private:
     float m_densityDecreaseRate = 0.02f;
     float m_temperatureDecreaseRate = 0.1f;
     float m_vorticityFactor = 0.5f;
-    float m_diffusionFactor = 4.f;
+    float m_densityDiffusionFactor = 4.f;
+    float m_temperatureDiffusionFactor = 0.f;
     float m_divergenceFactor = 1.0f;
 
     std::shared_ptr<FluidInitializer> m_densitySource;
@@ -43,8 +44,10 @@ public:
     void setVorticityFactor(float vorticityFactor) { m_vorticityFactor = vorticityFactor; }
     float getVorticityFactor() const { return m_vorticityFactor; }
 
-    void setDiffusionFactor(float diffusionFactor) { m_diffusionFactor = diffusionFactor; }
-    float getDiffusionFactor() const { return m_diffusionFactor; }
+    void setDensityDiffusionFactor(float densityDiffusionFactor) { m_densityDiffusionFactor = densityDiffusionFactor; }
+    float getDensityDiffusionFactor() const { return m_densityDiffusionFactor; }
+    void setTemperatureDiffusionFactor(float temperatureDiffusionFactor) { m_temperatureDiffusionFactor = temperatureDiffusionFactor; }
+    float getTemperatureDiffusionFactor() const { return m_temperatureDiffusionFactor; }
 
     void setDivergenceFactor(float divergenceFactor) { m_divergenceFactor = divergenceFactor; }
     float getDivergenceFactor() const { return m_divergenceFactor; }

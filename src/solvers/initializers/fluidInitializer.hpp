@@ -28,7 +28,7 @@ public:
         return m_min==other.min(1) && m_max==other.max(1);
     }
 
-    void loadOpenGl(float h);
+    void loadOpenGl(float h, float scale);
 
     virtual bool isInInitializer(glm::vec3 position, float scale) = 0;
     virtual void accept(IInitializerVisitor& visitor) = 0;

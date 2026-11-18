@@ -3,8 +3,8 @@
 using namespace glm;
 using namespace std;
 
-void FluidInitializer::loadOpenGl(float h){
-    m_gridDim = ivec3(ceil((m_max - m_min) / h));
+void FluidInitializer::loadOpenGl(float h, float scale){
+    m_gridDim = ivec3(ceil((m_max - m_min) * scale / h));
 
     ShaderProgram::deleteBuffer(m_gridBuffer);
     ShaderProgram::genSSBO<uint>(m_gridBuffer, m_gridDim.x * m_gridDim.y * m_gridDim.z, 0.0f);

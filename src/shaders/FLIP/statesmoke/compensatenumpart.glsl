@@ -24,9 +24,9 @@ uniform float pph;
 
 uniform vec3 minPos;
 
-uniform bvec2 openBoundsX;
-uniform bvec2 openBoundsY;
-uniform bvec2 openBoundsZ;
+uniform ivec2 openBoundsX;
+uniform ivec2 openBoundsY;
+uniform ivec2 openBoundsZ;
 
 #pragma include "../utils.glsl"
 #pragma include "../velutils.glsl"
@@ -86,9 +86,9 @@ void main(){
     int x = int(gl_GlobalInvocationID.x);
     int y = int(gl_GlobalInvocationID.y);
     int z = int(gl_GlobalInvocationID.z);
-    bvec2 returnCondX = (openBoundsX && bvec2(x == 0, x == gridX-1)) || bvec2(x >= gridX);
-    bvec2 returnCondY = (openBoundsY && bvec2(y == 0, y == gridY-1)) || bvec2(y >= gridY);
-    bvec2 returnCondZ = (openBoundsZ && bvec2(z == 0, z == gridZ-1)) || bvec2(z >= gridZ);
+    bvec2 returnCondX = (equal(openBoundsX, ivec2(1)) && bvec2(x == 0, x == gridX-1)) || bvec2(x >= gridX);
+    bvec2 returnCondY = (equal(openBoundsY, ivec2(1)) && bvec2(y == 0, y == gridY-1)) || bvec2(y >= gridY);
+    bvec2 returnCondZ = (equal(openBoundsZ, ivec2(1)) && bvec2(z == 0, z == gridZ-1)) || bvec2(z >= gridZ);
     if (any(returnCondX) || any(returnCondY) || any(returnCondZ)) return;
 
     ivec3 coord = ivec3(x, y, z);
@@ -96,7 +96,7 @@ void main(){
 
     uint numParticlesInCell = firstCellParticle[cell+1] - firstCellParticle[cell];
     uint targetPerCell = uint(floor(pph * pph * pph));
-    if (numParticlesInCell >= 2) return;
+    if (numParticlesInCell > 0) return;
 
     uint k = targetPerCell - numParticlesInCell + 1;
     uint base = atomicAdd(partN, k);
@@ -110,8 +110,8 @@ void main(){
         partVel[index] = vec4(gridVel(newPos, vec3(0.0)), 0.0);
         float d, t;
         sampleNeighbors(newPos, coord, d, t);
-        density[index] = d;
-        temperature[index] = t;
+        density[index] = 0;
+        temperature[index] = 0;
     }
 
     atomicMin(partN, uint(configPartN));

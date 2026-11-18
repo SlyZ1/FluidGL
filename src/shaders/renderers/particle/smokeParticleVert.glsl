@@ -19,7 +19,7 @@ void main()
     //worldPos.z -= 1000;
     vec4 viewPos = uView * worldPos;
 
-    float t = clamp(length(cVel) / 50.0, 0.0, 1.0);
+    float t = clamp(length(cVel) / 300.0, 0.0, 1.0);
 
     float customRadius = mix(particleRadius, particleRadius / 2, t) * 2;
     //customRadius = particleRadius * 4;
