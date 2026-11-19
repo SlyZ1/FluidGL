@@ -29,6 +29,7 @@ func reset() -> void:
 	_started = false
 	_possible_tricks = _tricks.get_neighbours("")
 	_nb_tricks_since_grounded = 0
+	on_nb_trick_increased.emit(_nb_tricks_since_grounded)
 	on_reset.emit()
 
 func on_ground() -> void:

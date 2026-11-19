@@ -22,7 +22,7 @@ shader_parameter/sin_spatial_freq = 18.695
 shader_parameter/sin_temp_freq = 10.0
 shader_parameter/sin_ampl = 0.02
 
-[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("tier_fill", "points", "popup_template", "wow_template")]
+[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("points", "popup_template", "tier_fill", "wow_template")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,10 +30,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ymcwo")
-tier_fill = NodePath("Tier")
 points = NodePath("Points")
 popup_template = NodePath("Points")
 popup_color = Color(1, 0.7176471, 0.36862746, 0.53333336)
+tier_fill = NodePath("Tier")
 wow_curve = SubResource("Curve_dsygr")
 wow_strengh = 1.0
 wow_duration = 0.2
@@ -105,6 +105,5 @@ theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
 theme_override_constants/outline_size = -46
 theme_override_fonts/font = ExtResource("5_dsygr")
 theme_override_font_sizes/font_size = 40
-text = "Wow"
 horizontal_alignment = 1
 vertical_alignment = 1

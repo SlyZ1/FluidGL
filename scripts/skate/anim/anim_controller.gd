@@ -31,8 +31,8 @@ func toggle(value: bool) -> void:
 func can_catch() -> bool:
 	return not skate_physics.is_grounded()
 
-func set_default_trick_rotation(rot: Quaternion) -> void:
-	_default_trick_rotation = rot
+func add_default_trick_rotation(rot: Quaternion) -> void:
+	_default_trick_rotation *= rot
 
 
 
@@ -52,6 +52,7 @@ func _process(_delta: float) -> void:
 		current_rotation *= trick.get_quaternion()
 		current_rotation = current_rotation.normalized()
 	skate_physics.set_rot(Basis(current_rotation))
+	_default_trick_rotation = Quaternion.IDENTITY
 	
 
 

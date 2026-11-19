@@ -27,6 +27,7 @@ var _points_scale: Vector2
 func _ready() -> void:
 	XpManager.xp_changed.connect(_on_xp_changed)
 	XpManager.tier_changed.connect(_on_tier_changed)
+	TrickManager.on_nb_trick_increased.connect(_on_nb_tricks_increased)
 	_wow_size = wow_template.size
 	_wow_scale = wow_template.scale
 	_tier_scale = tier_fill.scale
@@ -77,11 +78,12 @@ func spawn_wow(index: int) -> void:
 		0.0, 1.0, wow_duration
 	)
 
+func _on_nb_tricks_increased(nb_tricks: int) -> void:
+	spawn_wow(nb_tricks)
+
 var previous_tier: int = -1
 func _on_xp_changed(_xp_added: int, _tier_progression: float, _tier: int):
 	points.text = "%.d" % XpManager.get_points()
-	
-	#spawn_wow(_nb_tricks_since_grounded)
 	
 	if previous_tier != _tier:
 		tier_fill.set_remplissage(0 if previous_tier < _tier else 1)

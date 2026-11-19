@@ -8,7 +8,8 @@ class_name RailController
 @export var lane_snapper: LaneSnapper
 @export_group("Rail Detection")
 @export var rail_z_thresh: float = 2.5
-@export var rail_y_thresh_pos: float = 0.75
+@export var rail_y_thresh_enter: float = 1.5
+@export var rail_y_thresh_die: float = 0.75
 @export var rail_y_thresh_neg: float = -2
 @export var rail_y_offset: float = -0.3
 @export_group("Rail Animation")
@@ -49,7 +50,8 @@ func _step(dt: float) -> void:
 		_current_state = _new_state(state)
 		_current_state.enter(self)
 
-	anim_controller.set_default_trick_rotation(Quaternion.IDENTITY.slerp(_rail_pose_cible, _rail_pose_weight))
+func _process(_delta: float) -> void:
+	anim_controller.add_default_trick_rotation(Quaternion.IDENTITY.slerp(_rail_pose_cible, _rail_pose_weight))
 
 func _update_rail(new_rail: Path3D) -> void:
 	current_rail = new_rail
@@ -103,17 +105,17 @@ func _get_point_on_rail(rail: Path3D, pos_x: float) -> Vector3:
 	p += rail_y_offset * Vector3.UP
 	return p
 
-func _touches_rail(rail: Path3D, pos: Vector3) -> bool:
+func _touches_rail(rail: Path3D, pos: Vector3) -> float:
 	var rail_point: Vector3 = _get_point_on_rail(rail, pos.x)
 	if rail_point == Vector3.INF:
-		return false
+		return INF
 
 	var dy: float = pos.y - rail_point.y
 	var dz: float = abs(pos.z - rail_point.z) 
-	if dz <= rail_z_thresh and dy <= rail_y_thresh_pos and dy >= rail_y_thresh_neg:
-		return true
+	if dz <= rail_z_thresh and dy >= rail_y_thresh_neg:
+		return dy # dy <= rail_y_thresh_enter
 
-	return false
+	return INF
 
 
 

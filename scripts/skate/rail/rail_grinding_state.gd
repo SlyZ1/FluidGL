@@ -9,6 +9,9 @@ var _touches_rail: Callable
 var _get_point_on_rail: Callable
 var _current_rail: Path3D
 
+var _rail_y_thresh_enter: float
+var _rail_y_thresh_die: float
+
 var _skate_point_per_second: float
 
 var _last_rail_point: Vector3
@@ -39,6 +42,8 @@ func enter(rail_controller: RailController) -> void:
 	_current_rail = rail_controller.current_rail
 	_rail_vitesse_verticale = rail_controller._rail_vitesse_verticale
 	_skate_point_per_second = rail_controller.skate_point_per_second
+	_rail_y_thresh_enter = rail_controller.rail_y_thresh_enter
+	_rail_y_thresh_die = rail_controller.rail_y_thresh_die
 
 	rail_controller.lane_snapper.toggle(false)
 	rail_controller.anim_controller.toggle(false)
@@ -54,10 +59,17 @@ func enter(rail_controller: RailController) -> void:
 func state() -> RailController.RailState:
 	return RailController.RailState.GRINDING
 
+func _filter_rail(dy: float, rail: Path3D) -> Path3D:
+	if dy <= _rail_y_thresh_enter and TrickManager.get_catch_pressed():
+		return rail
+	return null
+
 func _find_rail(pos: Vector3) -> Path3D:
 	for section in MapLoader.instance._spawned_sections:
 		for rail in section.rails:
-			if _touches_rail.call(rail, pos): return rail
+			var dy: float = _touches_rail.call(rail, pos)
+			rail = _filter_rail(dy, rail)
+			if rail: return rail
 	return null
 
 func check_transitions(skate_physics: SkatePhysics, dt: float) -> RailController.RailState:

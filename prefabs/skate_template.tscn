@@ -88,10 +88,11 @@ anim_controller = NodePath("../AnimController")
 lane_snapper = NodePath("../LaneSnapper")
 rail_y_offset = 0.4
 
-[node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("skate_physics")]
+[node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("anim_controller", "skate_physics")]
 script = ExtResource("5_xumek")
-skate_physics = NodePath("..")
 lane_position = 4.25
+anim_controller = NodePath("../AnimController")
+skate_physics = NodePath("..")
 
 [node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller", "skate_physics", "parent")]
 script = ExtResource("5_wfreb")
