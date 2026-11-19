@@ -21,6 +21,7 @@ TrickManager="*uid://4qaamgw26etu"
 PlayerState="*uid://bb4ptvtb3wi6x"
 AudioManager="*uid://dhs56xnym1ry2"
 TimeManager="*uid://bpqf8mlvl285x"
+XpManager="*uid://bounrwwipn0l3"
 
 [display]
 
@@ -63,6 +64,11 @@ V={
 pause={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194305,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+switch_lane={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
 ]
 }
 

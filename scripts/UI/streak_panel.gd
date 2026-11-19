@@ -1,11 +1,15 @@
 extends Control
 
-@export var tier_fill: TierFill
+@export_group("Points")
 @export var points: Label
 @export var popup_template: Label
 @export var popup_color: Color
 
-@export_group("Wow")
+@export_group("Tiers")
+@export var tier_fill: TierFill
+@export var tier_letters: Array[String] = ["D", "C", "B", "A", "S"]
+
+@export_group("Wows")
 @export var wow_curve: Curve
 @export var wow_strengh: float
 @export var wow_duration: float
@@ -21,9 +25,8 @@ var _tier_scale: Vector2
 var _points_scale: Vector2
 
 func _ready() -> void:
-	TrickManager.trick_ended.connect(_on_trick_ended)
-	TrickManager.xp_changed.connect(_on_xp_changed)
-	TrickManager.tier_changed.connect(_on_tier_changed)
+	XpManager.xp_changed.connect(_on_xp_changed)
+	XpManager.tier_changed.connect(_on_tier_changed)
 	_wow_size = wow_template.size
 	_wow_scale = wow_template.scale
 	_tier_scale = tier_fill.scale
@@ -45,9 +48,6 @@ func points_popup(num_points: int) -> void:
 
 	await tween.finished
 	label.queue_free()
-
-func _on_trick_ended():
-	pass
 	
 func _maj_barre(_new_val: float) -> void:
 	create_tween().tween_method(tier_fill.set_remplissage, tier_fill.remplissage, _new_val, 0.2) \
@@ -78,19 +78,19 @@ func spawn_wow(index: int) -> void:
 	)
 
 var previous_tier: int = -1
-func _on_xp_changed(_new_val: float, _tier: int, _nb_tricks_since_grounded: int, _increased_by: int, _total_points: int, _with_popup: bool):
-	_new_val = clamp(_new_val, 0, 1)
-	points.text = "%.d" % _total_points
+func _on_xp_changed(_xp_added: int, _tier_progression: float, _tier: int):
+	points.text = "%.d" % XpManager.get_points()
 	
-	spawn_wow(_nb_tricks_since_grounded)
+	#spawn_wow(_nb_tricks_since_grounded)
 	
 	if previous_tier != _tier:
 		tier_fill.set_remplissage(0 if previous_tier < _tier else 1)
 		previous_tier = _tier
-	if _with_popup:
-		points_popup(_increased_by)
+
+	if _xp_added > 0:
+		points_popup(_xp_added)
 		
-		_maj_barre(_new_val)
+		_maj_barre(_tier_progression)
 		var tween = create_tween()
 		tween.tween_property($Tier, "scale", _tier_scale * 1.2, 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		create_tween().tween_property(points, "scale", _points_scale * 1.2, 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -98,8 +98,9 @@ func _on_xp_changed(_new_val: float, _tier: int, _nb_tricks_since_grounded: int,
 		await tween.finished
 		create_tween().tween_property($Tier, "scale", _tier_scale, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		create_tween().tween_property(points, "scale", _points_scale, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	else: tier_fill.set_remplissage(_new_val)
+	else: tier_fill.set_remplissage(_tier_progression)
 
 
 func _on_tier_changed(_new_tier: int):
-	$Tier.text = ["D", "C", "B", "A", "S"][_new_tier]
+	_new_tier = clamp(_new_tier, 0, tier_letters.size() - 1)
+	$Tier.text = tier_letters[_new_tier]

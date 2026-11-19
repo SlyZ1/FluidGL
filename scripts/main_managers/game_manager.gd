@@ -8,6 +8,7 @@ class_name GameManager
 
 signal on_stop
 signal on_start
+signal on_restart
 signal on_pause(paused: bool)
 
 static var auto_start: bool = false
@@ -28,6 +29,7 @@ func set_active(node: Node3D, active: bool) -> void:
 func _ready() -> void:
 	on_stop.connect(AudioManager.on_global_stop)
 	on_stop.connect(TrickManager.reset)
+	on_restart.connect(XpManager._on_restart)
 
 	set_active(skate, false)
 	set_active(skate_ragdoll, false)
@@ -80,11 +82,7 @@ func _restart_logic() -> void:
 	if _ready_to_restart and TrickManager.get_catch_pressed():
 		_waiting_for_restart = false
 		_ready_to_restart = false
-		
-		TrickManager._points = 0
-		TrickManager._xp = 0
-		TrickManager._xp_buffer = 0
-		TrickManager._tier = 0
+		on_restart.emit()
 		get_tree().reload_current_scene() # A CHANGER
 
 	if _waiting_for_restart and not TrickManager.get_catch_pressed():
@@ -93,6 +91,6 @@ func _restart_logic() -> void:
 func _on_restart_lag_timeout() -> void:
 	_waiting_for_restart = true
 
-func _process(dt: float) -> void:
+func _process(_dt: float) -> void:
 	_handle_pause()
 	_restart_logic()

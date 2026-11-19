@@ -81,7 +81,7 @@ func check_transitions(skate_physics: SkatePhysics, dt: float) -> RailController
 
 	_last_rail_point = rail_point
 
-	TrickManager.add_xp(_skate_point_per_second * dt)
+	XpManager.add_buffered_xp(_skate_point_per_second * dt)
 
 	skate_physics.global_position = Vector3(skate_physics.global_position.x, rail_point.y, rail_point.z)
 	skate_physics.reset_velocities(true, false)

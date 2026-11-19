@@ -8,10 +8,9 @@ var completed_first_quest := false
 
 func _ready() -> void:
 	TrickManager.trick_performed.connect(_on_trick)
-	TrickManager.trick_ended.connect(_reset_quest)
 	TrickManager.trick_catched.connect(_on_catch)
 
-func _on_catch(_progression: float, _dt: float) -> void:
+func _on_catch(_dt: float) -> void:
 	_reset_quest()
 
 func _on_quest_end_timeout() -> void:
@@ -28,7 +27,7 @@ func _on_trick(_name: String) -> void:
 	if _name == _current_quest.steps[_quest_progression]:
 		get_node("../UI/Input" + str(_quest_progression + 1)).correct()
 		_quest_progression += 1
-		TrickManager._xp_buffer += _current_quest.reward
+		XpManager.add_buffered_xp(_current_quest.reward)
 		if _quest_progression >= len(_current_quest.steps):
 			_move_quests(680)
 			_current_quest = null

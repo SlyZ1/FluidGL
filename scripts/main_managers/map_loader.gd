@@ -11,7 +11,6 @@ class_name MapLoader
 @export var empty_section: PackedScene
 @export_range(0,1) var empty_ratio: float = 0.3
 
-var is_running: bool = true
 var ready_to_restart := false
 
 var speed_vector: Vector3 = Vector3.ZERO
@@ -41,12 +40,12 @@ func _ready() -> void:
 	_control_speed(0.5)
 	_control_spawn()
 	_control_spawn(true)
-	TrickManager.xp_changed.connect(_on_xp_changed)
+	XpManager.points_changed.connect(_on_points_changed)
 	GameManager.instance.on_stop.connect(_on_stop)
 	GameManager.instance.on_start.connect(_on_start)
 	TimeManager.on_substep.connect(_control_speed)
 
-func _on_xp_changed(_new_val: int, _tier: int, _nb_tricks_since_grounded: int, _out_of: int, _total_points: int, _with_popup: bool):
+func _on_points_changed(_points_added: int, _total_points: int):
 	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
 	
 func _on_stop() -> void:

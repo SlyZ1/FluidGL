@@ -23,6 +23,8 @@ var _toggled: bool = true
 
 var _mesh_instance_scale: Vector3
 
+
+
 func toggle(value: bool) -> void:
 	_toggled = value
 
@@ -32,10 +34,11 @@ func can_catch() -> bool:
 func set_default_trick_rotation(rot: Quaternion) -> void:
 	_default_trick_rotation = rot
 
+
+
 func _ready() -> void:
 	_mesh_instance_scale = mesh_instance.scale
 	TrickManager.trick_performed.connect(_on_trick_performed)
-	TrickManager.trick_ended.connect(_on_trick_end)
 	TrickManager.trick_catched.connect(_on_trick_catched)
 	skate_physics.on_fall.connect(TrickManager.on_airborne)
 	skate_physics.on_grounded.connect(TrickManager.on_ground)
@@ -73,22 +76,8 @@ func _on_trick_performed(_name: String) -> void:
 		_active_tricks.push_back(trick)
 		trick.set_tween(_anim, self)
 
-func _on_trick_end() -> void:
-	_active_tricks.clear()
 	
-func _successfully_catched(dt: float) -> void:
-	if not _catch_pressed:
-		skate_physics.apply_impulse(catch_start_speed)
-		AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.CATCH)
-		
-	#_on_trick_end()
-	TrickManager.validate_xp()
-	if not _was_grounded_when_catched: skate_physics.reset_orientation(dt)
-	skate_physics.apply_impulse(-dt * catch_fall_speed)
-	_trick_catched = true
-	_catch_pressed = true
-	
-func _on_trick_catched(_progression: float, _dt: float) -> void:
+func _on_trick_catched(_dt: float) -> void:
 	if not _toggled:
 		return
 		
@@ -106,3 +95,15 @@ func _on_trick_catched(_progression: float, _dt: float) -> void:
 		return
 		
 	GameManager.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)
+
+func _successfully_catched(dt: float) -> void:
+	if not _catch_pressed:
+		skate_physics.apply_impulse(catch_start_speed)
+		AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.CATCH)
+		
+	_active_tricks.clear()
+	XpManager.validate_buffered_xp()
+	if not _was_grounded_when_catched: skate_physics.reset_orientation(dt)
+	skate_physics.apply_impulse(-dt * catch_fall_speed)
+	_trick_catched = true
+	_catch_pressed = true

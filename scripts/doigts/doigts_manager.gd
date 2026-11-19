@@ -28,6 +28,6 @@ func _process(_delta: float) -> void:
 	
 	if anim_controller.can_catch():
 		doigts_up.visual.material_overlay.stencil_color = Color.WHITE
-		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.3 * (0.6 + 0.5 * sin(TrickManager.get_progression()))
+		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.3
 	else:
 		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.0

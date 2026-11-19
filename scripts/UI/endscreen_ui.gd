@@ -9,4 +9,4 @@ func _on_holdfh_timeout() -> void:
 
 func _on_restart_lag_timeout() -> void:
 	input_suggestion_timer.start()
-	points_earned_label.text = "POINTS EARNED: %d" % TrickManager._points
+	points_earned_label.text = "POINTS EARNED: %d" % XpManager.get_points()

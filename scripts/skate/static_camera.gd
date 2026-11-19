@@ -63,10 +63,12 @@ func _update() -> void:
 		Vector3.UP if look_dir.dot(Vector3.UP) < 0.999 else Vector3.FORWARD
 	) 
 	
+# TODO : apply min distance so it stays focused even when rail after long combo
 func _handle_impact(dt: float) -> void:
 	_impact_t += dt
-	var strength := float(max(_impact_num_combo - 1, 0)) / impact_max_combo * impact_strength
-	_impact_distance_multiplier = 1 - strength * (1 - impact_curve.sample(min(_impact_t, 1)))
+	_impact_t = clamp(_impact_t, 0, 1)
+	var strength := clampf(_impact_num_combo - 1, 0, impact_max_combo) / impact_max_combo * impact_strength
+	_impact_distance_multiplier = 1 - strength * (1 - impact_curve.sample(_impact_t))
 
 func _process(delta: float) -> void:
 	if skate: 
@@ -84,5 +86,7 @@ func _on_stop() -> void:
 	skate = null
 	
 func _create_impact(_num_combo: int) -> void:
+	if _num_combo - 1 <= 0: return
 	_impact_t = 0
+	_impact_distance_multiplier = 1
 	_impact_num_combo = _num_combo
