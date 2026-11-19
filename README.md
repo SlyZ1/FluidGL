@@ -52,8 +52,8 @@ https://github.com/user-attachments/assets/59a388d3-5023-4894-96d9-a606be26afdd
 
 | Stat | Value |
 | ----------- | ----------- |
-| Particle number | 2.72 billion |
-| Cell number | 5.62 billion |
+| Particle number | 2.72 M |
+| Cell number | 5.62 M |
 | GPU Storage | 762 MB |
 | FPS | 14 |
 | Simulation time | 69 ms |
@@ -64,7 +64,7 @@ https://github.com/user-attachments/assets/4fe21d96-c868-499e-9ae7-c9c0ac28421e
 
 | Stat | Value |
 | ----------- | ----------- |
-| Particle number | 1.85 billion |
+| Particle number | 1.85 M |
 | Cell number | 539 K |
 | GPU Storage | 244 MB |
 | FPS | 41 |
@@ -76,8 +76,8 @@ https://github.com/user-attachments/assets/489b9e86-754a-45d7-8ae8-ae05fca0c769
 
 | Stat | Value |
 | ----------- | ----------- |
-| Particle number | 8.19 billion |
-| Cell number | 2.43 billion |
+| Particle number | 8.19 M |
+| Cell number | 2.43 M |
 | GPU Storage | 1 GB |
 | FPS | 10 |
 | Simulation time | 99 ms |
