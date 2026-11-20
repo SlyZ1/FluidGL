@@ -59,14 +59,11 @@ shader_parameter/decalage_colonne = 1.745
 
 [node name="Node3D" type="Node3D" unique_id=611096490]
 
-[node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("restart_lag_timer", "skate", "skate_ragdoll")]
+[node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("map_loader", "skate", "skate_ragdoll")]
 script = ExtResource("9_js0h6")
-restart_lag_timer = NodePath("RestartLag")
+map_loader = NodePath("../MapLoader")
 skate = NodePath("../Skate")
 skate_ragdoll = NodePath("../SkateRagdoll")
-
-[node name="RestartLag" type="Timer" parent="GameManager" unique_id=1344687735]
-one_shot = true
 
 [node name="UpgradeManager" type="Node" parent="." unique_id=1994883619]
 script = ExtResource("2_uina8")
@@ -74,6 +71,7 @@ current_upgrades = Array[ExtResource("3_ji1gn")]([ExtResource("4_1fjgs")])
 
 [node name="MapLoader" type="Node3D" parent="." unique_id=1846749011]
 script = ExtResource("1_a47ne")
+stop_duration = 1.5
 spawn_distance = 300
 kill_distance = 60
 angle = 0.0
@@ -83,11 +81,9 @@ sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), E
 empty_section = ExtResource("8_5k0m8")
 
 [node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
-transform = Transform3D(-3.365777e-08, 0, 0.77, 0, 0.77, 0, -0.77, 0, -3.365777e-08, 0, 3.5, 0)
 
 [node name="Skate" parent="." unique_id=38373150 instance=ExtResource("10_vxw8k")]
 transform = Transform3D(-3.365777e-08, 0, 0.77, 0, 0.77, 0, -0.77, 0, -3.365777e-08, 0, 9.099575, 0)
-visible = false
 inertia = 0.5
 angular_drag = 0.5
 
@@ -103,7 +99,7 @@ distance = 25.51
 angles = Vector2(-2.535, -0.485)
 offset = Vector3(3.815, 1.14, -1.88)
 skate_min_height = 7.0
-lerp_speed_multiplier = 5.0
+lerp_speed_multiplier = 8.0
 impact_strength = 0.545
 impact_curve = SubResource("Curve_p1m0m")
 impact_duration = 1.0
@@ -206,28 +202,27 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="EndScreen" type="Node" parent="UI" unique_id=1515080538 node_paths=PackedStringArray("input_suggestion_label", "input_suggestion_timer", "points_earned_label")]
+[node name="EndScreen" type="Node" parent="UI" unique_id=1515080538 node_paths=PackedStringArray("input_suggestion_timer", "input_suggestion_label", "points_earned_label")]
 script = ExtResource("40_0sji7")
-input_suggestion_label = NodePath("InputSuggestion")
 input_suggestion_timer = NodePath("InputSuggestion/InputAlternateTimer")
+input_suggestion_label = NodePath("InputSuggestion")
 points_earned_label = NodePath("PointsEarned")
 
 [node name="InputSuggestion" type="Label" parent="UI/EndScreen" unique_id=1666461984]
 visible = false
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 offset_left = -574.5
-offset_top = -62.0
+offset_top = -176.0
 offset_right = 574.5
-offset_bottom = 222.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 theme_override_fonts/font = ExtResource("36_qxk33")
 theme_override_font_sizes/font_size = 31
-text = "Hold F And H"
+text = "Press F + H to respawn"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -352,6 +347,4 @@ grow_horizontal = 2
 grow_vertical = 0
 pivot_offset_ratio = Vector2(1, 1)
 
-[connection signal="timeout" from="GameManager/RestartLag" to="GameManager" method="_on_restart_lag_timeout"]
-[connection signal="timeout" from="GameManager/RestartLag" to="UI/EndScreen" method="_on_restart_lag_timeout"]
 [connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]

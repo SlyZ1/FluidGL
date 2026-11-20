@@ -2,8 +2,9 @@ extends Node3D
 
 class_name MapLoader
 
-@export var spawn_distance = 20
-@export var kill_distance = 20
+@export var stop_duration: float = 1.0
+@export var spawn_distance: float = 20
+@export var kill_distance: float = 20
 @export var angle: float = -15
 @export var speed: float = 1
 @export_range(0,1) var speed_increase_rate: float = 1
@@ -16,6 +17,7 @@ var ready_to_restart := false
 var speed_vector: Vector3 = Vector3.ZERO
 
 var _speed_xp_accel: float = 1
+var _speed: float = 0
 
 var _spawned_sections: Array[Section] = []
 # Section "fantome" pour le prochain spawn
@@ -41,41 +43,13 @@ func _ready() -> void:
 	_control_spawn()
 	_control_spawn(true)
 	XpManager.points_changed.connect(_on_points_changed)
-	GameManager.instance.on_stop.connect(_on_stop)
 	GameManager.instance.on_start.connect(_on_start)
 	TimeManager.on_substep.connect(_control_speed)
+	_speed = speed
 
-func _on_points_changed(_points_added: int, _total_points: int):
-	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
-	
-func _on_stop() -> void:
-	create_tween().tween_property(self, "speed", 0.01, 2.0)
-	
-func _on_start() -> void:
-	_speed_xp_accel = 1
-
-func right() -> Vector3:
-	return Basis.from_euler(Vector3(0, 0, deg_to_rad(angle))) * Vector3.RIGHT
-	
-func up() -> Vector3:
-	return Basis.from_euler(Vector3(0, 0, deg_to_rad(angle))) * Vector3.UP
-
-func _new_section(snap_to: Vector3, empty := false) -> Section:
-	var index: int = randi() % sections.size()
-	for i in range(10):
-		if index == previous_spawn_index:
-			index = randi() % sections.size()
-		else: break
-	previous_spawn_index = index
-	var scene: PackedScene = sections[index]
-	
-	empty = empty || randf() < empty_ratio
-	
-	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
-	new_section.snap(snap_to, self)
-	add_child(new_section)
-	new_section.visible = false
-	return new_section
+func _process(_delta: float) -> void:
+	rotation_degrees.z = angle
+	_control_spawn()
 
 func _control_spawn(should_spawn_empty := false):
 	# Spawn le prochain fantome
@@ -100,13 +74,55 @@ func _control_spawn(should_spawn_empty := false):
 		front_section.queue_free()
 		_spawned_sections.pop_front()
 
+func _new_section(snap_to: Vector3, empty := false) -> Section:
+	var index: int = randi() % sections.size()
+	for i in range(10):
+		if index == previous_spawn_index:
+			index = randi() % sections.size()
+		else: break
+	previous_spawn_index = index
+	var scene: PackedScene = sections[index]
+	
+	empty = empty || randf() < empty_ratio
+	
+	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
+	new_section.snap(snap_to, self)
+	add_child(new_section)
+	new_section.visible = false
+	return new_section
+
 func _control_speed(delta: float):
 	for section: Section in _spawned_sections:
-		section.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
-	if _next_spawn: _next_spawn.position -= speed * _speed_xp_accel * Vector3.RIGHT * delta
-	if _spawned_sections.size() > 0: speed_vector = speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
+		section.position -= _speed * _speed_xp_accel * Vector3.RIGHT * delta
+	if _next_spawn: _next_spawn.position -= _speed * _speed_xp_accel * Vector3.RIGHT * delta
+	if _spawned_sections.size() > 0: speed_vector = _speed * _spawned_sections[0].global_basis.x * _speed_xp_accel
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	rotation_degrees.z = angle
+func _on_points_changed(_points_added: int, _total_points: int):
+	_speed_xp_accel = 1 + float(_total_points) / 1000 * speed_increase_rate
+	
+func stop() -> void:
+	await create_tween().tween_property(self, "_speed", 0.0, stop_duration).finished
+	
+func _on_start() -> void:
+	_speed = speed
+
+func restart_skip(duration: float) -> void:
+	_previous_skip_t = 0
+	_skip_dt = 0
+	_control_spawn(true)
+	var distance_to_skip: float = _spawned_sections.back().snap_front.global_position.x 
+	distance_to_skip += _spawned_sections.back().snap_back.global_position.x
+	distance_to_skip /= 2
+	var tween: Tween = create_tween()
+	tween.tween_method(_skip.bind(distance_to_skip), 0.0, 1.0, duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	await tween.finished
+
+var _previous_skip_t: float
+var _skip_dt: float
+func _skip(t: float, distance_to_skip: float) -> void:
+	_skip_dt = t - _previous_skip_t
+	_previous_skip_t = t
+	for section: Section in _spawned_sections:
+		section.position -= distance_to_skip * Vector3.RIGHT * _skip_dt
+	if _next_spawn: _next_spawn.position -= distance_to_skip * Vector3.RIGHT * _skip_dt
 	_control_spawn()

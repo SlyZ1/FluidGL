@@ -33,6 +33,7 @@ var _rail_weight_tween: Tween
 enum RailState { GROUNDED, FREE, GRINDING };
 
 func _ready() -> void:
+	GameManager.instance.on_death.connect(_reset)
 	TimeManager.on_substep.connect(_step)
 	_current_state = _new_state(RailState.GROUNDED)
 
@@ -44,6 +45,8 @@ func _new_state(state: RailState) -> RailControllerState:
 	return RailGroundedState.new()
 
 func _step(dt: float) -> void:
+	if not GameManager.instance.game_started: 
+		return
 	var state: RailState = _current_state.check_transitions(skate_physics, dt)
 	if state != _current_state.state():
 		_current_state.exit(self)
@@ -55,6 +58,14 @@ func _process(_delta: float) -> void:
 
 func _update_rail(new_rail: Path3D) -> void:
 	current_rail = new_rail
+
+func _reset() -> void:
+	_current_state.exit(self)
+	_current_state = _new_state(RailState.FREE)
+	_current_state.enter(self)
+	current_rail = null
+	is_on_rail = false
+	if _rail_weight_tween: _rail_weight_tween.kill()
 
 
 # -------------------- UTILITIES --------------------

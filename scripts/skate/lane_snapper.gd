@@ -32,16 +32,14 @@ func toggle(snap: bool) -> void:
 	if not snap: kill_tween()
 		
 func kill_tween() -> void:
-	if _lane_tween and _lane_tween.is_valid():
-		_lane_tween.kill()
+	if _lane_tween: _lane_tween.kill()
 
 func _ready() -> void:
 	_previous_z = skate_physics.global_position.z
 
 func _process(dt: float) -> void:
 	_handle_coyotee_time(dt)
-	if (_wants_switch):
-		_change_lane(-_current_lane)
+	if (_wants_switch): _change_lane(-_current_lane)
 
 	_snap_closest_lane()
 	_handle_drift(dt)
@@ -53,9 +51,12 @@ func _snap_closest_lane() -> void:
 	):
 		_change_lane(-1 if skate_physics.global_position.z <= 0 else 1)
 
-func _change_lane(lane: float, force: bool = false) -> void:
-	if not _snap: return
-	if not force and skate_physics.is_grounded(): return
+func _change_lane(lane: float) -> void:
+	if not _snap: 
+		_reset_coyotee()
+		return
+	if skate_physics.is_grounded(): return
+
 	_reset_coyotee()
 	_current_lane = lane
 	_lane_tween = create_tween()

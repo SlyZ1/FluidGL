@@ -25,15 +25,17 @@ var _catch_pressed: bool = true
 
 
 func reset() -> void:
+	_catch_pressed = false
 	_current_trick = ""
 	_started = false
-	_possible_tricks = _tricks.get_neighbours("")
+	_possible_tricks = []
 	_nb_tricks_since_grounded = 0
 	on_nb_trick_increased.emit(_nb_tricks_since_grounded)
 	on_reset.emit()
 
 func on_ground() -> void:
 	reset()
+	_possible_tricks = _tricks.get_neighbours("")
 
 func add_trick_count() -> void:
 	_nb_tricks_since_grounded += 1

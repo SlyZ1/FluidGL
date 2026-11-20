@@ -42,6 +42,7 @@ var _base_basis: Basis
 var _centre_local: Vector3
 var _centre_xz: Vector2
 var _half_len: float
+var _initial_y: float
 
 var _process_physics: bool = true
 var _process_linear_physics: bool = true
@@ -72,9 +73,23 @@ func _apply_wheel_impulse(side: float, j: float) -> void:
 	
 func just_impulsed() -> bool:
 	return _impulsed_timer > 0
+
+func reset() -> void:
+	_impulsed_timer = 0
+	_fall_timer = 0
+	_is_grounded = false
+	_y = _initial_y
+	reset_orientation()
+	reset_velocities()
+	_apply_transform()
+	capteur_back.force_shapecast_update()
+	capteur_front.force_shapecast_update()
+	capteur_ground.force_shapecast_update()
 	
-func reset_orientation(dt: float = 1, reset_strengh = 0.01) -> void:
-	#_theta = 0
+func reset_orientation() -> void:
+	_theta = 0
+
+func smooth_reset_orientation(dt: float = 1, reset_strengh = 0.01) -> void:
 	_omega = -_theta * reset_strengh / dt
 
 func reset_velocities(reset_linear: bool = true, reset_angular: bool = true) -> void:
@@ -106,6 +121,9 @@ func get_normal() -> Vector3:
 func set_global_y(pos_y: float) -> void:
 	_y = pos_y + (global_basis * _centre_local).y 
 
+func get_global_y() -> float:
+	return _y - (global_basis * _centre_local).y
+
 
 # ------------------ PHYSICS LOGIC ------------------
 
@@ -117,6 +135,7 @@ func _init_state() -> void:
 	_centre_local = to_local(mid)
 	_centre_xz = Vector2(mid.x, mid.z)
 	_y = mid.y
+	_initial_y = _y
 	_theta = 0
 	_vy = 0
 	_omega = 0

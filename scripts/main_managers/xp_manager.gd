@@ -61,7 +61,8 @@ func _update_tier() -> void:
 
 
 func _on_restart() -> void:
-	_points = 0
+	xp_changed.emit(-_xp, 0, _tier)
 	_xp = 0
 	_xp_buffer = 0
 	_tier = 0
+	tier_changed.emit(_tier)

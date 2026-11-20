@@ -16,6 +16,8 @@ var _skate_point_per_second: float
 
 var _last_rail_point: Vector3
 
+var _pos_transition_t: float
+
 # protected
 func exit(rail_controller: RailController) -> void:
 	rail_controller.current_rail = null
@@ -56,6 +58,8 @@ func enter(rail_controller: RailController) -> void:
 	rail_controller._init_rail_pose_cible()
 	rail_controller._tween_rail_weight(1.0)
 
+	_pos_transition_t = 0.0
+
 func state() -> RailController.RailState:
 	return RailController.RailState.GRINDING
 
@@ -95,10 +99,13 @@ func check_transitions(skate_physics: SkatePhysics, dt: float) -> RailController
 
 	XpManager.add_buffered_xp(_skate_point_per_second * dt)
 
-	skate_physics.global_position = Vector3(skate_physics.global_position.x, rail_point.y, rail_point.z)
+	var target_pos: Vector3 = Vector3(skate_physics.global_position.x, rail_point.y, rail_point.z)
+	_pos_transition_t = lerp(1.0, _pos_transition_t, exp(-4 * dt))
+	skate_physics.global_position = lerp(skate_physics.global_position, target_pos, _pos_transition_t)
+	skate_physics.set_global_y(lerp(skate_physics.get_global_y(), rail_point.y, _pos_transition_t))
+
 	skate_physics.reset_velocities(true, false)
-	skate_physics.reset_orientation(dt, 0.05)
-	skate_physics.set_global_y(rail_point.y)
+	skate_physics.smooth_reset_orientation(dt, 0.05)
 
 	_update_rail_pose_cile.call(dt)
 

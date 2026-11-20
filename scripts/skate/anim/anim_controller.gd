@@ -42,6 +42,7 @@ func _ready() -> void:
 	TrickManager.trick_catched.connect(_on_trick_catched)
 	skate_physics.on_fall.connect(TrickManager.on_airborne)
 	skate_physics.on_grounded.connect(TrickManager.on_ground)
+	GameManager.instance.on_death.connect(_reset)
 
 func _process(_delta: float) -> void:
 	if ((skate_physics.is_grounded() or skate_physics.is_mesh_colliding()) and not _trick_catched):
@@ -104,7 +105,13 @@ func _successfully_catched(dt: float) -> void:
 		
 	_active_tricks.clear()
 	XpManager.validate_buffered_xp()
-	if not _was_grounded_when_catched: skate_physics.reset_orientation(dt)
+	if not _was_grounded_when_catched: skate_physics.smooth_reset_orientation(dt)
 	skate_physics.apply_impulse(-dt * catch_fall_speed)
 	_trick_catched = true
 	_catch_pressed = true
+
+func _reset() -> void:
+	_trick_catched = true
+	_catch_pressed = false
+	_was_grounded_when_catched = false
+	_toggled = true

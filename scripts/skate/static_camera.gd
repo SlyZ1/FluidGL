@@ -45,7 +45,7 @@ func _ready() -> void:
 	_update()
 	_target_distance = distance
 	_actual_distance = distance
-	GameManager.instance.on_stop.connect(_on_stop)
+	GameManager.instance.on_death.connect(_on_death)
 	TrickManager.trick_validated.connect(_create_impact)
 
 # Fonction pour rotate la cam
@@ -71,7 +71,7 @@ func _handle_impact(dt: float) -> void:
 	_impact_distance_multiplier = 1 - strength * (1 - impact_curve.sample(_impact_t))
 
 func _process(delta: float) -> void:
-	if skate: 
+	if skate:
 		var skate_offset: float = max(skate.global_position.y - skate_min_height, 0)
 		_target_distance = distance + skate_offset * distance_multiplier
 		
@@ -80,10 +80,9 @@ func _process(delta: float) -> void:
 	_handle_impact(delta)
 	_update()
 	
-func _on_stop() -> void:
+func _on_death() -> void:
 	_target_distance = distance
 	lerp_speed_multiplier = 1
-	skate = null
 	
 func _create_impact(_num_combo: int) -> void:
 	if _num_combo - 1 <= 0: return

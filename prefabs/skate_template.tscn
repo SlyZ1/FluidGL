@@ -67,7 +67,7 @@ shape = SubResource("BoxShape3D_tnd71")
 target_position = Vector3(0, 0, 0)
 
 [node name="skate" parent="Skate" unique_id=1683496385 instance=ExtResource("2_uad4r")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0.046299934, -0.29049778, 0.020355226)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0, -0.29, 0)
 
 [node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5538435e-08, 0, -0.35547793)
@@ -79,20 +79,22 @@ script = ExtResource("2_2wimw")
 skate_physics = NodePath("..")
 trick_ground_collision = 0.6
 mesh_instance = NodePath("../Skate/skate")
-catch_fall_speed = 35.0
+catch_fall_speed = 50.0
+catch_start_speed = -3.0
 
 [node name="RailController" type="Node" parent="." unique_id=2049435339 node_paths=PackedStringArray("skate_physics", "anim_controller", "lane_snapper")]
 script = ExtResource("5_8vpdq")
 skate_physics = NodePath("..")
 anim_controller = NodePath("../AnimController")
 lane_snapper = NodePath("../LaneSnapper")
+rail_z_thresh = 1.0
 rail_y_offset = 0.4
 
 [node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("anim_controller", "skate_physics")]
 script = ExtResource("5_xumek")
-lane_position = 4.25
 anim_controller = NodePath("../AnimController")
 skate_physics = NodePath("..")
+lane_position = 4.25
 
 [node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller", "skate_physics", "parent")]
 script = ExtResource("5_wfreb")
