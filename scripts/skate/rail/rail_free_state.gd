@@ -8,6 +8,7 @@ var _previous_rail: Path3D
 
 var _rail_y_thresh_enter: float
 var _rail_y_thresh_die: float
+var _rail_y_thresh_neg: float
 
 # protected
 func exit(rail_controller: RailController) -> void:
@@ -18,15 +19,16 @@ func enter(rail_controller: RailController) -> void:
 	_previous_rail = rail_controller.current_rail
 	_rail_y_thresh_enter = rail_controller.rail_y_thresh_enter
 	_rail_y_thresh_die = rail_controller.rail_y_thresh_die
+	_rail_y_thresh_neg = rail_controller.rail_y_thresh_neg
 
 func state() -> RailController.RailState:
 	return RailController.RailState.FREE
 
 func _filter_rail(dy: float, rail: Path3D) -> Path3D:
-	if dy <= _rail_y_thresh_die and not TrickManager.get_catch_pressed():
+	if (dy <= _rail_y_thresh_die and dy >= _rail_y_thresh_neg and not TrickManager.get_catch_pressed()):
 		if rail == _previous_rail: 
 			return rail
-		GameManager.instance.stop()
+		GameManager.instance.death()
 		return null
 	if dy <= _rail_y_thresh_enter and TrickManager.get_catch_pressed():
 		return rail

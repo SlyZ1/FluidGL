@@ -7,7 +7,8 @@
 [ext_resource type="Script" uid="uid://doxuh2a25glg4" path="res://scripts/skate/rail/rail_controller.gd" id="5_8vpdq"]
 [ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
 [ext_resource type="Script" uid="uid://ddk58r6f7rp7l" path="res://scripts/doigts/doigts_manager.gd" id="5_wfreb"]
-[ext_resource type="Script" uid="uid://yrq8e5mmwhcy" path="res://scripts/skate/lane_snapper.gd" id="5_xumek"]
+[ext_resource type="Script" uid="uid://yrq8e5mmwhcy" path="res://scripts/skate/lane/lane_snapper.gd" id="5_xumek"]
+[ext_resource type="Script" uid="uid://dbcpgel1g3ga8" path="res://scripts/skate/lane/lane_settings.gd" id="6_8vpdq"]
 [ext_resource type="Shader" uid="uid://bhkg2pr070gd6" path="res://shaders/impact.gdshader" id="6_55io4"]
 [ext_resource type="Texture2D" uid="uid://dwjkmygjx26cl" path="res://icon.svg" id="7_oh2xr"]
 [ext_resource type="Script" uid="uid://3tok0mw57sx1" path="res://scripts/skate/skate_vfx.gd" id="11_5e2xk"]
@@ -20,6 +21,11 @@ size = Vector3(1.575, 0.865, 5.835)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q1d6x"]
 size = Vector3(1.55, 1.145, 3.45)
+
+[sub_resource type="Resource" id="Resource_8vpdq"]
+script = ExtResource("6_8vpdq")
+size = 4.25
+metadata/_custom_type_script = "uid://dbcpgel1g3ga8"
 
 [sub_resource type="Gradient" id="Gradient_55io4"]
 interpolation_color_space = 2
@@ -88,12 +94,14 @@ skate_physics = NodePath("..")
 anim_controller = NodePath("../AnimController")
 lane_snapper = NodePath("../LaneSnapper")
 rail_z_thresh = 1.0
+rail_y_thresh_neg = -1.0
 rail_y_offset = 0.4
 
 [node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("anim_controller", "skate_physics")]
 script = ExtResource("5_xumek")
 anim_controller = NodePath("../AnimController")
 skate_physics = NodePath("..")
+lane_settings = SubResource("Resource_8vpdq")
 lane_position = 4.25
 
 [node name="DoigtsManager" type="Node3D" parent="." unique_id=207228611 node_paths=PackedStringArray("doigts_idle", "doigts_up", "anim_controller", "rail_controller", "skate_physics", "parent")]

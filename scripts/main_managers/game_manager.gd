@@ -46,7 +46,7 @@ func _exit_tree() -> void:
 	if instance == self:
 		instance = null
 		
-func stop(impulse_direction: Vector3 = Vector3.ZERO) -> void:
+func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	if not game_started: return
 
 	AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.DEATH)
@@ -99,3 +99,4 @@ func _restart_logic() -> void:
 func _process(_dt: float) -> void:
 	_handle_pause()
 	_restart_logic()
+	if Input.is_key_pressed(KEY_0): death()

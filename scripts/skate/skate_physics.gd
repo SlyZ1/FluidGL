@@ -160,14 +160,14 @@ func _roue_snapped_position(capteur: ShapeCast3D) -> Vector2:
 	var rayon: float = (capteur.shape as SphereShape3D).radius * capteur.global_basis.get_scale().x
 	var i: int = _get_most_up_normal(capteur, true)
 	if Utils.collider_has_layer(capteur.get_collider(i), dangerous_obstacle_layer):
-		GameManager.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
+		GameManager.instance.death((Vector3.LEFT * 2 + Vector3.UP) * 10)
 		return Vector2(-INF, 0)
 	var g: Vector3 = capteur.get_collision_point(i)
 	var n: Vector3 = capteur.get_collision_normal(i)
 	if n.y < -0.4:
 		return Vector2(-INF, 0)
 	if n.y < slope_thresh:
-		GameManager.instance.stop((Vector3.LEFT * 2 + Vector3.UP) * 10)
+		GameManager.instance.death((Vector3.LEFT * 2 + Vector3.UP) * 10)
 		return Vector2(0, 0)
 	var p: Vector3 = capteur.global_position
 	var h: float = g.y + (rayon - n.x * (p.x - g.x) - n.z * (p.z - g.z)) / n.y # solving n dot (p - g) = r

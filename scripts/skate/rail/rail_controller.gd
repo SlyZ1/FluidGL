@@ -65,6 +65,7 @@ func _reset() -> void:
 	_current_state.enter(self)
 	current_rail = null
 	is_on_rail = false
+	_rail_pose_weight = 0
 	if _rail_weight_tween: _rail_weight_tween.kill()
 
 
@@ -123,7 +124,7 @@ func _touches_rail(rail: Path3D, pos: Vector3) -> float:
 
 	var dy: float = pos.y - rail_point.y
 	var dz: float = abs(pos.z - rail_point.z) 
-	if dz <= rail_z_thresh and dy >= rail_y_thresh_neg:
+	if dz <= rail_z_thresh:
 		return dy # dy <= rail_y_thresh_enter
 
 	return INF

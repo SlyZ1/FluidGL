@@ -93,9 +93,6 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_tgsb3"]
-size = Vector3(4.819031, 1.3818359, 1)
-
 [node name="rail_normal" type="Node3D" unique_id=635390335]
 transform = Transform3D(-4.371139e-08, 0, 1.28, 0, 1, 0, -1, 0, -5.5950576e-08, -9.5625, 0, -4.25)
 script = ExtResource("1_5umo1")
@@ -108,10 +105,3 @@ mesh = SubResource("ArrayMesh_3hon6")
 
 [node name="Path3D" type="Path3D" parent="." unique_id=528291768]
 curve = SubResource("Curve3D_tas50")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1518900737]
-collision_layer = 2
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=211462488]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04837084, -1.6464763, -7.041315)
-shape = SubResource("BoxShape3D_tgsb3")

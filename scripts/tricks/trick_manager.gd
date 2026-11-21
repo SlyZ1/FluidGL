@@ -25,7 +25,6 @@ var _catch_pressed: bool = true
 
 
 func reset() -> void:
-	_catch_pressed = false
 	_current_trick = ""
 	_started = false
 	_possible_tricks = []

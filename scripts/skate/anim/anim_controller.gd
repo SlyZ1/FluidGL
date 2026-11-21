@@ -44,9 +44,11 @@ func _ready() -> void:
 	skate_physics.on_grounded.connect(TrickManager.on_ground)
 	GameManager.instance.on_death.connect(_reset)
 
+var _was_grounded: bool
 func _process(_delta: float) -> void:
-	if ((skate_physics.is_grounded() or skate_physics.is_mesh_colliding()) and not _trick_catched):
-		GameManager.instance.stop()
+	# if (skate_physics.is_grounded() and not _was_grounded) and not TrickManager.get_catch_pressed():
+	# 	GameManager.instance.stop()
+	_was_grounded = skate_physics.is_grounded()
 	
 	var current_rotation: Quaternion = _default_trick_rotation
 	for trick in _active_tricks:
@@ -96,7 +98,7 @@ func _on_trick_catched(_dt: float) -> void:
 	if _trick_catched:
 		return
 		
-	GameManager.instance.stop((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)
+	GameManager.instance.death((Vector3.DOWN + Vector3.BACK * 2).normalized() * 8)
 
 func _successfully_catched(dt: float) -> void:
 	if not _catch_pressed:
@@ -111,7 +113,9 @@ func _successfully_catched(dt: float) -> void:
 	_catch_pressed = true
 
 func _reset() -> void:
+	_active_tricks = []
 	_trick_catched = true
 	_catch_pressed = false
 	_was_grounded_when_catched = false
-	_toggled = true
+	toggle(true)
+	skate_physics.set_rot(Basis(Quaternion.IDENTITY))
