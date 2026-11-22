@@ -6,6 +6,7 @@ extends Control
 @export var popup_color: Color
 
 @export_group("Tiers")
+@export var tier_label: Label
 @export var tier_fill: TierFill
 @export var tier_letters: Array[String] = ["D", "C", "B", "A", "S"]
 
@@ -37,7 +38,7 @@ func points_popup(num_points: int) -> void:
 	var label = popup_template.duplicate()
 	label.text = "+" + str(num_points)
 	label.add_theme_color_override("font_color", popup_color)
-	add_child(label)
+	popup_template.get_parent().add_child(label)
 	
 	var tween = create_tween().set_parallel(true)
 	tween.tween_property(label, "position:y", label.position.y - 50, 0.6)\
@@ -94,15 +95,15 @@ func _on_xp_changed(_xp_added: int, _tier_progression: float, _tier: int):
 		
 		_maj_barre(_tier_progression)
 		var tween = create_tween()
-		tween.tween_property($Tier, "scale", _tier_scale * 1.2, 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_property(tier_label, "scale", _tier_scale * 1.2, 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		create_tween().tween_property(points, "scale", _points_scale * 1.2, 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	
 		await tween.finished
-		create_tween().tween_property($Tier, "scale", _tier_scale, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		create_tween().tween_property(tier_label, "scale", _tier_scale, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		create_tween().tween_property(points, "scale", _points_scale, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	else: tier_fill.set_remplissage(_tier_progression)
 
 
 func _on_tier_changed(_new_tier: int):
 	_new_tier = clamp(_new_tier, 0, tier_letters.size() - 1)
-	$Tier.text = tier_letters[_new_tier]
+	tier_label.text = tier_letters[_new_tier]

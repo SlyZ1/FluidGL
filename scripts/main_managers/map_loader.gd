@@ -2,12 +2,13 @@ extends Node3D
 
 class_name MapLoader
 
-@export var stop_duration: float = 1.0
-@export var spawn_distance: float = 20
-@export var kill_distance: float = 20
-@export var angle: float = -15
-@export var speed: float = 1
-@export_range(0,1) var speed_increase_rate: float = 1
+@export var cam: CustomCamera
+@export var stop_duration: float = 1.5
+@export var spawn_distance: float = 300
+@export var kill_distance: float = 60
+@export var angle: float = 0
+@export var speed: float = 35
+@export_range(0,1) var speed_increase_rate: float = 0.002
 @export var sections: Array[PackedScene]
 @export var empty_section: PackedScene
 @export_range(0,1) var empty_ratio: float = 0.3
@@ -45,7 +46,7 @@ func _ready() -> void:
 	XpManager.points_changed.connect(_on_points_changed)
 	GameManager.instance.on_start.connect(_on_start)
 	TimeManager.on_substep.connect(_control_speed)
-	_speed = speed
+	_speed = speed 
 
 func _process(_delta: float) -> void:
 	rotation_degrees.z = angle
@@ -60,15 +61,17 @@ func _control_spawn(should_spawn_empty := false):
 		_next_spawn = _new_section(_spawned_sections.back().snap_front.global_position, false)
 
 	# Check si le fantome est valide
-	if _next_spawn && (_next_spawn.snap_back.global_position.length_squared() <= spawn_distance * spawn_distance || should_spawn_empty):
+	var custom_spawn_dist: float = spawn_distance * max(cam.get_distance_ratio() / 1.5, 1)
+	if _next_spawn && (_next_spawn.snap_back.global_position.length_squared() <= custom_spawn_dist * custom_spawn_dist || should_spawn_empty):
 		_next_spawn.visible = true
 		_spawned_sections.append(_next_spawn)
 		_next_spawn = null
 		
 	# Check si le plus vieux est hors cam
+	var custom_kill_dist: float = kill_distance * max(cam.get_distance_ratio() / 2, 1)
 	var front_section: Section = _spawned_sections.front()
 	if (front_section 
-		and front_section.snap_front.global_position.length_squared() > kill_distance * kill_distance
+		and front_section.snap_front.global_position.length_squared() > custom_kill_dist * custom_kill_dist
 		and front_section.snap_front.global_position.dot(Vector3(1,0,0)) < 0
 	):
 		front_section.queue_free()

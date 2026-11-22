@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://bykj6c41eouqh"]
 
 [ext_resource type="Script" uid="uid://bsk5i0bpxbhd4" path="res://scripts/UI/streak_panel.gd" id="1_ymcwo"]
-[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://fonts/Matcha Style.ttf" id="2_1fx2o"]
 [ext_resource type="Shader" uid="uid://dymfd8cg5kxm7" path="res://shaders/streak_panel.gdshader" id="2_4hqtd"]
 [ext_resource type="Script" uid="uid://bld81h7uoodvt" path="res://scripts/UI/tier_fill.gd" id="4_y865s"]
+[ext_resource type="Texture2D" uid="uid://bg3h7264dmdsq" path="res://textures/icons/Full Heart.svg" id="5_7kd24"]
 [ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://fonts/PORKYS_.TTF" id="5_dsygr"]
+[ext_resource type="Texture2D" uid="uid://bit0dbopf1aue" path="res://textures/icons/Half Heart.svg" id="6_f0p7f"]
+[ext_resource type="Texture2D" uid="uid://fakef504lm2r" path="res://textures/icons/Empty Heart.svg" id="7_c27ln"]
 
 [sub_resource type="Curve" id="Curve_dsygr"]
 _data = [Vector2(0, 0.49514556), 0.0, 0.0, 0, 0, Vector2(0.35999995, 1), 0.0, 0.0, 0, 0, Vector2(0.65090907, 0.36893195), 0.0, 0.0, 0, 0, Vector2(1, 0.49514556), 0.0, 0.0, 0, 0]
@@ -22,7 +24,7 @@ shader_parameter/sin_spatial_freq = 18.695
 shader_parameter/sin_temp_freq = 10.0
 shader_parameter/sin_ampl = 0.02
 
-[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("points", "popup_template", "tier_fill", "wow_template")]
+[node name="StreakPanel" type="Control" unique_id=199057457 node_paths=PackedStringArray("points", "popup_template", "tier_label", "tier_fill", "wow_template")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,64 +32,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ymcwo")
-points = NodePath("Points")
-popup_template = NodePath("Points")
+points = NodePath("Left UI/Points")
+popup_template = NodePath("Left UI/Points")
 popup_color = Color(1, 0.7176471, 0.36862746, 0.53333336)
-tier_fill = NodePath("Tier")
+tier_label = NodePath("Left UI/Tier")
+tier_fill = NodePath("Left UI/Tier")
 wow_curve = SubResource("Curve_dsygr")
 wow_strengh = 1.0
 wow_duration = 0.2
 wow_texts = Array[String](["", "", "Ok", "Nice!", "Great!", "Amazing!", "Crazy!", "Epic!!!", "Legendary!!!", "GODLIKE", "STOP PLEASE", "..."])
 wow_colors = Array[Color]([Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0.60784316), Color(1, 1, 1, 0.60784316), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(0.96862745, 0.96862745, 0.96862745, 1), Color(0.96862745, 0.4862745, 0.4862745, 1), Color(0.96862745, 0.4862745, 0.4862745, 1), Color(0.96862745, 0.4862745, 0.4862745, 1), Color(0, 0, 0, 1), Color(0, 0, 0, 1)])
 wow_template = NodePath("Wow")
-
-[node name="Tier" type="Label" parent="." unique_id=40381478]
-material = SubResource("ShaderMaterial_1fx2o")
-layout_mode = 1
-offset_top = 34.999996
-offset_right = 180.0
-offset_bottom = 170.0
-scale = Vector2(0.7170198, 0.7170198)
-pivot_offset_ratio = Vector2(0.5, 0.5)
-theme_override_fonts/font = ExtResource("5_dsygr")
-theme_override_font_sizes/font_size = 100
-text = "D"
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("4_y865s")
-
-[node name="Label2" type="Label" parent="." unique_id=431712243]
-layout_mode = 1
-offset_left = -101.0
-offset_top = 204.99998
-offset_right = 531.0
-offset_bottom = 251.99998
-rotation = -0.6060464
-pivot_offset_ratio = Vector2(0.5, 0.5)
-offset_transform_enabled = true
-theme_override_colors/font_color = Color(0.9607843, 0.654902, 0.2901961, 1)
-theme_override_constants/outline_size = -46
-theme_override_fonts/font = ExtResource("2_1fx2o")
-theme_override_font_sizes/font_size = 28
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Points" type="Label" parent="." unique_id=880287802]
-layout_mode = 1
-offset_left = -228.99998
-offset_top = 17.0
-offset_right = 403.0
-offset_bottom = 72.0
-scale = Vector2(0.7170198, 0.7170198)
-pivot_offset_ratio = Vector2(0.5, 0.5)
-offset_transform_enabled = true
-theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
-theme_override_constants/outline_size = -46
-theme_override_fonts/font = ExtResource("5_dsygr")
-theme_override_font_sizes/font_size = 40
-text = "1500"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Wow" type="Label" parent="." unique_id=685480470]
 layout_mode = 1
@@ -104,6 +59,81 @@ offset_transform_enabled = true
 theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
 theme_override_constants/outline_size = -46
 theme_override_fonts/font = ExtResource("5_dsygr")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 25
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Left UI" type="Control" parent="." unique_id=1549052985]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 50.0
+offset_top = 45.0
+offset_right = 90.0
+offset_bottom = 85.0
+scale = Vector2(0.725, 0.725)
+
+[node name="Tier" type="Label" parent="Left UI" unique_id=40381478]
+material = SubResource("ShaderMaterial_1fx2o")
+layout_mode = 1
+offset_left = -63.448273
+offset_top = 24.827587
+offset_right = 116.55173
+offset_bottom = 159.82759
+scale = Vector2(0.7170198, 0.7170198)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("5_dsygr")
+theme_override_font_sizes/font_size = 100
+text = "D"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_y865s")
+
+[node name="Points" type="Label" parent="Left UI" unique_id=880287802]
+layout_mode = 1
+offset_left = 2.5056763
+offset_top = -10.540573
+offset_right = 634.5057
+offset_bottom = 44.459427
+scale = Vector2(0.7170198, 0.7170198)
+pivot_offset_ratio = Vector2(0, 0.5)
+offset_transform_enabled = true
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = -46
+theme_override_fonts/font = ExtResource("5_dsygr")
+theme_override_font_sizes/font_size = 50
+text = "1500"
+vertical_alignment = 1
+
+[node name="Heart1" type="Control" parent="Left UI" unique_id=1293288067]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 26.206896
+offset_top = 166.89655
+offset_right = 66.206894
+offset_bottom = 206.89682
+
+[node name="FullHeart" type="Sprite2D" parent="Left UI/Heart1" unique_id=1929329164]
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("5_7kd24")
+
+[node name="Heart2" type="Control" parent="Left UI" unique_id=2070742324]
+anchors_preset = 0
+offset_left = 26.206896
+offset_top = 216.89655
+offset_right = 66.206894
+offset_bottom = 256.89682
+
+[node name="FullHeart" type="Sprite2D" parent="Left UI/Heart2" unique_id=284451517]
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("6_f0p7f")
+
+[node name="Heart3" type="Control" parent="Left UI" unique_id=778066280]
+anchors_preset = 0
+offset_left = 26.206896
+offset_top = 266.8965
+offset_right = 66.206894
+offset_bottom = 306.89682
+
+[node name="FullHeart" type="Sprite2D" parent="Left UI/Heart3" unique_id=1840846746]
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("7_c27ln")

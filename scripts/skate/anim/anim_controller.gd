@@ -46,8 +46,6 @@ func _ready() -> void:
 
 var _was_grounded: bool
 func _process(_delta: float) -> void:
-	# if (skate_physics.is_grounded() and not _was_grounded) and not TrickManager.get_catch_pressed():
-	# 	GameManager.instance.stop()
 	_was_grounded = skate_physics.is_grounded()
 	
 	var current_rotation: Quaternion = _default_trick_rotation

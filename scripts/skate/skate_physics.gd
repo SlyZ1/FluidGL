@@ -12,7 +12,8 @@ class_name SkatePhysics
 @export var mass: float = 1.0
 @export var inertia: float = 0.05
 @export var angular_drag: float = 0.01
-@export_group("Rotation limit")
+@export_group("Limits")
+@export var max_fall_speed: float = 70
 @export_range(0, 90) var max_deg_angle: float = 40
 @export var limit_softness: float = 6
 @export_group("Slope")
@@ -183,7 +184,7 @@ func _contact_vitesse(side: float, sol: Vector2, dt: float) -> void:
 		return
 
 	_vy = max(_vy, -20)
-
+	
 	var levier: float = side * _half_len * cos(_theta)
 	var v_rot: float = _omega * levier
 	var v_roue: float = _vy + v_rot
@@ -193,6 +194,7 @@ func _contact_vitesse(side: float, sol: Vector2, dt: float) -> void:
 	var k: float = 1 / mass + levier * levier / inertia
 	var impulsion: float = (v_target - v_roue) / k
 	_vy += impulsion / mass
+	
 	_omega += impulsion * levier / inertia
 
 func _contact_position(side: float, y_ground: float) -> void:
@@ -232,13 +234,13 @@ func _grounded_logic() -> void:
 	_is_grounded = capteur_ground.is_colliding()
 
 func _step(dt: float) -> void:
-	if not can_process():
+	if not can_process() or not GameManager.instance.game_started:
 		return 
 	var sol_back: Vector2 = _roue_snapped_position(capteur_back)
 	var sol_front: Vector2 = _roue_snapped_position(capteur_front)
 
 	if _process_physics:
-		if _process_linear_physics: _vy -= gravity * dt
+		if _process_linear_physics: _vy = max(_vy - gravity * dt, -max_fall_speed)
 		if _process_angular_physics: _omega -= _omega * angular_drag * dt
 
 		for _i in range(10):

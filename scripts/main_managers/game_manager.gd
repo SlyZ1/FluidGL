@@ -29,6 +29,7 @@ func set_active(node: Node3D, active: bool) -> void:
 	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
 
 func _ready() -> void:
+	Engine.max_fps = 120
 	on_death.connect(AudioManager.on_global_stop)
 	on_death.connect(TrickManager.reset)
 	on_death.connect(XpManager._on_restart)
@@ -99,4 +100,12 @@ func _restart_logic() -> void:
 func _process(_dt: float) -> void:
 	_handle_pause()
 	_restart_logic()
-	if Input.is_key_pressed(KEY_0): death()
+	if Input.is_action_just_pressed("fullscreen"): toggle_fullscreen()
+
+var _fullscreen: bool = false
+func toggle_fullscreen():
+	_fullscreen = not _fullscreen
+	if _fullscreen:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)

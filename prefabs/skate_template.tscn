@@ -94,7 +94,7 @@ skate_physics = NodePath("..")
 anim_controller = NodePath("../AnimController")
 lane_snapper = NodePath("../LaneSnapper")
 rail_z_thresh = 1.0
-rail_y_thresh_neg = -1.0
+rail_y_thresh_neg = -0.25
 rail_y_offset = 0.4
 
 [node name="LaneSnapper" type="Node" parent="." unique_id=1734990674 node_paths=PackedStringArray("anim_controller", "skate_physics")]

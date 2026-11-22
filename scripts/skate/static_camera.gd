@@ -1,4 +1,5 @@
 extends Node3D
+class_name CustomCamera
 
 @export_group("Scene Variables")
 # Pour que ça s'update à chaque modif
@@ -34,6 +35,7 @@ extends Node3D
 @export var impact_duration: float
 @export var impact_max_combo: int
 
+var _init_target_height: float
 var _target_distance: float
 var _actual_distance: float
 
@@ -41,8 +43,18 @@ var _impact_distance_multiplier: float = 1
 var _impact_t: float = 0
 var _impact_num_combo: int = 0
 
+
+func get_distance_ratio() -> float:
+	return max(_actual_distance / distance, 1)
+
+func set_target_position(pos: Vector3) -> void:
+	target.global_position = pos
+	_init_target_height = pos.y
+
+
 func _ready() -> void:
 	_update()
+	_init_target_height = target.global_position.y
 	_target_distance = distance
 	_actual_distance = distance
 	GameManager.instance.on_death.connect(_on_death)
@@ -61,7 +73,7 @@ func _update() -> void:
 	global_basis = Basis.looking_at(
 		-look_dir,
 		Vector3.UP if look_dir.dot(Vector3.UP) < 0.999 else Vector3.FORWARD
-	) 
+	)
 	
 # TODO : apply min distance so it stays focused even when rail after long combo
 func _handle_impact(dt: float) -> void:
@@ -73,6 +85,12 @@ func _handle_impact(dt: float) -> void:
 func _process(delta: float) -> void:
 	if skate:
 		var skate_offset: float = max(skate.global_position.y - skate_min_height, 0)
+		target.global_position.y = lerp(
+			target.global_position.y, 
+			_init_target_height + max(0, skate_offset - 20), 
+			1 - exp(-delta * lerp_speed_multiplier)
+		)
+		skate_offset = min(skate_offset, 20)
 		_target_distance = distance + skate_offset * distance_multiplier
 		
 	_actual_distance = lerp(_actual_distance, _target_distance, 1 - exp(-delta * lerp_speed_multiplier))
@@ -82,7 +100,6 @@ func _process(delta: float) -> void:
 	
 func _on_death() -> void:
 	_target_distance = distance
-	lerp_speed_multiplier = 1
 	
 func _create_impact(_num_combo: int) -> void:
 	if _num_combo - 1 <= 0: return

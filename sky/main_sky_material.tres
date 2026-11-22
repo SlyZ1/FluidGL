@@ -1,8 +1,8 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://d34r84cfcwtw3"]
 
 [ext_resource type="Shader" uid="uid://cjq22nl7da7xn" path="res://shaders/sky.gdshader" id="1_fr2wp"]
-[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/skate_sticker.png" id="2_pj7be"]
-[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/skate_contour_sticker.png" id="3_g1ik7"]
+[ext_resource type="Texture2D" uid="uid://d0vgw7mgaoqtg" path="res://textures/background/skate_sticker.png" id="2_pj7be"]
+[ext_resource type="Texture2D" uid="uid://23sxyltn24ek" path="res://textures/background/skate_contour_sticker.png" id="3_g1ik7"]
 
 [resource]
 shader = ExtResource("1_fr2wp")
