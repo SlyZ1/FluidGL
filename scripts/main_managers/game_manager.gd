@@ -94,7 +94,7 @@ func _handle_pause() -> void:
 	if Input.is_action_just_pressed("pause"):
 		game_paused = !game_paused
 		on_pause.emit(game_paused)
-		Engine.time_scale = 1 if game_paused else 0
+		Engine.time_scale = 0 if game_paused else 1
 
 func _restart_logic() -> void:
 	if _ready_to_respawn and TrickManager.get_catch_pressed():

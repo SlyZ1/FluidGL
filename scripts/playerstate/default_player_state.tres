@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="PlayerStateConfig" format=3 uid="uid://b7f75i5erja55"]
+
+[ext_resource type="Script" uid="uid://dir0ytk8cg02b" path="res://scripts/playerstate/player_state_config.gd" id="1_ypmmp"]
+
+[resource]
+script = ExtResource("1_ypmmp")
+metadata/_custom_type_script = "uid://dir0ytk8cg02b"

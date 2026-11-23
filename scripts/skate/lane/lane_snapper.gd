@@ -40,19 +40,22 @@ func _ready() -> void:
 	_previous_z = skate_physics.global_position.z
 
 func _process(dt: float) -> void:
-	_handle_coyotee_time(dt)
-	if (_wants_switch): _change_lane(-_current_lane)
+	var offset: float = skate_physics.global_position.z - lane_settings.center
+	_current_lane = -1 if offset <= 0 else 1
 
-	_snap_closest_lane()
+	_handle_coyotee_time(dt)
+	if (_wants_switch): 
+		_change_lane(-_current_lane)
+
+	_snap_closest_lane(offset)
 	_handle_drift(dt)
 	_previous_z = skate_physics.global_position.z
 
-func _snap_closest_lane() -> void:
+func _snap_closest_lane(offset: float) -> void:
 	if _lane_tween and _lane_tween.is_running(): return
 
-	var offset: float = skate_physics.global_position.z - lane_settings.center
 	if abs(abs(offset) - lane_settings.size) > 0.1: 
-		_change_lane(-1 if offset <= 0 else 1)
+		_change_lane(_current_lane)
 
 func _change_lane(lane: float) -> void:
 	if not _snap: 
@@ -61,7 +64,6 @@ func _change_lane(lane: float) -> void:
 	if skate_physics.is_grounded(): return
 
 	_reset_coyotee()
-	_current_lane = lane
 	_lane_tween = create_tween()
 	_lane_tween.tween_property(
 		skate_physics, 

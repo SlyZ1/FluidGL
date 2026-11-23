@@ -4,8 +4,6 @@
 [ext_resource type="Resource" uid="uid://br4f6a4i76nvg" path="res://sections/street_default_settings.tres" id="2_1o4wi"]
 [ext_resource type="PackedScene" uid="uid://bgghtk7ci6qw0" path="res://sections/section_street_template.tscn" id="2_qsg1q"]
 
-[sub_resource type="Curve3D" id="Curve3D_vqc4j"]
-
 [node name="StraightBase" type="Node3D" unique_id=665315059 node_paths=PackedStringArray("snap_back", "snap_front")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.7696276, 0)
 script = ExtResource("1_d87wr")
@@ -20,9 +18,6 @@ transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, -25.49, 0, 0)
 [node name="SnapFront" type="Node3D" parent="." unique_id=819480016]
 transform = Transform3D(0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 25.49, 0, 0)
 
-[node name="Path3D" type="Path3D" parent="." unique_id=161870261]
-curve = SubResource("Curve3D_vqc4j")
-
 [node name="Street Container" type="Node3D" parent="." unique_id=192372350]
 
-[node name="Street 0" type="Node3D" parent="Street Container" unique_id=1600972785 instance=ExtResource("2_qsg1q")]
+[node name="Street 0" parent="Street Container" unique_id=1600972785 instance=ExtResource("2_qsg1q")]

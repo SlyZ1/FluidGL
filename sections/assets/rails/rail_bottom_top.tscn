@@ -96,7 +96,7 @@ point_count = 2
 [node name="rail_bottom_top" type="Node3D" unique_id=1376682122]
 transform = Transform3D(-4.371139e-08, 0, 1.28, 0, 1, 0, -1, 0, -5.5950576e-08, 0, 0, 0)
 script = ExtResource("1_v38kp")
-snap_y = false
+offset_y = 4.295
 snap_settings = ExtResource("2_xyu0k")
 
 [node name="BézierCurve" type="MeshInstance3D" parent="." unique_id=1300391928]
