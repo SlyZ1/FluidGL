@@ -51,6 +51,7 @@ func check_transitions(skate_physics: SkatePhysics, _dt: float) -> RailControlle
 	if skate_physics.is_grounded(): 
 		return RailController.RailState.GROUNDED
 
+
 	_rail_found = _find_rail(skate_physics.global_position)  
 	if _rail_found == _previous_rail: return state()
 	_previous_rail = null

@@ -71,8 +71,6 @@ func _on_trick_performed(_name: String) -> void:
 	if _anim.reset_velocities: skate_physics.reset_velocities()
 	skate_physics.apply_impulse(_anim.impulse, _anim.angular_impulse)
 
-	if _name == TrickManager.jump_trick_name: print(_name)
-
 	if abs(_anim.rot_angle) > 0.001:
 		_confirm_trick()
 		_trick_catched = false

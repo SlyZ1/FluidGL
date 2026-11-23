@@ -1,6 +1,7 @@
 extends Node
 
 @export var jump_trick_name: String
+@export var input_lag: float = 0.032
 
 signal trick_performed(_name: String)
 signal trick_catched(_dt: float)
@@ -22,7 +23,6 @@ var _last_input := ""
 var _last_input_executed := ""
 
 var _catch_pressed: bool = true
-
 
 func reset() -> void:
 	_current_trick = ""
@@ -80,7 +80,7 @@ func _get_trick_performed(input_string: String, dt: float) -> void:
 
 	# Applying input lag
 	_update_input_lag(input_string, dt)
-	if _time_since_different_input < 0.032:
+	if _time_since_different_input < input_lag:
 		return
 		
 	# If catching the skate
@@ -111,9 +111,12 @@ func get_catch_pressed() -> bool:
 	return _catch_pressed
 	
 func _set_catch_pressed(input: String) -> void:
-	if not _catch_pressed and input == "FHybrv":
-		on_catch_pressed.emit()
-	_catch_pressed = input == "FHybrv"
+	if input != "FHybrv":
+		if not _trick_possible(input): return
+		else: _catch_pressed = false
+	else:
+		if not _catch_pressed: on_catch_pressed.emit()
+		_catch_pressed = true
 
 func _update_input_lag(input_string: String, dt: float) -> void:
 	if _last_input != input_string:
@@ -131,6 +134,14 @@ func _try_trick(input_string: String) -> void:
 			_last_input_executed = trick.input
 			_trick_performed(trick_name)
 			break
+
+func _trick_possible(input_string: String) -> bool:
+	for trick_name : String in _possible_tricks:
+		var trick := _tricks.get_node(trick_name)
+		if trick.input == input_string:
+			return true
+	return false
+
 
 func _trick_performed(_name: String) -> void:
 	add_trick_count()

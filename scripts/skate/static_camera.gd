@@ -90,7 +90,7 @@ func _process(delta: float) -> void:
 			_init_target_height + max(0, skate_offset), 
 			1 - exp(-delta * lerp_speed_multiplier)
 		)
-		skate_offset = min(skate_offset, 0)
+		# skate_offset = min(skate_offset, 0)
 		_target_distance = distance + skate_offset * distance_multiplier
 		
 	_actual_distance = lerp(_actual_distance, _target_distance, 1 - exp(-delta * lerp_speed_multiplier))
