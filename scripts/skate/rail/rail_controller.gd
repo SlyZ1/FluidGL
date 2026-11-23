@@ -37,6 +37,9 @@ func _ready() -> void:
 	TimeManager.on_substep.connect(_step)
 	_current_state = _new_state(RailState.GROUNDED)
 
+func _exit_tree() -> void:
+	TimeManager.on_substep.disconnect(_step)
+
 func _new_state(state: RailState) -> RailControllerState:
 	match state:
 		RailState.FREE: return RailFreeState.new()

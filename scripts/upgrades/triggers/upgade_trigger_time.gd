@@ -12,13 +12,13 @@ func _validate_property(property: Dictionary) -> void:
 	if property.name == "duration" and exit_immediately:
 		property.usage &= ~PROPERTY_USAGE_EDITOR
 
-func initialize_logic(_upgrade_manager: UpgradeManager) -> void:
-	_upgrade_manager.on_process.connect(_custom_enter) 
+func initialize_logic() -> void:
+	UpgradeManager.on_process.connect(_custom_enter) 
 
-func reset_logic(_upgrade_manager: UpgradeManager):
+func reset_logic():
 	_global_time_accumulated = 0.0
 	_trigger_time_accumulated = 0.0
-	_upgrade_manager.on_process.disconnect(_custom_enter)
+	UpgradeManager.on_process.disconnect(_custom_enter)
 
 # private
 var _global_time_accumulated: float = 0

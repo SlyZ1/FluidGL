@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="HeartSettings" format=3 uid="uid://db2ys3t3jlj6g"]
+
+[ext_resource type="Script" uid="uid://hvmn1t4lm7m" path="res://scripts/UI/hearts/heart_settings.gd" id="1_lrl31"]
+[ext_resource type="Texture2D" uid="uid://fakef504lm2r" path="res://textures/icons/Empty Heart.svg" id="1_qr8ko"]
+[ext_resource type="Texture2D" uid="uid://bg3h7264dmdsq" path="res://textures/icons/Full Heart.svg" id="2_x5h4a"]
+[ext_resource type="Texture2D" uid="uid://bit0dbopf1aue" path="res://textures/icons/Half Heart.svg" id="3_rblsn"]
+
+[resource]
+script = ExtResource("1_lrl31")
+full_heart = ExtResource("2_x5h4a")
+half_heart = ExtResource("3_rblsn")
+empty_heart = ExtResource("1_qr8ko")
+metadata/_custom_type_script = "uid://hvmn1t4lm7m"

@@ -6,17 +6,17 @@ class_name UpgradeTriggerOr
 @export var triggerA: UpgradeTrigger
 @export var triggerB: UpgradeTrigger
  
-func initialize_logic(_upgrade_manager: UpgradeManager) -> void:
-	triggerA.initialize(_upgrade_manager)
-	triggerB.initialize(_upgrade_manager)
+func initialize_logic() -> void:
+	triggerA.initialize()
+	triggerB.initialize()
 	triggerA.on_enter.connect(_enter)
 	triggerB.on_enter.connect(_enter)
 	triggerA.on_exit.connect(_exit)
 	triggerB.on_exit.connect(_exit)
 
-func reset_logic(_upgrade_manager: UpgradeManager) -> void:
-	triggerA.reset(_upgrade_manager)
-	triggerB.reset(_upgrade_manager)
+func reset_logic() -> void:
+	triggerA.reset()
+	triggerB.reset()
 	triggerA.on_enter.disconnect(_enter)
 	triggerB.on_enter.disconnect(_enter)
 	triggerA.on_exit.disconnect(_exit)

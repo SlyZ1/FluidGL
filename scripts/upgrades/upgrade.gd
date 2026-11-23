@@ -11,14 +11,14 @@ extends Resource
 @export var trigger : UpgradeTrigger
 @export var effects : Array[UpgradeEffect]
 
-func initialize(upgrade_manager: UpgradeManager) -> void:
-    trigger.initialize(upgrade_manager)
+func initialize() -> void:
+    trigger.initialize()
     for effect in effects:
-        effect.initialize(upgrade_manager)
+        effect.initialize() 
         trigger.on_enter.connect(effect.apply)
 
-func reset(upgrade_manager: UpgradeManager) -> void:
-    trigger.reset(upgrade_manager)
+func reset() -> void:
+    trigger.reset()
     for effect in effects:
-        effect.reset(upgrade_manager)
+        effect.reset()
         trigger.on_enter.disconnect(effect.apply)

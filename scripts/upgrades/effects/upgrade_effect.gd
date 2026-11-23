@@ -5,20 +5,20 @@ class_name UpgradeEffect
 func apply() -> void:
     _on_apply.emit()
 
-func initialize(upgrade_manager: UpgradeManager) -> void:
+func initialize() -> void:
     if _is_initialized: return
     _is_initialized = true
-    initialize_logic(upgrade_manager)
+    initialize_logic()
 
-func reset(upgrade_manager: UpgradeManager) -> void:
+func reset() -> void:
     if not _is_initialized: return
     _is_initialized = false
-    reset_logic(upgrade_manager)
+    reset_logic()
 
-func initialize_logic(_upgrade_manager: UpgradeManager) -> void:
+func initialize_logic() -> void:
     pass
     
-func reset_logic(_upgrade_manager: UpgradeManager) -> void:
+func reset_logic() -> void:
     pass
 
 # private

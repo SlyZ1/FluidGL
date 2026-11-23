@@ -4,9 +4,10 @@
 [ext_resource type="Shader" uid="uid://dymfd8cg5kxm7" path="res://shaders/streak_panel.gdshader" id="2_4hqtd"]
 [ext_resource type="Script" uid="uid://bld81h7uoodvt" path="res://scripts/UI/tier_fill.gd" id="4_y865s"]
 [ext_resource type="Texture2D" uid="uid://bg3h7264dmdsq" path="res://textures/icons/Full Heart.svg" id="5_7kd24"]
+[ext_resource type="Script" uid="uid://c6f0g5u1h5lrt" path="res://scripts/UI/hearts/heart_ui.gd" id="5_087ef"]
 [ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://fonts/PORKYS_.TTF" id="5_dsygr"]
-[ext_resource type="Texture2D" uid="uid://bit0dbopf1aue" path="res://textures/icons/Half Heart.svg" id="6_f0p7f"]
-[ext_resource type="Texture2D" uid="uid://fakef504lm2r" path="res://textures/icons/Empty Heart.svg" id="7_c27ln"]
+[ext_resource type="Script" uid="uid://cumk2jyetv0h1" path="res://scripts/UI/hearts/heart_manager.gd" id="5_okknq"]
+[ext_resource type="Resource" uid="uid://db2ys3t3jlj6g" path="res://scripts/UI/hearts/default_heart_settings.tres" id="6_okknq"]
 
 [sub_resource type="Curve" id="Curve_dsygr"]
 _data = [Vector2(0, 0.49514556), 0.0, 0.0, 0, 0, Vector2(0.35999995, 1), 0.0, 0.0, 0, 0, Vector2(0.65090907, 0.36893195), 0.0, 0.0, 0, 0, Vector2(1, 0.49514556), 0.0, 0.0, 0, 0]
@@ -104,36 +105,23 @@ theme_override_font_sizes/font_size = 50
 text = "1500"
 vertical_alignment = 1
 
-[node name="Heart1" type="Control" parent="Left UI" unique_id=1293288067]
-layout_mode = 1
+[node name="HeartManager" type="Control" parent="Left UI" unique_id=471770695 node_paths=PackedStringArray("hearts")]
 anchors_preset = 0
-offset_left = 26.206896
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_okknq")
+hearts = [NodePath("Heart1")]
+spacing = 50.0
+
+[node name="Heart1" type="Control" parent="Left UI/HeartManager" unique_id=1293288067]
+anchors_preset = 0
+offset_left = 26.206894
 offset_top = 166.89655
 offset_right = 66.206894
 offset_bottom = 206.89682
+script = ExtResource("5_087ef")
+heart_settings = ExtResource("6_okknq")
 
-[node name="FullHeart" type="Sprite2D" parent="Left UI/Heart1" unique_id=1929329164]
+[node name="FullHeart" type="Sprite2D" parent="Left UI/HeartManager/Heart1" unique_id=1929329164]
 scale = Vector2(0.08, 0.08)
 texture = ExtResource("5_7kd24")
-
-[node name="Heart2" type="Control" parent="Left UI" unique_id=2070742324]
-anchors_preset = 0
-offset_left = 26.206896
-offset_top = 216.89655
-offset_right = 66.206894
-offset_bottom = 256.89682
-
-[node name="FullHeart" type="Sprite2D" parent="Left UI/Heart2" unique_id=284451517]
-scale = Vector2(0.08, 0.08)
-texture = ExtResource("6_f0p7f")
-
-[node name="Heart3" type="Control" parent="Left UI" unique_id=778066280]
-anchors_preset = 0
-offset_left = 26.206896
-offset_top = 266.8965
-offset_right = 66.206894
-offset_bottom = 306.89682
-
-[node name="FullHeart" type="Sprite2D" parent="Left UI/Heart3" unique_id=1840846746]
-scale = Vector2(0.08, 0.08)
-texture = ExtResource("7_c27ln")

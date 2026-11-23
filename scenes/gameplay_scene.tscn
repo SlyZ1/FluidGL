@@ -2,10 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cbv8stkrtn8ru" path="res://scripts/main_managers/map_loader.gd" id="1_a47ne"]
 [ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="2_qshxn"]
-[ext_resource type="Script" uid="uid://b67781cgo407u" path="res://scripts/upgrades/upgrade_manager.gd" id="2_uina8"]
 [ext_resource type="PackedScene" uid="uid://i8wl7n8qas82" path="res://sections/section_rail_2.tscn" id="3_0rqnr"]
-[ext_resource type="Script" uid="uid://djhyin3m7la6j" path="res://scripts/upgrades/upgrade.gd" id="3_ji1gn"]
-[ext_resource type="Resource" uid="uid://22ws3ftx3nrn" path="res://upgrades/test_upgrade.tres" id="4_1fjgs"]
 [ext_resource type="PackedScene" uid="uid://briofgnybt16n" path="res://sections/section_ramp_1.tscn" id="4_jst68"]
 [ext_resource type="PackedScene" uid="uid://cidsrnocieany" path="res://sections/section_ramp_2.tscn" id="5_xmxvq"]
 [ext_resource type="PackedScene" uid="uid://bxjsr5t8tqo5q" path="res://sections/section_ramp_3.tscn" id="6_e1t68"]
@@ -64,10 +61,6 @@ script = ExtResource("9_js0h6")
 map_loader = NodePath("../MapLoader")
 skate = NodePath("../Skate")
 skate_ragdoll = NodePath("../SkateRagdoll")
-
-[node name="UpgradeManager" type="Node" parent="." unique_id=1994883619]
-script = ExtResource("2_uina8")
-current_upgrades = Array[ExtResource("3_ji1gn")]([ExtResource("4_1fjgs")])
 
 [node name="MapLoader" type="Node3D" parent="." unique_id=1846749011 node_paths=PackedStringArray("cam")]
 script = ExtResource("1_a47ne")

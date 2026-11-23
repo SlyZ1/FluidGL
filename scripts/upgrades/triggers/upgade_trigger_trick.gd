@@ -5,10 +5,10 @@ class_name UpgradeTriggerTrick
 # public
 @export var trick: String
 
-func initialize_logic(_upgrade_manager: UpgradeManager) -> void:
+func initialize_logic() -> void:
 	TrickManager.trick_performed.connect(_trick_performed)
 
-func reset_logic(_upgrade_manager: UpgradeManager) -> void:
+func reset_logic() -> void:
 	TrickManager.trick_performed.disconnect(_trick_performed)
 
 func _trick_performed(name: String):

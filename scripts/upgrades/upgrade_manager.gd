@@ -1,25 +1,24 @@
 extends Node
-class_name UpgradeManager
 
 @export var current_upgrades: Array[Upgrade]
 
 signal on_process(dt: float)
 
 func add_upgrade(upgrade: Upgrade) -> void:
-    upgrade.initialize(self)
+    upgrade.initialize()
     current_upgrades.push_back(upgrade)
     
 # remove by name
 func remove_upgrade(upgrade_name: String) -> void:
     for i in range(current_upgrades.size()):
         if current_upgrades[i].upgrade_name == upgrade_name:
-            current_upgrades[i].reset(self)
+            current_upgrades[i].reset()
             current_upgrades.remove_at(i)
             return
 
 func _exit_tree() -> void:
     for upgrade in current_upgrades:
-        upgrade.reset(self)
+        upgrade.reset() 
 
 
 func add_hp(hp : int) -> void:
@@ -51,7 +50,7 @@ func set_jump_height(jump_height : float) -> void:
 
 func _ready() -> void:
     for upgrade in current_upgrades:
-        upgrade.initialize(self)
+        upgrade.initialize()
 
 func _process(delta: float) -> void:
     on_process.emit(delta)

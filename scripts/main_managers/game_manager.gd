@@ -50,6 +50,7 @@ func _exit_tree() -> void:
 func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	if not game_started: return
 
+	UpgradeManager.add_hp(-1)
 	AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.DEATH)
 	game_started = false
 
@@ -57,6 +58,9 @@ func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	skate.reset()
 	set_active(skate, false)
 	set_active(skate_ragdoll, true)
+
+	if PlayerState.get_hp() <= 0:
+		get_tree().reload_current_scene()
 	
 	skate_ragdoll.linear_velocity = Vector3.ZERO
 	skate_ragdoll.angular_velocity = Vector3.ZERO
