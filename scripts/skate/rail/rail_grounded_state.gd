@@ -25,7 +25,6 @@ func _find_rail(pos: Vector3) -> bool:
 
 func check_transitions(skate_physics: SkatePhysics, _dt: float) -> RailController.RailState:
 	if not skate_physics.is_grounded(): return RailController.RailState.FREE
-
 	if _find_rail(skate_physics.global_position): GameManager.instance.death()
 
 	return state()

@@ -34,7 +34,9 @@ func reset() -> void:
 
 func on_ground() -> void:
 	reset()
-	_possible_tricks = _tricks.get_neighbours("")
+	_possible_tricks = [jump_trick_name]
+	_time_since_different_input = 0
+	_started = true
 
 func add_trick_count() -> void:
 	_nb_tricks_since_grounded += 1

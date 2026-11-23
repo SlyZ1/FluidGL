@@ -63,14 +63,10 @@ func toggle_angular(process: bool) -> void:
 	_process_angular_physics = process
 
 func apply_impulse(impulse: float, angular_impulse: float = 0) -> void:
-	if not _is_grounded or not impulse < 0: _vy += impulse / mass
+	if not _is_grounded or not impulse < 0:
+		_vy += impulse / mass
 	_omega += angular_impulse / inertia
 	if impulse > 0: _impulsed_timer = 0.1
-
-func _apply_wheel_impulse(side: float, j: float) -> void:
-	var levier := side * _half_len * cos(_theta)
-	_vy += j / mass
-	_omega += j * levier / inertia
 	
 func just_impulsed() -> bool:
 	return _impulsed_timer > 0
