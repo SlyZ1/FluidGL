@@ -9,9 +9,9 @@ class_name GameManager
 @export var skate_ragdoll: RigidBody3D
 
 signal on_death
-signal on_start
-signal on_restart
-signal on_ready_to_restart
+signal on_spawn
+signal on_respawn
+signal on_ready_to_respawn
 signal on_pause(paused: bool)
 
 static var auto_start: bool = false
@@ -20,7 +20,7 @@ var game_started: bool = false
 var game_paused: bool = false
 
 # run state
-var _ready_to_restart: bool = false
+var _ready_to_respawn: bool = false
 
 static var instance: GameManager
 	
@@ -36,7 +36,7 @@ func _ready() -> void:
 
 	set_active(skate, false)
 	set_active(skate_ragdoll, false)
-	if auto_start: start()
+	if auto_start: spawn()
 
 func _enter_tree() -> void:
 	if instance and instance != self:
@@ -50,7 +50,7 @@ func _exit_tree() -> void:
 func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	if not game_started: return
 
-	UpgradeManager.add_hp(-1)
+	PlayerState.add_hp(-1)
 	AudioManager.play(SoundEffectSettings.SOUND_EFFECT_TYPE.DEATH)
 	game_started = false
 
@@ -60,6 +60,7 @@ func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	set_active(skate_ragdoll, true)
 
 	if PlayerState.get_hp() <= 0:
+		PlayerState.reset()
 		get_tree().reload_current_scene()
 	
 	skate_ragdoll.linear_velocity = Vector3.ZERO
@@ -77,17 +78,17 @@ func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	create_tween().tween_property(skate_ragdoll, "global_position", skate.global_position, restart_transition_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	create_tween().tween_property(skate_ragdoll, "global_rotation", skate.global_rotation, restart_transition_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	await map_loader.restart_skip(restart_transition_duration)
-	_ready_to_restart = true
+	_ready_to_respawn = true
 
-	on_ready_to_restart.emit()
+	on_ready_to_respawn.emit()
 
-func start() -> void:
+func spawn() -> void:
 	if game_started: return
 
 	game_started = true
 	set_active(skate, true)
 	set_active(skate_ragdoll, false)
-	on_start.emit()
+	on_spawn.emit()
 
 func _handle_pause() -> void:
 	if Input.is_action_just_pressed("pause"):
@@ -96,10 +97,10 @@ func _handle_pause() -> void:
 		Engine.time_scale = 1 if game_paused else 0
 
 func _restart_logic() -> void:
-	if _ready_to_restart and TrickManager.get_catch_pressed():
-		_ready_to_restart = false
-		on_restart.emit()
-		start()
+	if _ready_to_respawn and TrickManager.get_catch_pressed():
+		_ready_to_respawn = false
+		on_respawn.emit()
+		spawn()
 
 func _process(_dt: float) -> void:
 	_handle_pause()

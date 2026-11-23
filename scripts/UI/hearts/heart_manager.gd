@@ -7,7 +7,7 @@ class_name HeartManager
 func _ready() -> void:
 	PlayerState.on_hp_changed.connect(_on_hp_changed)
 	PlayerState.on_max_hp_changed.connect(_on_max_hp_changed)
-	PlayerState._max_hp = 8
+	PlayerState.set_max_hp(8)
 
 func _on_max_hp_changed(max_hp: int) -> void:
 	_reset_hearts()

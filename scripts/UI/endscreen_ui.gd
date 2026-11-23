@@ -5,8 +5,8 @@ extends Node
 @export var points_earned_label: Label
 
 func _ready() -> void:
-	GameManager.instance.on_restart.connect(_hide)
-	GameManager.instance.on_ready_to_restart.connect(_on_ready_to_restart)
+	GameManager.instance.on_respawn.connect(_hide)
+	GameManager.instance.on_ready_to_respawn.connect(_on_ready_to_restart)
 
 func _on_holdfh_timeout() -> void:
 	input_suggestion_label.visible = not input_suggestion_label.visible

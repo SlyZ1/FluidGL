@@ -44,7 +44,7 @@ func _ready() -> void:
 	_control_spawn()
 	_control_spawn(true)
 	XpManager.points_changed.connect(_on_points_changed)
-	GameManager.instance.on_start.connect(_on_start)
+	GameManager.instance.on_spawn.connect(_on_start)
 	TimeManager.on_substep.connect(_control_speed)
 	_speed = speed 
 

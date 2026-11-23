@@ -18,11 +18,11 @@ config/icon="res://icon.svg"
 [autoload]
 
 TrickManager="*uid://4qaamgw26etu"
-PlayerState="*uid://bb4ptvtb3wi6x"
 AudioManager="*uid://dhs56xnym1ry2"
 TimeManager="*uid://bpqf8mlvl285x"
 XpManager="*uid://bounrwwipn0l3"
 UpgradeManager="*uid://b1f2oymee00mb"
+PlayerState="*uid://cpibmm4riidib"
 
 [display]
 

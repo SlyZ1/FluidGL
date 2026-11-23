@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cpibmm4riidib"]
+
+[ext_resource type="Script" uid="uid://bb4ptvtb3wi6x" path="res://scripts/playerstate/player_state.gd" id="1_hmdjb"]
+[ext_resource type="Script" uid="uid://dir0ytk8cg02b" path="res://scripts/playerstate/player_state_config.gd" id="2_i5co2"]
+
+[sub_resource type="Resource" id="Resource_i5co2"]
+script = ExtResource("2_i5co2")
+metadata/_custom_type_script = "uid://dir0ytk8cg02b"
+
+[node name="PlayerState" type="Node" unique_id=1720900100]
+script = ExtResource("1_hmdjb")
+_default_config = SubResource("Resource_i5co2")

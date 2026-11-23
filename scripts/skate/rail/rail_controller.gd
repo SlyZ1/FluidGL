@@ -12,6 +12,7 @@ class_name RailController
 @export var rail_y_thresh_die: float = 0.75
 @export var rail_y_thresh_neg: float = -2
 @export var rail_y_offset: float = -0.3
+@export var rail_exit_time: float = 0.1
 @export_group("Rail Animation")
 @export var rail_pose_duration = 0.12
 @export var rail_slide_angles: Vector3 = Vector3(-20, 90, 0)

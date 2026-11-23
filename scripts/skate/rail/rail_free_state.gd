@@ -9,6 +9,7 @@ var _previous_rail: Path3D
 var _rail_y_thresh_enter: float
 var _rail_y_thresh_die: float
 var _rail_y_thresh_neg: float
+var _rail_exit_timer: float
 
 # protected
 func exit(rail_controller: RailController) -> void:
@@ -20,13 +21,15 @@ func enter(rail_controller: RailController) -> void:
 	_rail_y_thresh_enter = rail_controller.rail_y_thresh_enter
 	_rail_y_thresh_die = rail_controller.rail_y_thresh_die
 	_rail_y_thresh_neg = rail_controller.rail_y_thresh_neg
+	_rail_exit_timer = rail_controller.rail_exit_time
 
 func state() -> RailController.RailState:
 	return RailController.RailState.FREE
 
 func _filter_rail(dy: float, rail: Path3D) -> Path3D:
 	if (dy <= _rail_y_thresh_die and dy >= _rail_y_thresh_neg and not TrickManager.get_catch_pressed()):
-		if rail == _previous_rail: 
+		if rail == _previous_rail or _rail_exit_timer > 0:
+			_previous_rail = rail
 			return rail
 		GameManager.instance.death()
 		return null
@@ -44,6 +47,7 @@ func _find_rail(pos: Vector3) -> Path3D:
 
 
 func check_transitions(skate_physics: SkatePhysics, _dt: float) -> RailController.RailState:
+	_rail_exit_timer -= _dt
 	if skate_physics.is_grounded(): 
 		return RailController.RailState.GROUNDED
 
