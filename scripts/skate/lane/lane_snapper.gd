@@ -40,6 +40,8 @@ func _ready() -> void:
 	_previous_z = skate_physics.global_position.z
 
 func _process(dt: float) -> void:
+	if not GameManager.instance.game_started: return
+
 	var offset: float = skate_physics.global_position.z - lane_settings.center
 	_current_lane = -1 if offset <= 0 else 1
 
@@ -94,6 +96,7 @@ func _handle_drift(dt: float) -> void:
 	anim_controller.add_default_trick_rotation(_drift_rotation)
 
 func _reset() -> void:
+	if !is_inside_tree(): return
 	kill_tween()
 	toggle(true)
 	_reset_coyotee()

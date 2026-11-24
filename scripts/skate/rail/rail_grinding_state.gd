@@ -70,15 +70,18 @@ func _filter_rail(dy: float, rail: Path3D) -> Path3D:
 
 func _find_rail(pos: Vector3) -> Path3D:
 	for section in MapLoader.instance._spawned_sections:
-		for rail in section.rails:
+		for rail in section.rail_containers:
 			var dy: float = _touches_rail.call(rail, pos)
-			rail = _filter_rail(dy, rail)
-			if rail: return rail
+			var rail_found: Path3D = _filter_rail(dy, rail.path3D)
+			if rail_found: return rail_found
 	return null
 
 func check_transitions(skate_physics: SkatePhysics, dt: float) -> RailController.RailState:
 	if _current_rail == null: return RailController.RailState.FREE
-	if not TrickManager.get_catch_pressed(): return RailController.RailState.FREE
+
+	if not TrickManager.get_catch_pressed(): 
+		if not TrickManager.get_jump_pressed(): GameManager.instance.death()
+		return RailController.RailState.FREE
 
 	var rail_point: Vector3 = _get_point_on_rail.call(_current_rail, skate_physics.global_position.x)
 	if rail_point == Vector3.INF: 

@@ -121,15 +121,15 @@ func _get_point_on_rail(rail: Path3D, pos_x: float) -> Vector3:
 	p += rail_y_offset * Vector3.UP
 	return p
 
-func _touches_rail(rail: Path3D, pos: Vector3) -> float:
-	var rail_point: Vector3 = _get_point_on_rail(rail, pos.x)
+func _touches_rail(rail: Rail, pos: Vector3) -> float:
+	var rail_point: Vector3 = _get_point_on_rail(rail.path3D, pos.x)
 	if rail_point == Vector3.INF:
 		return INF
 
 	var dy: float = pos.y - rail_point.y
 	var dz: float = abs(pos.z - rail_point.z) 
-	if dz <= rail_z_thresh:
-		return dy # dy <= rail_y_thresh_enter
+	if dz <= rail_z_thresh and pos.y >= rail.bounds.position.y:
+		return dy
 
 	return INF
 

@@ -37,6 +37,7 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	if instance == self:
 		instance = null
+	TimeManager.on_substep.disconnect(_control_speed)
 
 func _ready() -> void:
 	_next_spawn = _new_section(-20 * Vector3.RIGHT, true)

@@ -23,6 +23,7 @@ var _toggled: bool = true
 
 var _mesh_instance_scale: Vector3
 
+var _scale_tween: Tween
 
 
 func toggle(value: bool) -> void:
@@ -59,7 +60,9 @@ func _process(_delta: float) -> void:
 
 func _confirm_trick():
 	mesh_instance.scale = _mesh_instance_scale * 1.3
-	create_tween().tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
+	if _scale_tween: _scale_tween.kill()
+	_scale_tween = create_tween()
+	_scale_tween.tween_property(mesh_instance, "scale", _mesh_instance_scale, 0.15).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT_IN)
 
 func _on_trick_performed(_name: String) -> void:
 	_catch_pressed = false
@@ -115,5 +118,8 @@ func _reset() -> void:
 	_trick_catched = true
 	_catch_pressed = false
 	_was_grounded_when_catched = false
+	_default_trick_rotation = Quaternion.IDENTITY
+	if _scale_tween: _scale_tween.kill()
+	mesh_instance.scale = _mesh_instance_scale
 	toggle(true)
 	skate_physics.set_rot(Basis(Quaternion.IDENTITY))

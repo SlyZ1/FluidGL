@@ -73,15 +73,15 @@ transform = Transform3D(-3.715468e-08, 0, 1.28, 0, 1, 0, -0.85, 0, -5.5950576e-0
 
 [node name="Street Container" type="Node3D" parent="." unique_id=1291027943]
 
-[node name="Street 0" type="Node3D" parent="Street Container" unique_id=1600972785 instance=ExtResource("3_o6o57")]
+[node name="Street 0" parent="Street Container" unique_id=1600972785 instance=ExtResource("3_o6o57")]
 
-[node name="Street 1" type="Node3D" parent="Street Container" unique_id=515393320 instance=ExtResource("3_o6o57")]
+[node name="Street 1" parent="Street Container" unique_id=515393320 instance=ExtResource("3_o6o57")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 0)
 
-[node name="Street 2" type="Node3D" parent="Street Container" unique_id=161157089 instance=ExtResource("3_o6o57")]
+[node name="Street 2" parent="Street Container" unique_id=161157089 instance=ExtResource("3_o6o57")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102, 0, 0)
 
-[node name="Street 3" type="Node3D" parent="Street Container" unique_id=1732901182 instance=ExtResource("3_o6o57")]
+[node name="Street 3" parent="Street Container" unique_id=1732901182 instance=ExtResource("3_o6o57")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 153, 0, 0)
 
 [node name="small_ramp2" parent="." unique_id=2112366118 instance=ExtResource("4_qjuci")]

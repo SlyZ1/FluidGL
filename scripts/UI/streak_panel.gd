@@ -29,6 +29,7 @@ func _ready() -> void:
 	XpManager.xp_changed.connect(_on_xp_changed)
 	XpManager.tier_changed.connect(_on_tier_changed)
 	TrickManager.on_nb_trick_increased.connect(_on_nb_tricks_increased)
+	
 	_wow_size = wow_template.size
 	_wow_scale = wow_template.scale
 	_tier_scale = tier_fill.scale

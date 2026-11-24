@@ -2,6 +2,7 @@ extends Node
 
 @export var jump_trick_name: String
 @export var input_lag: float = 0.032
+@export var catch_lag: float = 0.1
 
 signal trick_performed(_name: String)
 signal trick_catched(_dt: float)
@@ -23,6 +24,7 @@ var _last_input := ""
 var _last_input_executed := ""
 
 var _catch_pressed: bool = true
+var _jump_pressed: bool = false
 
 func reset() -> void:
 	_current_trick = ""
@@ -64,7 +66,8 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	var input_string := _compute_input()
-	_set_catch_pressed(input_string)
+	_set_jump_pressed(input_string)
+	_set_catch_pressed(input_string, dt)
 	_get_trick_performed(input_string, dt)
 
 
@@ -109,13 +112,21 @@ func _compute_input() -> String:
 
 func get_catch_pressed() -> bool:
 	return _catch_pressed
+
+func _set_jump_pressed(input: String) -> void:
+	_jump_pressed = input == "fhybrv" 
+
+func get_jump_pressed() -> bool:
+	return _jump_pressed
 	
-func _set_catch_pressed(input: String) -> void:
+var _test: float = 0
+func _set_catch_pressed(input: String, dt: float) -> void:
 	if input != "FHybrv":
-		if not _trick_possible(input): return
+		if input != "fhybrv" and not _trick_possible(input) and _test > 0: _test -= dt
 		else: _catch_pressed = false
 	else:
 		if not _catch_pressed: on_catch_pressed.emit()
+		_test = catch_lag
 		_catch_pressed = true
 
 func _update_input_lag(input_string: String, dt: float) -> void:

@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://c7ahe7coql5lf"]
 
-[ext_resource type="Script" uid="uid://dmtaujq356fnp" path="res://scripts/sections/obstacle_snap.gd" id="1_5umo1"]
 [ext_resource type="Material" uid="uid://dvlxarpj4fjcu" path="res://materials/red.tres" id="1_36018"]
+[ext_resource type="Script" uid="uid://b2d0qts30lo02" path="res://scripts/sections/rail.gd" id="1_eybo3"]
 [ext_resource type="Resource" uid="uid://cpgbu2mnm1ksb" path="res://sections/snap_default_settings.tres" id="2_wum6j"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_a6rpq"]
@@ -93,9 +93,11 @@ _data = {
 }
 point_count = 2
 
-[node name="rail_normal" type="Node3D" unique_id=635390335]
+[node name="rail_normal" type="Node3D" unique_id=635390335 node_paths=PackedStringArray("_mesh", "path3D")]
 transform = Transform3D(-4.371139e-08, 0, 1.28, 0, 1, 0, -1, 0, -5.5950576e-08, -9.5625, 0, -4.25)
-script = ExtResource("1_5umo1")
+script = ExtResource("1_eybo3")
+_mesh = NodePath("Cylinder_020")
+path3D = NodePath("Path3D")
 offset_y = 2.125
 snap_settings = ExtResource("2_wum6j")
 

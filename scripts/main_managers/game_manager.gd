@@ -2,12 +2,14 @@ extends Node
 class_name GameManager
 
 @export var map_loader: MapLoader
+@export var camera: CustomCamera
 @export_group("Restart")
 @export var restart_transition_duration: float = 2
 @export_group("Skate")
 @export var skate: SkatePhysics
 @export var skate_ragdoll: RigidBody3D
 
+signal on_stop
 signal on_death
 signal on_spawn
 signal on_respawn
@@ -25,14 +27,15 @@ var _ready_to_respawn: bool = false
 static var instance: GameManager
 	
 func set_active(node: Node3D, active: bool) -> void:
-	node.visible = active
 	node.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
+	node.visible = active
 
 func _ready() -> void:
 	Engine.max_fps = 120
 	on_death.connect(AudioManager.on_global_stop)
 	on_death.connect(TrickManager.reset)
-	on_death.connect(XpManager._on_restart)
+	on_death.connect(XpManager.reset)
+	on_stop.connect(XpManager.on_stop)
 
 	set_active(skate, false)
 	set_active(skate_ragdoll, false)
@@ -58,10 +61,7 @@ func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	skate.reset()
 	set_active(skate, false)
 	set_active(skate_ragdoll, true)
-
-	if PlayerState.get_hp() <= 0:
-		PlayerState.reset()
-		get_tree().reload_current_scene()
+	camera.skate = skate_ragdoll
 	
 	skate_ragdoll.linear_velocity = Vector3.ZERO
 	skate_ragdoll.angular_velocity = Vector3.ZERO
@@ -74,11 +74,21 @@ func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 	await map_loader.stop()
 	await get_tree().create_timer(0.5).timeout
 
+	if PlayerState.get_hp() <= 0:
+		PlayerState.reset()
+		on_stop.emit()
+		get_tree().reload_current_scene()
+		return
+
 	skate_ragdoll.process_mode = Node.PROCESS_MODE_DISABLED
 	create_tween().tween_property(skate_ragdoll, "global_position", skate.global_position, restart_transition_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	create_tween().tween_property(skate_ragdoll, "global_rotation", skate.global_rotation, restart_transition_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	await map_loader.restart_skip(restart_transition_duration)
 	_ready_to_respawn = true
+
+	camera.skate = skate
+	set_active(skate, true)
+	set_active(skate_ragdoll, false)
 
 	on_ready_to_respawn.emit()
 
@@ -97,7 +107,7 @@ func _handle_pause() -> void:
 		Engine.time_scale = 0 if game_paused else 1
 
 func _restart_logic() -> void:
-	if _ready_to_respawn and TrickManager.get_catch_pressed():
+	if _ready_to_respawn and Input.is_action_pressed("F") and Input.is_action_pressed("H"):
 		_ready_to_respawn = false
 		on_respawn.emit()
 		spawn()

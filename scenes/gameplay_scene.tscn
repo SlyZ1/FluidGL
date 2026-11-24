@@ -57,15 +57,17 @@ shader_parameter/decalage_colonne = 1.745
 
 [node name="Node3D" type="Node3D" unique_id=611096490]
 
-[node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("map_loader", "skate", "skate_ragdoll")]
+[node name="GameManager" type="Node" parent="." unique_id=1359711792 node_paths=PackedStringArray("map_loader", "camera", "skate", "skate_ragdoll")]
 script = ExtResource("9_js0h6")
 map_loader = NodePath("../MapLoader")
+camera = NodePath("../Camera3D")
 skate = NodePath("../Skate")
 skate_ragdoll = NodePath("../SkateRagdoll")
 
 [node name="MapLoader" type="Node3D" parent="." unique_id=1846749011 node_paths=PackedStringArray("cam")]
 script = ExtResource("1_a47ne")
 cam = NodePath("../Camera3D")
+kill_distance = 70.0
 sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly"), ExtResource("9_uina8")])
 empty_section = ExtResource("8_5k0m8")
 

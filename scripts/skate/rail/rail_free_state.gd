@@ -39,10 +39,10 @@ func _filter_rail(dy: float, rail: Path3D) -> Path3D:
 
 func _find_rail(pos: Vector3) -> Path3D:
 	for section in MapLoader.instance._spawned_sections:
-		for rail in section.rails:
+		for rail in section.rail_containers:
 			var dy: float = _touches_rail.call(rail, pos)
-			rail = _filter_rail(dy, rail)
-			if rail: return rail
+			var rail_found: Path3D = _filter_rail(dy, rail.path3D)
+			if rail_found: return rail_found
 	return null
 
 

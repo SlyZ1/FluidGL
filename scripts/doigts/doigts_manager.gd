@@ -13,11 +13,13 @@ const _rail_rot: Basis = Basis(Vector3.UP, -PI / 2.0)
 
 func _ready() -> void:
 	_orientation_rot = Basis.from_euler(Vector3(0.0, deg_to_rad(orientation), 0.0))
+	GameManager.instance.on_death.connect(reset)
 
 func _process(_delta: float) -> void:
-	var fh: bool = TrickManager.get_catch_pressed() or skate_physics.is_grounded()
-	doigts_idle.visible = fh
-	doigts_up.visible = not fh
+	if GameManager.instance.game_paused or not GameManager.instance.game_started: return
+
+	var catching: bool = Input.is_action_pressed("F") and Input.is_action_pressed("H")
+	var fh: bool = catching or skate_physics.is_grounded() or rail_controller.is_on_rail
 	doigts_idle.visible = fh
 	doigts_up.visible = not fh
 	
@@ -31,3 +33,12 @@ func _process(_delta: float) -> void:
 		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.3
 	else:
 		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.0
+
+func reset() -> void:
+	if !is_inside_tree(): return
+	doigts_up.visual.material_overlay.stencil_color = Color.WHITE
+	doigts_up.visual.material_overlay.stencil_outline_thickness = 0.3
+	doigts_idle.visible = false
+	doigts_up.visible = true
+	doigts_idle.basis = parent.global_basis.inverse() * _orientation_rot
+	doigts_up.basis = parent.global_basis.inverse() * _orientation_rot

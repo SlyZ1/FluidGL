@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://ratyht3nvlww"]
 
 [ext_resource type="Material" uid="uid://dvlxarpj4fjcu" path="res://materials/red.tres" id="1_k58kn"]
-[ext_resource type="Script" uid="uid://dmtaujq356fnp" path="res://scripts/sections/obstacle_snap.gd" id="1_v38kp"]
+[ext_resource type="Script" uid="uid://b2d0qts30lo02" path="res://scripts/sections/rail.gd" id="1_v38kp"]
 [ext_resource type="Resource" uid="uid://cpgbu2mnm1ksb" path="res://sections/snap_default_settings.tres" id="2_xyu0k"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_n5aft"]
@@ -93,9 +93,11 @@ _data = {
 }
 point_count = 2
 
-[node name="rail_bottom_top" type="Node3D" unique_id=1376682122]
+[node name="rail_bottom_top" type="Node3D" unique_id=1376682122 node_paths=PackedStringArray("_mesh", "path3D")]
 transform = Transform3D(-4.371139e-08, 0, 1.28, 0, 1, 0, -1, 0, -5.5950576e-08, 0, 0, 0)
 script = ExtResource("1_v38kp")
+_mesh = NodePath("BézierCurve")
+path3D = NodePath("Path3D")
 offset_y = 4.295
 snap_settings = ExtResource("2_xyu0k")
 

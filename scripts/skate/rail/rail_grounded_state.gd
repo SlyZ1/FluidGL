@@ -17,14 +17,17 @@ func state() -> RailController.RailState:
 
 func _find_rail(pos: Vector3) -> bool:
 	for section in MapLoader.instance._spawned_sections:
-		for rail in section.rails:
+		for rail in section.rail_containers:
 			var dy: float = _touches_rail.call(rail, pos)
-			if rail and dy != INF and dy < 0: return true
+			if rail.path3D and dy != INF and dy < 0: return true
 	return false
 
 
 func check_transitions(skate_physics: SkatePhysics, _dt: float) -> RailController.RailState:
 	if not skate_physics.is_grounded(): return RailController.RailState.FREE
 	if _find_rail(skate_physics.global_position): GameManager.instance.death()
+
+	if not TrickManager.get_catch_pressed() and not TrickManager.get_jump_pressed(): 
+		GameManager.instance.death()
 
 	return state()
