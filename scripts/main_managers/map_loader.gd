@@ -12,6 +12,7 @@ class_name MapLoader
 @export var sections: Array[PackedScene]
 @export var empty_section: PackedScene
 @export_range(0,1) var empty_ratio: float = 0.3
+@export var portal : PackedScene
 
 var ready_to_restart := false
 
@@ -26,6 +27,9 @@ var _next_spawn: Section
 
 var waiting_for_restart := false
 var previous_spawn_index: int = -1
+
+@export var nbSectionsBeforePortal := 12
+signal portal_entered
 
 static var instance: MapLoader
 
@@ -93,7 +97,19 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 	new_section.snap(snap_to, self)
 	add_child(new_section)
 	new_section.visible = false
+	nbSectionsBeforePortal -= 1
+	print(nbSectionsBeforePortal)
+	if nbSectionsBeforePortal <= 0:
+		var newPortal = portal.instantiate()
+		new_section.add_child(newPortal)
+		newPortal.global_position = new_section.global_position
+		newPortal.scale *= 100
+		nbSectionsBeforePortal = 12 # c'est temporaire, en vrai ce serait a RunManager de decider
+		newPortal.get_node("Hitbox").area_entered.connect(_on_portal_entered)
 	return new_section
+
+func _on_portal_entered(_other : Area3D):
+	portal_entered.emit()
 
 func _control_speed(delta: float):
 	for section: Section in _spawned_sections:

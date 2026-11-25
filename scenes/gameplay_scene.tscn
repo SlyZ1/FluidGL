@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://b1ji8ypten23f" path="res://sections/section_0.tscn" id="9_uina8"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate_template.tscn" id="10_vxw8k"]
 [ext_resource type="PackedScene" uid="uid://b66n7507tsgkp" path="res://prefabs/skate_ragdoll_template.tscn" id="11_54hnc"]
+[ext_resource type="PackedScene" uid="uid://ccp0nfli1cp47" path="res://prefabs/portal.tscn" id="11_ji1gn"]
 [ext_resource type="Texture2D" uid="uid://b08s8xst4v3yx" path="res://textures/background/skate_sticker.svg" id="25_1fjgs"]
 [ext_resource type="Texture2D" uid="uid://cmayb6asonf66" path="res://textures/background/skate_contour_sticker.svg" id="26_i3471"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/skate/static_camera.gd" id="30_7oq1k"]
@@ -70,6 +71,7 @@ cam = NodePath("../Camera3D")
 kill_distance = 70.0
 sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly"), ExtResource("9_uina8")])
 empty_section = ExtResource("8_5k0m8")
+portal = ExtResource("11_ji1gn")
 
 [node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
 
@@ -339,4 +341,5 @@ grow_horizontal = 2
 grow_vertical = 0
 pivot_offset_ratio = Vector2(1, 1)
 
+[connection signal="portal_entered" from="MapLoader" to="GameManager" method="toggle_choice_screen"]
 [connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]

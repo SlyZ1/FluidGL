@@ -4,4 +4,4 @@
 
 [node name="TimeManager" type="Node" unique_id=1192397001]
 script = ExtResource("1_3hpic")
-bullet_time_strength = 0.0
+bullet_time_strength = 5.044

@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://ccp0nfli1cp47"]
+
+[ext_resource type="Shader" uid="uid://wfbwvyp2tcrp" path="res://portal.gdshader" id="1_gbxor"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lgns8"]
+height = 0.02303812
+radius = 0.087402344
+
+[sub_resource type="QuadMesh" id="QuadMesh_lgns8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5hio4"]
+render_priority = 0
+shader = ExtResource("1_gbxor")
+
+[node name="Portal" type="Node3D" unique_id=20202740]
+
+[node name="Hitbox" type="Area3D" parent="." unique_id=1070380387]
+collision_mask = 65536
+
+[node name="ItsACylinder" type="CollisionShape3D" parent="Hitbox" unique_id=282009828]
+transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 0.008477911, 0.043570258, 0.05639063)
+shape = SubResource("CylinderShape3D_lgns8")
+
+[node name="Quad" type="MeshInstance3D" parent="." unique_id=850674132]
+transform = Transform3D(-9.8350625e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.8350625e-09, 0, 0.039727174, 0.057158753)
+mesh = SubResource("QuadMesh_lgns8")
+surface_material_override/0 = SubResource("ShaderMaterial_5hio4")
