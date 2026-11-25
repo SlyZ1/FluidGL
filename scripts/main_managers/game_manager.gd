@@ -16,6 +16,8 @@ signal on_respawn
 signal on_ready_to_respawn
 signal on_pause(paused: bool)
 
+signal display_choice(choice1 : Upgrade, choice2 : Upgrade, choice3 : Upgrade)
+
 static var auto_start: bool = false
 
 var game_started: bool = false
@@ -126,4 +128,8 @@ func toggle_fullscreen():
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
 func toggle_choice_screen():
-	print("Choice screen !")
+	var tw := create_tween()
+	tw.tween_property(TimeManager, "_time_scale", 1e-5, 1.6)
+	var ups : Array[Upgrade] = UpgradeManager.generate_random_upgrades()
+	display_choice.emit(ups[0], ups[1], ups[2])
+	# await tw.finished

@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://crnwq6ifvh5g5"]
+
+[ext_resource type="Script" uid="uid://bnnhy7jvbxqxl" path="res://scripts/UI/choice_panel.gd" id="1_nu3xy"]
+[ext_resource type="Shader" uid="uid://vo4ma32x5bro" path="res://shaders/choice_background.gdshader" id="2_6kxug"]
+[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://fonts/Matcha Style.ttf" id="3_puc0j"]
+[ext_resource type="Shader" uid="uid://bhk553pvm4uxw" path="res://shaders/choice.gdshader" id="4_ef6iq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_236rp"]
+shader = ExtResource("2_6kxug")
+shader_parameter/tt = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lgns8"]
+resource_local_to_scene = true
+shader = ExtResource("4_ef6iq")
+shader_parameter/seed = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5hio4"]
+resource_local_to_scene = true
+shader = ExtResource("4_ef6iq")
+shader_parameter/seed = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5qthr"]
+resource_local_to_scene = true
+shader = ExtResource("4_ef6iq")
+shader_parameter/seed = 13.0
+
+[node name="ChoicePanel" type="Control" unique_id=1119993685 node_paths=PackedStringArray("choice_title", "bg", "rect1", "rect2", "rect3", "unsync")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nu3xy")
+anim_speed = 1.25
+choice_title = NodePath("ChoiceTitle")
+bg = NodePath("Background")
+rect1 = NodePath("Choice1")
+rect2 = NodePath("Choice2")
+rect3 = NodePath("Choice3")
+unsync = NodePath("Unsync")
+
+[node name="Background" type="ColorRect" parent="." unique_id=652123865]
+material = SubResource("ShaderMaterial_236rp")
+layout_mode = 0
+offset_left = 1.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.485703, 0.48570395, 0.48570287, 1)
+
+[node name="ChoiceTitle" type="Label" parent="." unique_id=1242461981]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 42.0
+offset_right = 924.0
+offset_bottom = 117.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("3_puc0j")
+theme_override_font_sizes/font_size = 64
+text = "UPGRADE THAT SKATE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Choice1" type="ColorRect" parent="." unique_id=2079937559]
+material = SubResource("ShaderMaterial_lgns8")
+layout_mode = 0
+offset_left = 39.0
+offset_top = 152.0
+offset_right = 370.0
+offset_bottom = 612.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+
+[node name="Choice2" type="ColorRect" parent="." unique_id=803092985]
+material = SubResource("ShaderMaterial_5hio4")
+layout_mode = 0
+offset_left = 407.0
+offset_top = 152.0
+offset_right = 738.0
+offset_bottom = 612.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+
+[node name="Choice3" type="ColorRect" parent="." unique_id=2088436919]
+material = SubResource("ShaderMaterial_5qthr")
+layout_mode = 0
+offset_left = 776.0
+offset_top = 152.0
+offset_right = 1107.0
+offset_bottom = 612.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+
+[node name="Unsync" type="Timer" parent="." unique_id=1343989497]
+one_shot = true

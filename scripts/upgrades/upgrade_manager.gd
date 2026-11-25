@@ -1,5 +1,7 @@
 extends Node
 
+@export var all_upgrades : Array[Upgrade]
+
 signal on_process(dt: float)
 
 func add_upgrade(upgrade: Upgrade) -> void:
@@ -24,3 +26,6 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     on_process.emit(delta)
+
+func generate_random_upgrades() -> Array[Upgrade]:
+    return [all_upgrades.pick_random(), all_upgrades.pick_random(), all_upgrades.pick_random()]
