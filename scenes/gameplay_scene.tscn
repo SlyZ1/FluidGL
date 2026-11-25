@@ -248,4 +248,5 @@ vertical_alignment = 1
 
 [connection signal="display_choice" from="GameManager" to="UI/ChoiceLayer/ChoicePanel" method="display_choice"]
 [connection signal="portal_entered" from="MapLoader" to="GameManager" method="toggle_choice_screen"]
+[connection signal="back_to_gameplay" from="UI/ChoiceLayer/ChoicePanel" to="GameManager" method="_on_choice_panel_back_to_gameplay"]
 [connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]

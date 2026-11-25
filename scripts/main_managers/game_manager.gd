@@ -120,16 +120,20 @@ func _process(_dt: float) -> void:
 	if Input.is_action_just_pressed("fullscreen"): toggle_fullscreen()
 
 var _fullscreen: bool = false
-func toggle_fullscreen():
+func toggle_fullscreen() -> void:
 	_fullscreen = not _fullscreen
 	if _fullscreen:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
-func toggle_choice_screen():
-	var tw := create_tween()
-	tw.tween_property(TimeManager, "_time_scale", 1e-5, 1.6)
+func toggle_choice_screen() -> void:
+	create_tween().tween_property(TimeManager, "_time_scale", 1e-5, 1.6)
 	var ups : Array[Upgrade] = UpgradeManager.generate_random_upgrades()
 	display_choice.emit(ups[0], ups[1], ups[2])
-	# await tw.finished
+
+func _on_choice_panel_back_to_gameplay() -> void:
+	create_tween().tween_property(TimeManager, "_time_scale", 1, 1.6)
+	
+	PlayerState.add_hp(1)
+	death() # mdr

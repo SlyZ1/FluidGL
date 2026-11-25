@@ -18,11 +18,11 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nu3xy")
 anim_speed = 1.25
-choice_title = NodePath("ChoiceTitle")
+choice_title = NodePath("Background/ChoiceTitle")
 bg = NodePath("Background")
-rect1 = NodePath("Choice1")
-rect2 = NodePath("Choice2")
-rect3 = NodePath("Choice3")
+rect1 = NodePath("Background/Choice1")
+rect2 = NodePath("Background/Choice2")
+rect3 = NodePath("Background/Choice3")
 unsync = NodePath("WaitBeforeAppearing")
 
 [node name="Background" type="ColorRect" parent="." unique_id=652123865]
@@ -33,11 +33,11 @@ offset_right = 1152.0
 offset_bottom = 648.0
 color = Color(0.485703, 0.48570395, 0.48570287, 1)
 
-[node name="ChoiceTitle" type="Label" parent="." unique_id=1242461981]
+[node name="ChoiceTitle" type="Label" parent="Background" unique_id=1242461981]
 layout_mode = 0
-offset_left = 229.0
+offset_left = 228.0
 offset_top = 42.0
-offset_right = 924.0
+offset_right = 923.0
 offset_bottom = 117.0
 pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_fonts/font = ExtResource("3_puc0j")
@@ -46,27 +46,34 @@ text = "UPGRADE THAT SKATE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Choice1" parent="." unique_id=1356371373 instance=ExtResource("4_nu3xy")]
+[node name="Choice1" parent="Background" unique_id=1356371373 instance=ExtResource("4_nu3xy")]
 layout_mode = 0
-offset_left = 203.0
+offset_left = 202.0
 offset_top = 386.0
-offset_right = 203.0
+offset_right = 202.0
 offset_bottom = 386.0
 anim_seed = 2.0
+press_what_to_select = "R"
 
-[node name="Choice2" parent="." unique_id=1628520232 instance=ExtResource("4_nu3xy")]
+[node name="Choice2" parent="Background" unique_id=1628520232 instance=ExtResource("4_nu3xy")]
 layout_mode = 0
-offset_left = 583.0
+offset_left = 582.0
 offset_top = 384.0
-offset_right = 583.0
+offset_right = 582.0
 offset_bottom = 384.0
 anim_seed = 4.0
+press_what_to_select = "T"
 
-[node name="Choice3" parent="." unique_id=563422324 instance=ExtResource("4_nu3xy")]
+[node name="Choice3" parent="Background" unique_id=563422324 instance=ExtResource("4_nu3xy")]
 layout_mode = 0
-offset_left = 949.0
+offset_left = 948.0
 offset_top = 382.0
-offset_right = 949.0
+offset_right = 948.0
 offset_bottom = 382.0
+press_what_to_select = "Y"
 
 [node name="WaitBeforeAppearing" type="Timer" parent="." unique_id=1463308785]
+
+[connection signal="chose_me" from="Background/Choice1" to="." method="_on_choice"]
+[connection signal="chose_me" from="Background/Choice2" to="." method="_on_choice"]
+[connection signal="chose_me" from="Background/Choice3" to="." method="_on_choice"]

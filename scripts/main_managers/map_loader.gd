@@ -28,7 +28,7 @@ var _next_spawn: Section
 var waiting_for_restart := false
 var previous_spawn_index: int = -1
 
-@export var nbSectionsBeforePortal := 8
+@export var nbSectionsBeforePortal := 14
 var remainingSectionsBeforePortal := nbSectionsBeforePortal
 signal portal_entered
 
