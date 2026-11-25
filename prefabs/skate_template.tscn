@@ -93,7 +93,7 @@ script = ExtResource("5_8vpdq")
 skate_physics = NodePath("..")
 anim_controller = NodePath("../AnimController")
 lane_snapper = NodePath("../LaneSnapper")
-rail_z_thresh = 1.0
+rail_z_thresh = 2.0
 rail_y_thresh_neg = -0.25
 rail_y_offset = 0.4
 

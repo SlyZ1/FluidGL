@@ -1,15 +1,8 @@
 [gd_scene format=3 uid="uid://bwvau03vnk7bb"]
 
 [ext_resource type="Script" uid="uid://cbv8stkrtn8ru" path="res://scripts/main_managers/map_loader.gd" id="1_a47ne"]
-[ext_resource type="PackedScene" uid="uid://cssio1dad3ndv" path="res://sections/section_rail.tscn" id="2_qshxn"]
-[ext_resource type="PackedScene" uid="uid://i8wl7n8qas82" path="res://sections/section_rail_2.tscn" id="3_0rqnr"]
-[ext_resource type="PackedScene" uid="uid://briofgnybt16n" path="res://sections/section_ramp_1.tscn" id="4_jst68"]
-[ext_resource type="PackedScene" uid="uid://cidsrnocieany" path="res://sections/section_ramp_2.tscn" id="5_xmxvq"]
-[ext_resource type="PackedScene" uid="uid://bxjsr5t8tqo5q" path="res://sections/section_ramp_3.tscn" id="6_e1t68"]
-[ext_resource type="PackedScene" uid="uid://wh5nmjkf5hu1" path="res://sections/section_ramp_4.tscn" id="7_wfdly"]
-[ext_resource type="PackedScene" uid="uid://55ciu1ybrl1o" path="res://sections/section_empty.tscn" id="8_5k0m8"]
+[ext_resource type="Resource" uid="uid://ce7gh356hsbgl" path="res://sections/worlds/test_world.tres" id="3_n7byd"]
 [ext_resource type="Script" uid="uid://vsj75ecd4be1" path="res://scripts/main_managers/game_manager.gd" id="9_js0h6"]
-[ext_resource type="PackedScene" uid="uid://b1ji8ypten23f" path="res://sections/section_0.tscn" id="9_uina8"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate_template.tscn" id="10_vxw8k"]
 [ext_resource type="PackedScene" uid="uid://b66n7507tsgkp" path="res://prefabs/skate_ragdoll_template.tscn" id="11_54hnc"]
 [ext_resource type="Texture2D" uid="uid://b08s8xst4v3yx" path="res://textures/background/skate_sticker.svg" id="25_1fjgs"]
@@ -68,8 +61,7 @@ skate_ragdoll = NodePath("../SkateRagdoll")
 script = ExtResource("1_a47ne")
 cam = NodePath("../Camera3D")
 kill_distance = 70.0
-sections = Array[PackedScene]([ExtResource("2_qshxn"), ExtResource("3_0rqnr"), ExtResource("4_jst68"), ExtResource("5_xmxvq"), ExtResource("6_e1t68"), ExtResource("7_wfdly"), ExtResource("9_uina8")])
-empty_section = ExtResource("8_5k0m8")
+world = ExtResource("3_n7byd")
 
 [node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
 

@@ -9,9 +9,7 @@ class_name MapLoader
 @export var angle: float = 0
 @export var speed: float = 35
 @export_range(0,1) var speed_increase_rate: float = 0.002
-@export var sections: Array[PackedScene]
-@export var empty_section: PackedScene
-@export_range(0,1) var empty_ratio: float = 0.3
+@export var world: World
 
 var ready_to_restart := false
 
@@ -79,17 +77,17 @@ func _control_spawn(should_spawn_empty := false):
 		_spawned_sections.pop_front()
 
 func _new_section(snap_to: Vector3, empty := false) -> Section:
-	var index: int = randi() % sections.size()
+	var index: int = randi() % world.sections.size()
 	for i in range(10):
 		if index == previous_spawn_index:
-			index = randi() % sections.size()
+			index = randi() % world.sections.size()
 		else: break
 	previous_spawn_index = index
-	var scene: PackedScene = sections[index]
+	var scene: PackedScene = world.sections[index]
 	
-	empty = empty || randf() < empty_ratio
+	empty = empty || randf() < world.empty_ratio
 	
-	var new_section: Section = (scene.instantiate() if not empty else empty_section.instantiate()) as Section
+	var new_section: Section = (scene.instantiate() if not empty else world.empty_section.instantiate()) as Section
 	new_section.snap(snap_to, self)
 	add_child(new_section)
 	new_section.visible = false

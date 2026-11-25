@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://68r0pghwfsu6"]
+
+[ext_resource type="PackedScene" uid="uid://b2wk4ruxx4ed4" path="res://models/street_cut.glb" id="1_yb1pg"]
+[ext_resource type="Material" uid="uid://ng4840ug6iol" path="res://materials/gray.tres" id="2_eb72w"]
+
+[node name="street_cut" unique_id=1590713083 instance=ExtResource("1_yb1pg")]
+
+[node name="Cube_004" parent="." index="1" unique_id=1449427973]
+surface_material_override/0 = ExtResource("2_eb72w")
+surface_material_override/1 = ExtResource("2_eb72w")
+surface_material_override/2 = ExtResource("2_eb72w")
+surface_material_override/3 = ExtResource("2_eb72w")
+
+[node name="Cube_036" parent="." index="2" unique_id=865751992]
+surface_material_override/0 = ExtResource("2_eb72w")
+surface_material_override/1 = ExtResource("2_eb72w")
+surface_material_override/2 = ExtResource("2_eb72w")
+surface_material_override/3 = ExtResource("2_eb72w")

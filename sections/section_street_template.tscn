@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bgghtk7ci6qw0"]
 
 [ext_resource type="PackedScene" uid="uid://b2wk4ruxx4ed4" path="res://models/street_cut.glb" id="1_45lpc"]
+[ext_resource type="PackedScene" uid="uid://68r0pghwfsu6" path="res://models/street_cut_model.tscn" id="2_he5cg"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_he5cg"]
 points = PackedVector3Array(25.5, 0, 10, 25.5, 0, -10, -25.5, 0, 10, -25.5, 0, -10)
@@ -9,9 +10,13 @@ points = PackedVector3Array(25.5, 0, 10, 25.5, 0, -10, -25.5, 0, 10, -25.5, 0, -
 
 [node name="street_cut" parent="." unique_id=108908019 instance=ExtResource("1_45lpc")]
 transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
+visible = false
 
-[node name="StaticBody3D" type="StaticBody3D" parent="street_cut" unique_id=602756634]
-transform = Transform3D(-5.1425165e-08, 0, -1.1764706, 0, 1.1764706, 0, 1.1764706, 0, -5.1425165e-08, 0, 0, 0)
+[node name="street_cut2" parent="." unique_id=1590713083 instance=ExtResource("2_he5cg")]
+transform = Transform3D(-3.715468e-08, 0, 0.85, 0, 0.85, 0, -0.85, 0, -3.715468e-08, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="street_cut/StaticBody3D" unique_id=974463221]
+[node name="StaticBody3D" type="StaticBody3D" parent="street_cut2" unique_id=602756634]
+transform = Transform3D(-5.142517e-08, 0, -1.1764708, 0, 1.1764708, 0, 1.1764708, 0, -5.142517e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="street_cut2/StaticBody3D" unique_id=974463221]
 shape = SubResource("ConvexPolygonShape3D_he5cg")

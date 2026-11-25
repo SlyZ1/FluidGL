@@ -2,7 +2,7 @@ extends Node
 
 @export var jump_trick_name: String
 @export var input_lag: float = 0.032
-@export var catch_lag: float = 0.1
+@export var catch_lag: float = 0.15
 
 signal trick_performed(_name: String)
 signal trick_catched(_dt: float)
@@ -139,20 +139,32 @@ func _update_input_lag(input_string: String, dt: float) -> void:
 func _try_trick(input_string: String) -> void:
 	for trick_name : String in _possible_tricks:
 		var trick := _tricks.get_node(trick_name)
-		if trick.input == input_string:
+		if _input_corresponding(input_string, trick.input):
 			if trick.input == _last_input_executed:
 				break
-			_last_input_executed = trick.input
 			_trick_performed(trick_name)
 			break
+	_last_input_executed = input_string
 
 func _trick_possible(input_string: String) -> bool:
 	for trick_name : String in _possible_tricks:
 		var trick := _tricks.get_node(trick_name)
-		if trick.input == input_string:
+		if _input_corresponding(input_string, trick.input):
 			return true
 	return false
 
+func _input_corresponding(input_string: String, trick_input: String) -> bool:
+	# vérifier que les inputs étaient pas déjà pressed à la frame précédente, sinon ça fait des trigger non voulus
+	for i in trick_input.length():
+		var trick_key_pressed: bool = trick_input[i] == trick_input[i].to_upper()
+		var last_input_not_empty: bool = _last_input_executed.length() > i
+		var last_input_key_pressed: bool = false
+		if last_input_not_empty: 
+			last_input_key_pressed = _last_input_executed[i] == _last_input_executed[i].to_upper()
+		if  trick_key_pressed and last_input_key_pressed:
+			return false
+
+	return trick_input == input_string
 
 func _trick_performed(_name: String) -> void:
 	add_trick_count()
