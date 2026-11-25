@@ -80,6 +80,7 @@ func death(impulse_direction: Vector3 = Vector3.ZERO) -> void:
 		get_tree().reload_current_scene()
 		return
 
+	skate.reset()
 	skate_ragdoll.process_mode = Node.PROCESS_MODE_DISABLED
 	create_tween().tween_property(skate_ragdoll, "global_position", skate.global_position, restart_transition_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	create_tween().tween_property(skate_ragdoll, "global_rotation", skate.global_rotation, restart_transition_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)

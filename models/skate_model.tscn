@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://b7mx4wspgkln" path="res://models/skate.glb" id="1_ugsku"]
 [ext_resource type="Shader" uid="uid://c15d0s27ce88v" path="res://shaders/stylized_af.gdshader" id="2_n1kpf"]
 [ext_resource type="Material" uid="uid://dlnom5eppukyq" path="res://materials/orange.tres" id="3_n1kpf"]
+[ext_resource type="Material" uid="uid://b7l6q0f8aknms" path="res://materials/street_black.tres" id="4_y66qv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rlsmw"]
 resource_local_to_scene = true
@@ -10,12 +11,6 @@ render_priority = 0
 shader = ExtResource("2_n1kpf")
 shader_parameter/color_id = 0
 shader_parameter/sig = 0.6
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6tuy"]
-render_priority = 0
-shader = ExtResource("2_n1kpf")
-shader_parameter/color_id = 6
-shader_parameter/sig = 0.25
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_y66qv"]
 render_priority = 0
@@ -33,7 +28,7 @@ shader_parameter/sig = 0.25
 
 [node name="Plastic White" parent="." index="0" unique_id=453955180]
 surface_material_override/0 = SubResource("ShaderMaterial_rlsmw")
-surface_material_override/2 = SubResource("ShaderMaterial_a6tuy")
+surface_material_override/2 = ExtResource("4_y66qv")
 
 [node name="Cylinder_001" parent="." index="1" unique_id=2113072738]
 surface_material_override/0 = SubResource("ShaderMaterial_y66qv")

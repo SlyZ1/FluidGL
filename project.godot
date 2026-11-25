@@ -94,6 +94,7 @@ renderer/rendering_method="gl_compatibility"
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=4
 viewport/hdr_2d=true
 anti_aliasing/quality/msaa_3d=2
+mesh_lod/lod_change/threshold_pixels=0.5
 
 [shader_globals]
 

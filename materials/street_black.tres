@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b7l6q0f8aknms"]
+
+[resource]
+resource_name = "Route.002"
+cull_mode = 2
+albedo_color = Color(0.21230498, 0.2123048, 0.21230483, 1)

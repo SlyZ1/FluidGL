@@ -38,8 +38,8 @@ shader_parameter/blur_amount = 2.000000095
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_37qun"]
 shader = ExtResource("37_fnset")
 shader_parameter/backgroundColor = Color(0.11952978, 0.45886183, 0.9999998, 1)
-shader_parameter/imageColor = Color(0.44786596, 0.6899652, 1, 1)
-shader_parameter/image2Color = Color(0.44705883, 0.6901961, 1, 1)
+shader_parameter/imageColor = Color(0.32156864, 0.5686275, 1, 1)
+shader_parameter/image2Color = Color(0.36862746, 0.62352943, 1, 1)
 shader_parameter/image = ExtResource("25_1fjgs")
 shader_parameter/image2 = ExtResource("26_i3471")
 shader_parameter/scale = 0.08
@@ -97,7 +97,7 @@ script = ExtResource("32_ri4in")
 sky_mat = ExtResource("33_ky5ee")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2012255489]
-transform = Transform3D(-0.5055673, 0.63080204, 0.58863425, -0.11391028, -0.7250761, 0.6791826, 0.8552345, 0.27632093, 0.4384297, -1.1963387, 3.8094516, 0)
+transform = Transform3D(-0.037676897, -0.68022895, -0.7320307, -0.11351568, -0.7248956, 0.6794413, -0.9928215, 0.10869619, -0.049904842, -1.1963387, 3.8094516, 0)
 shadow_enabled = true
 shadow_opacity = 0.55
 shadow_blur = 0.0
