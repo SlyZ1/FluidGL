@@ -3,26 +3,11 @@
 [ext_resource type="Script" uid="uid://bnnhy7jvbxqxl" path="res://scripts/UI/choice_panel.gd" id="1_nu3xy"]
 [ext_resource type="Shader" uid="uid://vo4ma32x5bro" path="res://shaders/choice_background.gdshader" id="2_6kxug"]
 [ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://fonts/Matcha Style.ttf" id="3_puc0j"]
-[ext_resource type="Shader" uid="uid://bhk553pvm4uxw" path="res://shaders/choice.gdshader" id="4_ef6iq"]
+[ext_resource type="PackedScene" uid="uid://dlpddl0vkyg2" path="res://prefabs/choice_rect.tscn" id="4_nu3xy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_236rp"]
 shader = ExtResource("2_6kxug")
 shader_parameter/tt = 0.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_lgns8"]
-resource_local_to_scene = true
-shader = ExtResource("4_ef6iq")
-shader_parameter/seed = 2.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_5hio4"]
-resource_local_to_scene = true
-shader = ExtResource("4_ef6iq")
-shader_parameter/seed = 5.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_5qthr"]
-resource_local_to_scene = true
-shader = ExtResource("4_ef6iq")
-shader_parameter/seed = 13.0
 
 [node name="ChoicePanel" type="Control" unique_id=1119993685 node_paths=PackedStringArray("choice_title", "bg", "rect1", "rect2", "rect3", "unsync")]
 layout_mode = 3
@@ -38,7 +23,7 @@ bg = NodePath("Background")
 rect1 = NodePath("Choice1")
 rect2 = NodePath("Choice2")
 rect3 = NodePath("Choice3")
-unsync = NodePath("Unsync")
+unsync = NodePath("WaitBeforeAppearing")
 
 [node name="Background" type="ColorRect" parent="." unique_id=652123865]
 material = SubResource("ShaderMaterial_236rp")
@@ -61,32 +46,27 @@ text = "UPGRADE THAT SKATE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Choice1" type="ColorRect" parent="." unique_id=2079937559]
-material = SubResource("ShaderMaterial_lgns8")
+[node name="Choice1" parent="." unique_id=1356371373 instance=ExtResource("4_nu3xy")]
 layout_mode = 0
-offset_left = 39.0
-offset_top = 152.0
-offset_right = 370.0
-offset_bottom = 612.0
-pivot_offset_ratio = Vector2(0.5, 0.5)
+offset_left = 203.0
+offset_top = 386.0
+offset_right = 203.0
+offset_bottom = 386.0
+anim_seed = 2.0
 
-[node name="Choice2" type="ColorRect" parent="." unique_id=803092985]
-material = SubResource("ShaderMaterial_5hio4")
+[node name="Choice2" parent="." unique_id=1628520232 instance=ExtResource("4_nu3xy")]
 layout_mode = 0
-offset_left = 407.0
-offset_top = 152.0
-offset_right = 738.0
-offset_bottom = 612.0
-pivot_offset_ratio = Vector2(0.5, 0.5)
+offset_left = 583.0
+offset_top = 384.0
+offset_right = 583.0
+offset_bottom = 384.0
+anim_seed = 4.0
 
-[node name="Choice3" type="ColorRect" parent="." unique_id=2088436919]
-material = SubResource("ShaderMaterial_5qthr")
+[node name="Choice3" parent="." unique_id=563422324 instance=ExtResource("4_nu3xy")]
 layout_mode = 0
-offset_left = 776.0
-offset_top = 152.0
-offset_right = 1107.0
-offset_bottom = 612.0
-pivot_offset_ratio = Vector2(0.5, 0.5)
+offset_left = 949.0
+offset_top = 382.0
+offset_right = 949.0
+offset_bottom = 382.0
 
-[node name="Unsync" type="Timer" parent="." unique_id=1343989497]
-one_shot = true
+[node name="WaitBeforeAppearing" type="Timer" parent="." unique_id=1463308785]

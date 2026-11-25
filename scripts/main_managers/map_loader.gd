@@ -28,7 +28,8 @@ var _next_spawn: Section
 var waiting_for_restart := false
 var previous_spawn_index: int = -1
 
-@export var nbSectionsBeforePortal := 12
+@export var nbSectionsBeforePortal := 8
+var remainingSectionsBeforePortal := nbSectionsBeforePortal
 signal portal_entered
 
 static var instance: MapLoader
@@ -98,9 +99,9 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 	add_child(new_section)
 	new_section.visible = false
 
-	nbSectionsBeforePortal -= 1
-	if nbSectionsBeforePortal <= 0:
-		nbSectionsBeforePortal = 12 # c'est temporaire, en vrai ce serait a RunManager de decider
+	remainingSectionsBeforePortal -= 1
+	if remainingSectionsBeforePortal <= 0:
+		remainingSectionsBeforePortal = nbSectionsBeforePortal # c'est temporaire, en vrai ce serait a RunManager de decider
 		spawnPortal(new_section)
 
 	return new_section

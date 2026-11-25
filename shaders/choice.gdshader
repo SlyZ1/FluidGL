@@ -17,7 +17,7 @@ void fragment() {
 	
 	float circle = 1. - step(0.3, length(repeated)) * step(length(repeated), 0.4);
 	vec3 clrBack = vec3(0.5, 0.8, 0.45);
-	vec3 clrFront = 0.8 * clrBack;
+	vec3 clrFront = 0.88 * clrBack;
 	
 	const float n = 8.0;
 	float Ln = pow(pow(abs(uv.x), n) + pow(abs(uv.y), n), 1. / n);

@@ -107,7 +107,7 @@ script = ExtResource("32_ri4in")
 sky_mat = ExtResource("33_ky5ee")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2012255489]
-transform = Transform3D(-0.5055673, 0.63080204, 0.58863425, -0.11391028, -0.7250761, 0.6791826, 0.8552345, 0.27632093, 0.4384297, -1.1963387, 3.8094516, 0)
+transform = Transform3D(-0.5055674, 0.63080204, 0.5886344, -0.11391026, -0.72507614, 0.67918265, 0.8552346, 0.27632108, 0.4384297, -1.1963387, 3.8094516, 0)
 shadow_enabled = true
 shadow_opacity = 0.55
 shadow_blur = 0.0
@@ -138,55 +138,13 @@ layout_mode = 1
 popup_color = Color(0.9607843, 0.654902, 0.2901961, 1)
 wow_sounds = Array[int]([13, 13, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
 
-[node name="EndScreen" type="Node" parent="UI" unique_id=1515080538 node_paths=PackedStringArray("input_suggestion_timer", "input_suggestion_label", "points_earned_label")]
-script = ExtResource("40_0sji7")
-input_suggestion_timer = NodePath("InputSuggestion/InputAlternateTimer")
-input_suggestion_label = NodePath("InputSuggestion")
-points_earned_label = NodePath("PointsEarned")
+[node name="ChoiceLayer" type="CanvasLayer" parent="UI" unique_id=2057365743]
 
-[node name="InputSuggestion" type="Label" parent="UI/EndScreen" unique_id=1666461984]
+[node name="ChoicePanel" parent="UI/ChoiceLayer" unique_id=1119993685 instance=ExtResource("27_ji1gn")]
 visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -574.5
-offset_top = -176.0
-offset_right = 574.5
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_fonts/font = ExtResource("36_qxk33")
-theme_override_font_sizes/font_size = 31
-text = "Press F + H to respawn"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InputAlternateTimer" type="Timer" parent="UI/EndScreen/InputSuggestion" unique_id=58528195]
-wait_time = 0.5
-
-[node name="PointsEarned" type="Label" parent="UI/EndScreen" unique_id=893113799]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -574.5
-offset_top = -142.0
-offset_right = 574.5
-offset_bottom = 142.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("36_qxk33")
-theme_override_font_sizes/font_size = 60
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ChoicePanel" parent="UI" unique_id=1119993685 instance=ExtResource("27_ji1gn")]
-visible = false
-layout_mode = 1
 
 [node name="PauseLayer" type="CanvasLayer" parent="UI" unique_id=243726203]
+layer = 2
 visible = false
 script = ExtResource("35_qshxn")
 
@@ -244,6 +202,50 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[connection signal="display_choice" from="GameManager" to="UI/ChoicePanel" method="display_choice"]
+[node name="EndScreen" type="Node" parent="UI" unique_id=1515080538 node_paths=PackedStringArray("input_suggestion_timer", "input_suggestion_label", "points_earned_label")]
+script = ExtResource("40_0sji7")
+input_suggestion_timer = NodePath("InputSuggestion/InputAlternateTimer")
+input_suggestion_label = NodePath("InputSuggestion")
+points_earned_label = NodePath("PointsEarned")
+
+[node name="InputSuggestion" type="Label" parent="UI/EndScreen" unique_id=1666461984]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -574.5
+offset_top = -176.0
+offset_right = 574.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("36_qxk33")
+theme_override_font_sizes/font_size = 31
+text = "Press F + H to respawn"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InputAlternateTimer" type="Timer" parent="UI/EndScreen/InputSuggestion" unique_id=58528195]
+wait_time = 0.5
+
+[node name="PointsEarned" type="Label" parent="UI/EndScreen" unique_id=893113799]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.5
+offset_top = -142.0
+offset_right = 574.5
+offset_bottom = 142.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("36_qxk33")
+theme_override_font_sizes/font_size = 60
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="display_choice" from="GameManager" to="UI/ChoiceLayer/ChoicePanel" method="display_choice"]
 [connection signal="portal_entered" from="MapLoader" to="GameManager" method="toggle_choice_screen"]
 [connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]
