@@ -37,9 +37,9 @@ shader_parameter/blur_amount = 2.000000095
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_37qun"]
 shader = ExtResource("37_fnset")
-shader_parameter/backgroundColor = Color(0.11952978, 0.45886183, 0.9999998, 1)
-shader_parameter/imageColor = Color(0.32156864, 0.5686275, 1, 1)
-shader_parameter/image2Color = Color(0.36862746, 0.62352943, 1, 1)
+shader_parameter/backgroundColor = Color(0.16078432, 0.48235294, 1, 1)
+shader_parameter/imageColor = Color(0.43, 0.65799993, 1, 1)
+shader_parameter/image2Color = Color(0.43137255, 0.65882355, 1, 1)
 shader_parameter/image = ExtResource("25_1fjgs")
 shader_parameter/image2 = ExtResource("26_i3471")
 shader_parameter/scale = 0.08

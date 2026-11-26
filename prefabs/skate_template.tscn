@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dhrwk24kr7uqb" path="res://scripts/skate/skate_physics.gd" id="1_sgunh"]
 [ext_resource type="Script" uid="uid://bgwv5b1vd00jg" path="res://scripts/skate/anim/anim_controller.gd" id="2_2wimw"]
 [ext_resource type="PackedScene" uid="uid://dqf1ivmopijt" path="res://models/skate_model.tscn" id="2_uad4r"]
+[ext_resource type="PackedScene" uid="uid://cokmbxut5dd5j" path="res://models/skate_test.tscn" id="3_hfbjb"]
 [ext_resource type="PackedScene" uid="uid://bfds1rxiaxwa7" path="res://models/2_doigts.tscn" id="4_y7iwp"]
 [ext_resource type="Script" uid="uid://doxuh2a25glg4" path="res://scripts/skate/rail/rail_controller.gd" id="5_8vpdq"]
 [ext_resource type="PackedScene" uid="uid://by65jlmem62pt" path="res://models/2_doigts_up.tscn" id="5_uad4r"]
@@ -74,6 +75,10 @@ target_position = Vector3(0, 0, 0)
 
 [node name="skate" parent="Skate" unique_id=1683496385 instance=ExtResource("2_uad4r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.87, 0, -0.29, 0)
+
+[node name="skate_test" parent="Skate" unique_id=576799161 instance=ExtResource("3_hfbjb")]
+transform = Transform3D(1.505, 0, 0, 0, 1.505, 0, 0, 0, 1.505, 0, 0, 0)
+visible = false
 
 [node name="Ground" type="ShapeCast3D" parent="." unique_id=630398105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5538435e-08, 0, -0.35547793)

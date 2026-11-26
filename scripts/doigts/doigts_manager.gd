@@ -11,9 +11,12 @@ extends Node
 var _orientation_rot: Basis
 const _rail_rot: Basis = Basis(Vector3.UP, -PI / 2.0)
 
+var _outline_tween: Tween
+
 func _ready() -> void:
 	_orientation_rot = Basis.from_euler(Vector3(0.0, deg_to_rad(orientation), 0.0))
 	GameManager.instance.on_death.connect(reset)
+	TrickManager.trick_performed.connect(_on_trick_performed)
 
 func _process(_delta: float) -> void:
 	if GameManager.instance.game_paused or not GameManager.instance.game_started: return
@@ -27,15 +30,23 @@ func _process(_delta: float) -> void:
 	
 	doigts_idle.basis = parent.global_basis.inverse() * _orientation_rot * rot
 	doigts_up.basis = parent.global_basis.inverse() * _orientation_rot * rot
-	
-	if anim_controller.can_catch():
-		doigts_up.visual.material_overlay.stencil_color = Color.WHITE
+
+func _on_trick_performed(_name: String) -> void:
+	if _outline_tween and _outline_tween.is_valid(): 
+		_outline_tween.kill()
+
+	if _name == TrickManager.jump_trick_name: 
 		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.3
-	else:
-		doigts_up.visual.material_overlay.stencil_outline_thickness = 0.0
+		return
+
+	doigts_up.visual.material_overlay.stencil_outline_thickness = 0.0
+	_outline_tween = create_tween()
+	_outline_tween.tween_property(doigts_up.visual.material_overlay, "stencil_outline_thickness", 0.3, 0.15)
+	_outline_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func reset() -> void:
 	if !is_inside_tree(): return
+	if _outline_tween: _outline_tween.kill()
 	doigts_up.visual.material_overlay.stencil_color = Color.WHITE
 	doigts_up.visual.material_overlay.stencil_outline_thickness = 0.3
 	doigts_idle.visible = false
