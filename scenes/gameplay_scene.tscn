@@ -5,8 +5,10 @@
 [ext_resource type="Script" uid="uid://vsj75ecd4be1" path="res://scripts/main_managers/game_manager.gd" id="9_js0h6"]
 [ext_resource type="PackedScene" uid="uid://dqi8e4nn6yni4" path="res://prefabs/skate_template.tscn" id="10_vxw8k"]
 [ext_resource type="PackedScene" uid="uid://b66n7507tsgkp" path="res://prefabs/skate_ragdoll_template.tscn" id="11_54hnc"]
+[ext_resource type="PackedScene" uid="uid://ccp0nfli1cp47" path="res://prefabs/portal.tscn" id="11_ji1gn"]
 [ext_resource type="Texture2D" uid="uid://b08s8xst4v3yx" path="res://textures/background/skate_sticker.svg" id="25_1fjgs"]
 [ext_resource type="Texture2D" uid="uid://cmayb6asonf66" path="res://textures/background/skate_contour_sticker.svg" id="26_i3471"]
+[ext_resource type="PackedScene" uid="uid://crnwq6ifvh5g5" path="res://prefabs/choice_panel.tscn" id="27_ji1gn"]
 [ext_resource type="Script" uid="uid://l50nio1hp4qx" path="res://scripts/skate/static_camera.gd" id="30_7oq1k"]
 [ext_resource type="Environment" uid="uid://cmks0nm0sqiqg" path="res://sky/main_environment.tres" id="31_blaph"]
 [ext_resource type="Script" uid="uid://v3s70tvc6v62" path="res://scripts/UI/skybox_ratio.gd" id="32_ri4in"]
@@ -17,7 +19,6 @@
 [ext_resource type="FontFile" uid="uid://c4og5rhr8ivft" path="res://fonts/PORKYS_.TTF" id="36_qxk33"]
 [ext_resource type="Shader" uid="uid://bk5hvsujij6nr" path="res://shaders/sky_canvas.gdshader" id="37_fnset"]
 [ext_resource type="Script" uid="uid://dc0qunlfonhe6" path="res://scripts/UI/endscreen_ui.gd" id="40_0sji7"]
-[ext_resource type="PackedScene" uid="uid://ikljigiecowi" path="res://prefabs/input_panel.tscn" id="41_n656w"]
 [ext_resource type="AudioStream" uid="uid://b7yvn1nwfygf5" path="res://audio/fingertrick.mp3" id="42_se55i"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_5o71f"]
@@ -62,6 +63,7 @@ script = ExtResource("1_a47ne")
 cam = NodePath("../Camera3D")
 kill_distance = 70.0
 world = ExtResource("3_n7byd")
+portal = ExtResource("11_ji1gn")
 
 [node name="SkateRagdoll" parent="." unique_id=787583672 instance=ExtResource("11_54hnc")]
 
@@ -128,7 +130,13 @@ layout_mode = 1
 popup_color = Color(0.9607843, 0.654902, 0.2901961, 1)
 wow_sounds = Array[int]([13, 13, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
 
+[node name="ChoiceLayer" type="CanvasLayer" parent="UI" unique_id=2057365743]
+
+[node name="ChoicePanel" parent="UI/ChoiceLayer" unique_id=1119993685 instance=ExtResource("27_ji1gn")]
+visible = false
+
 [node name="PauseLayer" type="CanvasLayer" parent="UI" unique_id=243726203]
+layer = 2
 visible = false
 script = ExtResource("35_qshxn")
 
@@ -230,105 +238,7 @@ theme_override_font_sizes/font_size = 60
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="QuestInputs(deprecated)" type="Node" parent="UI" unique_id=1930562873]
-
-[node name="Input1" parent="UI/QuestInputs(deprecated)" unique_id=7957100 instance=ExtResource("41_n656w")]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-offset_left = -333.0
-offset_top = 37.0
-offset_right = -333.0
-offset_bottom = 37.0
-grow_vertical = 0
-scale = Vector2(0.8, 0.8)
-passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-
-[node name="Input2" parent="UI/QuestInputs(deprecated)" unique_id=1297023805 instance=ExtResource("41_n656w")]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-offset_left = -215.0
-offset_top = 37.0
-offset_right = -215.0
-offset_bottom = 37.0
-grow_vertical = 0
-scale = Vector2(0.8, 0.8)
-passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-
-[node name="Input3" parent="UI/QuestInputs(deprecated)" unique_id=506145894 instance=ExtResource("41_n656w")]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-offset_left = -97.0
-offset_top = 37.0
-offset_right = -97.0
-offset_bottom = 37.0
-grow_vertical = 0
-scale = Vector2(0.8, 0.8)
-passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-
-[node name="Input4" parent="UI/QuestInputs(deprecated)" unique_id=703435643 instance=ExtResource("41_n656w")]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-offset_left = 21.0
-offset_top = 37.0
-offset_right = 21.0
-offset_bottom = 37.0
-grow_vertical = 0
-scale = Vector2(0.8, 0.8)
-passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-
-[node name="Input5" parent="UI/QuestInputs(deprecated)" unique_id=502797229 instance=ExtResource("41_n656w")]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-offset_left = 132.0
-offset_top = 37.0
-offset_right = 132.0
-offset_bottom = 37.0
-grow_vertical = 0
-scale = Vector2(0.8, 0.8)
-passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-
-[node name="Input6" parent="UI/QuestInputs(deprecated)" unique_id=328165781 instance=ExtResource("41_n656w")]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-offset_left = 250.0
-offset_top = 37.0
-offset_right = 250.0
-offset_bottom = 37.0
-grow_vertical = 0
-scale = Vector2(0.8, 0.8)
-passive_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-
-[node name="Inputs" type="Control" parent="UI/QuestInputs(deprecated)" unique_id=481270804]
-visible = false
-layout_mode = 3
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_top = -2.3079224
-offset_right = 1.0
-offset_bottom = 3.3079834
-grow_horizontal = 2
-grow_vertical = 0
-pivot_offset_ratio = Vector2(1, 1)
-
+[connection signal="display_choice" from="GameManager" to="UI/ChoiceLayer/ChoicePanel" method="display_choice"]
+[connection signal="portal_entered" from="MapLoader" to="GameManager" method="toggle_choice_screen"]
+[connection signal="back_to_gameplay" from="UI/ChoiceLayer/ChoicePanel" to="GameManager" method="_on_choice_panel_back_to_gameplay"]
 [connection signal="timeout" from="UI/EndScreen/InputSuggestion/InputAlternateTimer" to="UI/EndScreen" method="_on_holdfh_timeout"]

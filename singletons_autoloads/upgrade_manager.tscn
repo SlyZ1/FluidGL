@@ -2,8 +2,30 @@
 
 [ext_resource type="Script" uid="uid://b67781cgo407u" path="res://scripts/upgrades/upgrade_manager.gd" id="1_16bch"]
 [ext_resource type="Script" uid="uid://djhyin3m7la6j" path="res://scripts/upgrades/upgrade.gd" id="2_6o8wj"]
-[ext_resource type="Resource" uid="uid://22ws3ftx3nrn" path="res://upgrades/test_upgrade.tres" id="3_2dbcl"]
+[ext_resource type="Script" uid="uid://cu1wgsgwwsfrk" path="res://scripts/upgrades/effects/upgrade_effect.gd" id="3_6o8wj"]
+[ext_resource type="Script" uid="uid://beahu4xnd1q0r" path="res://scripts/upgrades/effects/upgrade_effect_health.gd" id="4_2dbcl"]
+[ext_resource type="Script" uid="uid://dp5uep1ywj7b8" path="res://scripts/upgrades/triggers/upgade_trigger_trick.gd" id="5_g7yad"]
+
+[sub_resource type="Resource" id="Resource_1afgr"]
+script = ExtResource("4_2dbcl")
+hp_added = 1
+metadata/_custom_type_script = "uid://beahu4xnd1q0r"
+
+[sub_resource type="Resource" id="Resource_g7yad"]
+script = ExtResource("5_g7yad")
+trick = "helicopter"
+exit_immediately = true
+metadata/_custom_type_script = "uid://dp5uep1ywj7b8"
+
+[sub_resource type="Resource" id="Resource_vhchk"]
+script = ExtResource("2_6o8wj")
+upgrade_name = "Health up"
+description = "helicopter now heals you because you're cool"
+rarity = 1.0
+trigger = SubResource("Resource_g7yad")
+effects = Array[ExtResource("3_6o8wj")]([SubResource("Resource_1afgr")])
+metadata/_custom_type_script = "uid://djhyin3m7la6j"
 
 [node name="UpgradeManager" type="Node" unique_id=951883777]
 script = ExtResource("1_16bch")
-current_upgrades = Array[ExtResource("2_6o8wj")]([ExtResource("3_2dbcl")])
+all_upgrades = Array[ExtResource("2_6o8wj")]([SubResource("Resource_vhchk")])

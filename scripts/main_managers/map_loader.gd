@@ -10,6 +10,7 @@ class_name MapLoader
 @export var speed: float = 35
 @export_range(0,1) var speed_increase_rate: float = 0.002
 @export var world: World
+@export var portal : PackedScene
 
 var ready_to_restart := false
 
@@ -24,6 +25,10 @@ var _next_spawn: Section
 
 var waiting_for_restart := false
 var previous_spawn_index: int = -1
+
+@export var nbSectionsBeforePortal := 14
+var remainingSectionsBeforePortal := nbSectionsBeforePortal
+signal portal_entered
 
 static var instance: MapLoader
 
@@ -91,7 +96,26 @@ func _new_section(snap_to: Vector3, empty := false) -> Section:
 	new_section.snap(snap_to, self)
 	add_child(new_section)
 	new_section.visible = false
+
+	remainingSectionsBeforePortal -= 1
+	if remainingSectionsBeforePortal <= 0:
+		remainingSectionsBeforePortal = nbSectionsBeforePortal # c'est temporaire, en vrai ce serait a RunManager de decider
+		spawnPortal(new_section)
+
 	return new_section
+
+func spawnPortal(new_section : Section) -> void:
+	var newPortal = portal.instantiate()
+	new_section.add_child(newPortal)
+	newPortal.global_position = new_section.global_position
+	newPortal.position.z = 6
+	if randi_range(0, 1) == 1:
+		newPortal.position.z *= -1
+	newPortal.scale *= 80 # nsm je comprends rien a la scale de godot
+	newPortal.get_node("Hitbox").area_entered.connect(_on_portal_entered)
+
+func _on_portal_entered(_other : Area3D):
+	portal_entered.emit()
 
 func _control_speed(delta: float):
 	for section: Section in _spawned_sections:

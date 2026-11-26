@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://crnwq6ifvh5g5"]
+
+[ext_resource type="Script" uid="uid://bnnhy7jvbxqxl" path="res://scripts/UI/choice_panel.gd" id="1_nu3xy"]
+[ext_resource type="Shader" uid="uid://vo4ma32x5bro" path="res://shaders/choice_background.gdshader" id="2_6kxug"]
+[ext_resource type="FontFile" uid="uid://35k2i72hxchn" path="res://fonts/Matcha Style.ttf" id="3_puc0j"]
+[ext_resource type="PackedScene" uid="uid://dlpddl0vkyg2" path="res://prefabs/choice_rect.tscn" id="4_nu3xy"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_236rp"]
+shader = ExtResource("2_6kxug")
+shader_parameter/tt = 0.0
+
+[node name="ChoicePanel" type="Control" unique_id=1119993685 node_paths=PackedStringArray("choice_title", "bg", "rect1", "rect2", "rect3", "unsync")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nu3xy")
+anim_speed = 1.25
+choice_title = NodePath("Background/ChoiceTitle")
+bg = NodePath("Background")
+rect1 = NodePath("Background/Choice1")
+rect2 = NodePath("Background/Choice2")
+rect3 = NodePath("Background/Choice3")
+unsync = NodePath("WaitBeforeAppearing")
+
+[node name="Background" type="ColorRect" parent="." unique_id=652123865]
+material = SubResource("ShaderMaterial_236rp")
+layout_mode = 0
+offset_left = 1.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.485703, 0.48570395, 0.48570287, 1)
+
+[node name="ChoiceTitle" type="Label" parent="Background" unique_id=1242461981]
+layout_mode = 0
+offset_left = 228.0
+offset_top = 42.0
+offset_right = 923.0
+offset_bottom = 117.0
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("3_puc0j")
+theme_override_font_sizes/font_size = 64
+text = "UPGRADE THAT SKATE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Choice1" parent="Background" unique_id=1356371373 instance=ExtResource("4_nu3xy")]
+layout_mode = 0
+offset_left = 202.0
+offset_top = 386.0
+offset_right = 202.0
+offset_bottom = 386.0
+anim_seed = 2.0
+press_what_to_select = "R"
+
+[node name="Choice2" parent="Background" unique_id=1628520232 instance=ExtResource("4_nu3xy")]
+layout_mode = 0
+offset_left = 582.0
+offset_top = 384.0
+offset_right = 582.0
+offset_bottom = 384.0
+anim_seed = 4.0
+press_what_to_select = "T"
+
+[node name="Choice3" parent="Background" unique_id=563422324 instance=ExtResource("4_nu3xy")]
+layout_mode = 0
+offset_left = 948.0
+offset_top = 382.0
+offset_right = 948.0
+offset_bottom = 382.0
+press_what_to_select = "Y"
+
+[node name="WaitBeforeAppearing" type="Timer" parent="." unique_id=1463308785]
+
+[connection signal="chose_me" from="Background/Choice1" to="." method="_on_choice"]
+[connection signal="chose_me" from="Background/Choice2" to="." method="_on_choice"]
+[connection signal="chose_me" from="Background/Choice3" to="." method="_on_choice"]
