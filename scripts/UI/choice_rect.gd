@@ -11,6 +11,8 @@ class_name ChoiceRect
 @export var description : Label
 @export var pickme : Label
 
+var current_upgrade : Upgrade
+
 signal chose_me(which : String)
 
 func _ready() -> void:
@@ -19,6 +21,7 @@ func _ready() -> void:
 	pickme.text = "press " + press_what_to_select + " to select"
 
 func appear(with_delay : float, duration : float, content : Upgrade) -> void:
+	current_upgrade = content
 	upgrade_name.text = content.upgrade_name
 	description.text = content.description
 
@@ -41,4 +44,4 @@ func _on_flicker_timeout() -> void:
 
 func _process(delta : float) -> void:
 	if Input.is_action_just_pressed(press_what_to_select):
-		chose_me.emit(press_what_to_select)
+		chose_me.emit(press_what_to_select, current_upgrade)

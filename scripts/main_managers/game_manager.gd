@@ -132,8 +132,10 @@ func toggle_choice_screen() -> void:
 	var ups : Array[Upgrade] = UpgradeManager.generate_random_upgrades()
 	display_choice.emit(ups[0], ups[1], ups[2])
 
-func _on_choice_panel_back_to_gameplay() -> void:
+func _on_choice_panel_back_to_gameplay(up : Upgrade) -> void:
 	create_tween().tween_property(TimeManager, "_time_scale", 1, 1.6)
 	
 	PlayerState.add_hp(1)
 	death() # mdr
+
+	UpgradeManager.add_upgrade(up)

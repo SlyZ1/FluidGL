@@ -37,7 +37,7 @@ func display_choice(choice1 : Upgrade, choice2 : Upgrade, choice3 : Upgrade) -> 
 
 	create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC).tween_property(choice_title, "scale", Vector2.ONE, anim_speed)
 
-func _on_choice(which : String) -> void:
+func _on_choice(which : String, up : Upgrade) -> void:
 	if not choosing:
 		return
 	choosing = false
@@ -46,5 +46,5 @@ func _on_choice(which : String) -> void:
 	rect2.disappear(2 * delay_btw_choices, anim_speed)
 	rect1.disappear(3 * delay_btw_choices, anim_speed)
 	create_tween().tween_method(set_background_anim, 1., 0., bg_anim_speed)
-	back_to_gameplay.emit()
+	back_to_gameplay.emit(up)
 	
